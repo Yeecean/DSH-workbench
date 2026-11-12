@@ -133,12 +133,12 @@ Host 可以接收 Mode Value 用于默认值与 Tool Policy，但客户端提交
 
 | 方案 | 优势 | 劣势 | 建议 |
 |---|---|---|---|
-| 保留 `AppFrame` 并扩展子 Slot | 原生 Session、Files、Terminal、Approval、Locale、Scope 与 Plugin Wiring 保持活动；可增量迁移 | 窗口 Chrome 与面板关系遵循原生布局 | V1 推荐 |
-| 替换客户端 `root` | 完整控制壳层拓扑、键盘归属与面板组合 | 必须恢复原生 Layout Ownership 与全部被移除的 Child-Slot Behavior；回归面高 | 在确认具体限制后考虑 |
+| 保留 `AppFrame` 并扩展布局 | 可以保留原生 Session、Files、Terminal、Approval、Locale、Scope 与插件接线；保留效果需要验证 | 全局右栏需要布局仲裁和新增扩展点 | 推荐评审 |
+| 替换客户端 `root` | 完整控制壳层拓扑、键盘归属与面板组合 | 必须恢复原生布局归属与全部被移除的子 Slot 行为；回归面高 | P1 不采用 |
 
-P1 保留 `AppFrame`，但原生 Session 右栏在全局 Home 面板上隐藏。要求的常驻 Home Context 因此需要布局扩展或调整需求；实现暂停，等待决定。详见 [Slot 审计](APPFRAME_SLOT_AUDIT.zh.md)。
+P1 保留 `AppFrame`，但原生 Session 右栏在全局 Home 面板上隐藏。要求的常驻 Home Context 因此需要布局扩展或调整需求；实现暂停，等待决定。详见 [Slot 审计](APPFRAME_SLOT_AUDIT.zh.md)与[全局右栏 ADR](GLOBAL_RIGHTBAR_ADR.zh.md)。
 
-如果未来提议替换 `root`，验收必须覆盖 Session Scope 与切换、Panel Selection、Route Reconstruction、Locale、Tooltip、Focus Order、Terminal Reconnect、File Action、Approval Answer、Plugin Transaction，以及注册到每个 Child Slot 的原生 Effect。路线图将该项作为独立架构变更。
+P1 不授权替换 `root`、替换整个原生右栏或将 `shell.overlay` 作为布局列。原生能力保留必须在 Windows Desktop 上验证。
 
 -----
 
@@ -172,7 +172,7 @@ P1 保留 `AppFrame`，但原生 Session 右栏在全局 Home 面板上隐藏。
 | `BUILD` | Execution-World Selector | 新 Host 与 Client Plugin | 原生单 Host API 不拥有的产品路由 |
 | `BUILD` | WSL Host Adapter | 新 Host Adapter 与 Endpoint Design | 完整 Linux Runtime 需要新 Discovery 与 Lifecycle |
 
-`REPLACE` 不是偏好的同义词。V1 计划只替换需要独立产品 Package Identity 的 Brand Shell Metadata。除非评审提出 `AppFrame` Slot 无法表达的具体行为，客户端 `root` 保持保留。
+`REPLACE` 不是偏好的同义词。V1 计划只替换需要独立产品 Package Identity 的 Brand Shell Metadata。即使需要新的布局扩展，P1 仍保留客户端 `root`。
 
 -----
 

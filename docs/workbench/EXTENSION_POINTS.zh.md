@@ -226,10 +226,10 @@ File Explorer 不得从 Chromium 直接读取本地 Path。它调用 Host File S
 
 | 产品页面 | 推荐 Slot 或 Client Mechanism |
 |---|---|
-| Environment 与 Mode Rail | `shell.leading` 或 Sidebar Occupant |
+| 环境与模式导航 | Sidebar 内部扩展；`shell.leading` 仅在特定折叠或抽屉状态出现 |
 | Project 与 Session Navigation | `sidebar` |
 | Main Work 或 Code Surface | 带 Key 的 `main` |
-| Agent Activity 与 Approval | Session 右栏或 `shell.bottom`；全局 Home 常驻右栏需要新扩展 |
+| Agent Context | Session 右栏或 `shell.bottom`；全局 Home 常驻右栏需要新布局扩展 |
 | Command Palette 与 Modal Flow | `shell.overlay` |
 | Status 与 Task Progress | `shell.bottom` 或专用 Sidebar Section |
 

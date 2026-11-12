@@ -1,0 +1,31 @@
+# Bilingual-pair consistency record for DESKTOP_PROFILE_FEASIBILITY.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/DESKTOP_PROFILE_FEASIBILITY.md
+/desktop-profile-feasibility:
+  en: 45a718dacd735ade
+  zh: c3604cbf527e063d
+/desktop-profile-feasibility/summary:
+  en: 28d8120c41375e4a
+  zh: c38887cdddc578e3
+/desktop-profile-feasibility/table-of-contents:
+  en: 022a5b86dbba39c5
+  zh: 4fb7ecbdf83a3e0a
+/desktop-profile-feasibility/profile-selection:
+  en: 5b82b2201d279976
+  zh: 9051d35e57adb2b1
+/desktop-profile-feasibility/bundle-composition:
+  en: acebc601cc00df8e
+  zh: 4698424deb589ded
+/desktop-profile-feasibility/isolation-and-risks:
+  en: 6c94cb6682e3e2e6
+  zh: 4d004401d4d3d5e7
+/desktop-profile-feasibility/minimum-windows-validation-plan:
+  en: 46de63db91829a56
+  zh: 033c4ed2e00ccbad
+/desktop-profile-feasibility/decision-required:
+  en: 0b19e2cec8249c7d
+  zh: 7743642152843e11
+/desktop-profile-feasibility/dev-note:
+  en: a6f37f7f2db0668f
+  zh: 72b08b3a52a58052

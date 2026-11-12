@@ -226,10 +226,10 @@ Client UI extensions are reversible Cordis registrations. Native `AppFrame` decl
 
 | Product surface | Recommended slot or client mechanism |
 |---|---|
-| Environment and mode rail | `shell.leading` or a sidebar occupant |
+| Environment and mode navigation | Inner sidebar extension; `shell.leading` appears only in specific collapsed or drawer states |
 | Project and session navigation | `sidebar` |
 | Main Work or Code surface | Keyed `main` |
-| Agent activity and approvals | Session rightbar or `shell.bottom`; a persistent global Home rightbar needs a new extension |
+| Agent Context | Session rightbar or `shell.bottom`; a persistent global Home rightbar needs a new layout extension |
 | Command palette and modal flows | `shell.overlay` |
 | Status and task progress | `shell.bottom` or a dedicated sidebar section |
 

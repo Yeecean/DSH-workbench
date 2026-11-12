@@ -94,7 +94,7 @@ Approving an ambiguous shell or authority model creates costly rework across eve
 <a id="p1-workbench-shell"></a>
 ## P1: Workbench shell
 
-Implementation is paused after the source review: the native Session rightbar hides on global Home pages. The requested layout needs an additional extension or a changed requirement before implementation can resume; see the [Slot audit](APPFRAME_SLOT_AUDIT.md).
+Implementation remains paused for design review: the native Session rightbar hides on global Home pages. The proposed global extension and Desktop profile isolation need approval before the [minimal prototype plan](P1_PROTOTYPE_PLAN.md) can begin; see the [Slot audit](APPFRAME_SLOT_AUDIT.md).
 
 ### Goal
 
@@ -105,7 +105,7 @@ Produce a Windows Desktop build with a distinctive Workbench shell, product navi
 - P0 approval.
 - A clean package shape for the Workbench bundle and client entry.
 - A product theme and localization inventory.
-- A selected native `AppFrame` child-slot map.
+- Approval of the global rightbar layout extension, arbitration, and Desktop profile isolation; the current slots alone do not supply the requested Home right column.
 
 ### Source areas
 
@@ -115,17 +115,17 @@ Produce a Windows Desktop build with a distinctive Workbench shell, product navi
 
 - Add a Workbench bundle/profile composition.
 - Add the Workbench client package and `dsh.client` entry.
-- Contribute a leading rail, grouped sidebar, main region, and overlays inside `AppFrame`.
+- Preserve the native `AppFrame`, sidebar, and Session rightbar; contribute Home and Context through the approved extension and existing child slots.
 - Add semantic product tokens and localized shell copy.
 - Preserve Desktop security settings and boot injection.
 
 ### Acceptance condition
 
-A clean Windows home can select the Workbench profile and launch Desktop. The renderer shows Workbench navigation, reaches the private Host, survives a reload, and displays a recoverable boot error when the Host cannot start. Unloading the client package removes all shell registrations.
+On Windows Native Desktop, the approved isolated composition loads Home and Context, preserves native Conversation, Terminal, and Files, and passes navigation, resize, renderer reload, plugin unload, and native fallback checks. A separately named Desktop profile is not assumed supported until its launch route is verified; record any unsupported path as blocked.
 
 ### Risk
 
-Client modules can be invalidated by a Host release change. Shell work can accidentally duplicate route, focus, locale, or scope ownership from native `AppFrame`, increasing reload and accessibility failures.
+Client modules can be invalidated by a Host release change. Global and Session rightbars can contend for width, visibility, focus, and lifecycle ownership; retaining Session state may require an approved minimal `ui-sidebar-right` adaptation as well as layout changes. Desktop profile and user-data isolation remain unverified.
 
 -----
 

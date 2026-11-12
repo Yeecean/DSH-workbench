@@ -94,7 +94,7 @@
 <a id="p1-workbench-shell"></a>
 ## P1：Workbench 壳层
 
-源码审查后实现已暂停：原生 Session 右栏在全局 Home 页面隐藏。继续实现前，需要增加扩展点或调整布局需求；详见 [Slot 审计](APPFRAME_SLOT_AUDIT.zh.md)。
+实现仍暂停于设计评审：原生 Session 右栏在全局 Home 页面隐藏。拟议的全局扩展与 Desktop Profile 隔离须获批准后，才能开始[最小原型计划](P1_PROTOTYPE_PLAN.zh.md)；详见 [Slot 审计](APPFRAME_SLOT_AUDIT.zh.md)。
 
 ### 目标
 
@@ -105,7 +105,7 @@
 - P0 批准。
 - Workbench Bundle 与 Client Entry 的干净 Package Shape。
 - 产品 Theme 与 Localization Inventory。
-- 已选原生 `AppFrame` Child-Slot Map。
+- 批准全局右栏布局扩展、仲裁和 Desktop Profile 隔离；现有 Slot 本身无法提供所需的 Home 右列。
 
 ### 源码范围
 
@@ -115,17 +115,17 @@
 
 - 增加 Workbench Bundle/Profile 组合。
 - 增加 Workbench Client Package 与 `dsh.client` Entry。
-- 在 `AppFrame` 内贡献 Leading Rail、Grouped Sidebar、Main Region 与 Overlay。
+- 保留原生 `AppFrame`、侧栏和 Session 右栏；通过批准的扩展及现有子 Slot 贡献 Home 和 Context。
 - 增加 Semantics Product Token 与 Localized Shell Copy。
 - 保留 Desktop Security Setting 与 Boot Injection。
 
 ### 验收条件
 
-干净 Windows Home 可以选择 Workbench Profile 并启动 Desktop。Renderer 显示 Workbench Navigation、连接私有 Host、承受 Reload，并在 Host 无法启动时显示可恢复 Boot Error。卸载 Client Package 会移除全部 Shell Registration。
+在 Windows Native Desktop 上，批准的隔离组合加载 Home 和 Context、保留原生 Conversation、Terminal 与 Files，并通过导航、窗口缩放、Renderer 重载、插件卸载和原生回退检查。在启动路径得到验证前，不假定 Desktop 支持单独命名的 Profile；不受支持的路径记为阻塞。
 
 ### 风险
 
-Client Module 可能因 Host Release Change 失效。壳层工作可能重复原生 `AppFrame` 的 Route、Focus、Locale 或 Scope Ownership，增加 Reload 与 Accessibility Failure。
+Client Module 可能因 Host Release Change 失效。全局右栏与 Session 右栏可能争用宽度、可见性、焦点与生命周期；保留 Session 状态可能需要经批准的最小 `ui-sidebar-right` 适配及布局修改。Desktop Profile 与 User Data 隔离仍未验证。
 
 -----
 

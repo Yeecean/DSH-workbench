@@ -47,13 +47,17 @@
 | [原生能力矩阵](NATIVE_CAPABILITY_MATRIX.zh.md) | 原生服务、API、UI 归属与保留条件 |
 | [WSL2 可行性](WSL2_FEASIBILITY.zh.md) | 已观察的 WSL 环境与尚未验证的 Host 路径 |
 | [已知问题](KNOWN_ISSUES.zh.md) | Desktop 退出、IPC 与 GUI 超时问题的排查状态 |
+| [Git 同步报告](GIT_SYNC_REPORT.zh.md) | 分支同步检查点与保留的历史 |
+| [全局右栏 ADR](GLOBAL_RIGHTBAR_ADR.zh.md) | 候选方案、布局契约草案与待批准决策 |
+| [Desktop Profile 可行性](DESKTOP_PROFILE_FEASIBILITY.zh.md) | Desktop 组合、隔离和验证计划 |
+| [P1 原型计划](P1_PROTOTYPE_PLAN.zh.md) | 最小原型范围与 Windows 验收计划 |
 
 -----
 
 <a id="baseline-at-a-glance"></a>
 ## 基线概览
 
-该工作区基于当前官方默认分支，并通过独立分支有意与旧 Fork 快照分开。它可从记录的 Commit 重现，且没有 Workbench 专属 Commit。
+该工作区基于记录的上游 Commit，并通过独立分支与旧 Fork 快照分开。P1 分支已有 Workbench 专属文档提交；该提交没有实现 Workbench 产品壳层。详见 [Git 同步报告](GIT_SYNC_REPORT.zh.md)。
 
 | 项目 | 记录值 |
 |---|---|
@@ -106,7 +110,7 @@ Commit 标识按四字符分组，以满足仓库引用策略；移除空格即�
 
 P1 按要求在 Slot 审查处暂停：现有 Session 右栏在独立全局页面隐藏，要求的 Home 右栏需要额外布局扩展或调整需求。详见 [AppFrame Slot 审计](APPFRAME_SLOT_AUDIT.zh.md)。
 
-Windows Native 仍是首个验收平台；WSL 执行环境是后续单独验证的 Host 拓扑。P1 尚未交付 Workbench 壳层，也没有 Commit、Push 或 Release。
+Windows Native 仍是首个验收平台；WSL 执行环境是后续单独验证的 Host 拓扑。P1 文档已提交并推送；Workbench 壳层和产品发布仍未实现。
 
 -----
 

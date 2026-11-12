@@ -133,12 +133,12 @@ The client currently has one built-in `root` slot occupied by `AppFrame`. `AppFr
 
 | Option | Advantages | Disadvantages | Recommendation |
 |---|---|---|---|
-| Retain `AppFrame`, extend child slots | Native Session, Files, Terminal, Approval, locale, scopes, and plugin wiring stay active; incremental migration | Window chrome and panel relationships follow the native layout | Recommended for V1 |
-| Replace client `root` | Full control of shell topology, keyboard ownership, and panel composition | Must restore native layout ownership and every removed child-slot behavior; high regression surface | Consider after a concrete limitation is proven |
+| Retain `AppFrame`, extend layout | Can preserve native Session, Files, Terminal, Approval, locale, scopes, and plugin wiring; preservation requires verification | A global rightbar needs layout arbitration and an added extension point | Recommended for review |
+| Replace client `root` | Full control of shell topology, keyboard ownership, and panel composition | Must restore native layout ownership and every removed child-slot behavior; high regression surface | Excluded from P1 |
 
-P1 retains `AppFrame`, but the native Session rightbar hides on a global Home panel. The requested persistent Home context therefore needs a layout extension or a changed requirement; implementation is paused pending that decision. See the [Slot audit](APPFRAME_SLOT_AUDIT.md).
+P1 retains `AppFrame`, but the native Session rightbar hides on a global Home panel. The requested persistent Home context therefore needs a layout extension or a changed requirement; implementation is paused pending that decision. See the [Slot audit](APPFRAME_SLOT_AUDIT.md) and the [global rightbar ADR](GLOBAL_RIGHTBAR_ADR.md).
 
-If a future proposal replaces `root`, its acceptance must cover Session scope and switching, panel selection, route reconstruction, locale, tooltips, focus order, terminal reconnect, file actions, approval answering, plugin transactions, and the native effects registered into each child slot. The roadmap treats that work as a separate architecture change.
+P1 does not authorize replacing `root`, replacing the entire native rightbar, or using `shell.overlay` as a layout column. Native capability preservation must be verified on Windows Desktop.
 
 -----
 
@@ -172,7 +172,7 @@ The table below assigns a primary label. A module may use a second label for a n
 | `BUILD` | Execution-world selector | New Host and client plugins | Product routing that native single-Host APIs do not own |
 | `BUILD` | WSL Host adapter | New Host adapter and endpoint design | A complete Linux Runtime requires new discovery and lifecycle |
 
-`REPLACE` is not a synonym for preference. The V1 plan replaces only brand shell metadata that needs a distinct product package identity. The client `root` remains retained unless review presents concrete behavior that `AppFrame` slots cannot express.
+`REPLACE` is not a synonym for preference. The V1 plan replaces only brand shell metadata that needs a distinct product package identity. P1 retains the client `root` even where a new layout extension is needed.
 
 -----
 

@@ -47,13 +47,17 @@ The pages have separate owners. Start with the audit and sync report, then revie
 | [Native capability matrix](NATIVE_CAPABILITY_MATRIX.md) | Native service, API, and UI ownership and preservation conditions |
 | [WSL2 feasibility](WSL2_FEASIBILITY.md) | Observed WSL environment and unverified Host paths |
 | [Known issues](KNOWN_ISSUES.md) | Desktop shutdown, IPC, and GUI timeout investigation status |
+| [Git synchronization report](GIT_SYNC_REPORT.md) | Branch synchronization checkpoint and retained history |
+| [Global rightbar ADR](GLOBAL_RIGHTBAR_ADR.md) | Options, proposed layout contract, and pending decisions |
+| [Desktop Profile feasibility](DESKTOP_PROFILE_FEASIBILITY.md) | Desktop composition, isolation, and verification plan |
+| [P1 prototype plan](P1_PROTOTYPE_PLAN.md) | Minimal prototype scope and Windows acceptance plan |
 
 -----
 
 <a id="baseline-at-a-glance"></a>
 ## Baseline at a glance
 
-The worktree is based on the current official default branch and is intentionally detached from the older fork snapshot through a separate branch. It remains reproducible from the recorded commit and has no Workbench-specific commits.
+The worktree is based on the recorded upstream commit and is separate from the older fork snapshot. A Workbench-specific documentation commit is present on the P1 branch; it does not implement the Workbench product shell. See the [Git synchronization report](GIT_SYNC_REPORT.md).
 
 | Item | Recorded value |
 |---|---|
@@ -106,7 +110,7 @@ The audit does not treat a README claim as sufficient evidence when source is av
 
 P1 implementation is paused at the requested Slot review: the existing Session rightbar hides on independent global pages, so the requested Home rightbar needs an additional layout extension or a changed requirement. See the [AppFrame Slot audit](APPFRAME_SLOT_AUDIT.md).
 
-Windows Native remains the first acceptance platform; a WSL execution world is a later, separately verified Host topology. P1 has not delivered a Workbench shell, commit, push, or release.
+Windows Native remains the first acceptance platform; a WSL execution world is a later, separately verified Host topology. The P1 documentation has been committed and pushed; the Workbench shell and product release remain unimplemented.
 
 -----
 
