@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "markdown-document",
+  "title": "DESIGN_COMPARISON.md",
+  "entry": "DESIGN_COMPARISON.md",
+  "renderer": "markdown",
+  "status": "complete",
+  "exports": [
+    "md",
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-11-12T16:01:03.145Z",
+  "updatedAt": "2026-11-12T16:01:03.147Z",
+  "metadata": {
+    "inferred": true
+  }
+}

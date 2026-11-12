@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>状态 5 · Appearance 外观设置与玻璃/实色回退对比（A/B 对比）</title>
+  <link rel="stylesheet" href="../assets/tokens.css">
+  <style>
+    body { margin: 0; padding: 16px; background: #14181f; color: #e8edf4; font-family: var(--dsh-font-family-text); }
+    .head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .head h1 { font-size: 16px; margin: 0; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; height: calc(100vh - 64px); }
+    .pane { display: flex; flex-direction: column; border: 1px solid rgba(255,255,255,0.16); border-radius: 10px; overflow: hidden; background: #1c222b; }
+    .pane-bar { padding: 8px 12px; font-size: 12px; font-weight: 600; background: #232a35; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; }
+    iframe { flex: 1; width: 100%; border: 0; background: #fff; }
+  </style>
+</head>
+<body>
+  <div class="head">
+    <h1>状态 E · Appearance Settings（基础模式、强调色、三角色字体族与字号、局部玻璃与实色回退对比）</h1>
+    <span>左：方向 B 局部玻璃开启 (Glass ON) ｜ 右：方向 B 实色回退 (Opaque Fallback)</span>
+  </div>
+  <div class="grid">
+    <div class="pane">
+      <div class="pane-bar"><span>方向 B · 局部毛玻璃开启 (Glass ON)</span><span>顶栏/辅助头模糊 + 阅读区实色</span></div>
+      <iframe src="../index.html?preset=appearance&dir=product&glass=on" title="Appearance Glass ON"></iframe>
+    </div>
+    <div class="pane">
+      <div class="pane-bar"><span>方向 B · 实色回退 (Opaque Fallback / 减少透明)</span><span>全部表面回退为高对比实色</span></div>
+      <iframe src="../index.html?preset=appearance&dir=product&glass=off" title="Appearance Opaque Fallback"></iframe>
+    </div>
+  </div>
+</body>
+</html>

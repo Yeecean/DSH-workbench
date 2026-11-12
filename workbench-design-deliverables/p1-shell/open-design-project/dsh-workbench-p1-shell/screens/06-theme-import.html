@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>状态 6 · 自定义主题导入流程（Schema v1 白名单校验、预览与失败拦截）</title>
+  <link rel="stylesheet" href="../assets/tokens.css">
+  <style>
+    body { margin: 0; padding: 16px; background: #14181f; color: #e8edf4; font-family: var(--dsh-font-family-text); }
+    .head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .head h1 { font-size: 16px; margin: 0; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; height: calc(100vh - 64px); }
+    .pane { display: flex; flex-direction: column; border: 1px solid rgba(255,255,255,0.16); border-radius: 10px; overflow: hidden; background: #1c222b; }
+    .pane-bar { padding: 8px 12px; font-size: 12px; font-weight: 600; background: #232a35; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; }
+    iframe { flex: 1; width: 100%; border: 0; background: #fff; }
+  </style>
+</head>
+<body>
+  <div class="head">
+    <h1>状态 F · 主题导入流程（左：有效 JSON 主题通过校验并可预览 ｜ 右：恶意 CSS/URL 注入被白名单拦截并保持原主题）</h1>
+    <span>纯数据版本化 JSON · 不执行脚本 · 不注入任意 CSS</span>
+  </div>
+  <div class="grid">
+    <div class="pane">
+      <div class="pane-bar"><span>有效主题文件校验通过与预览 (`validDark`)</span><span>Schema v1 · 对比度 12.6:1 ≥ 4.5:1</span></div>
+      <iframe src="../index.html?preset=theme-import&dir=product&importSample=validDark" title="Theme Import Valid Preview"></iframe>
+    </div>
+    <div class="pane">
+      <div class="pane-bar"><span>不安全 CSS/URL 注入被拦截 (`invalidCss`)</span><span>拒绝应用 · 保持当前已提交主题不变</span></div>
+      <iframe src="../index.html?preset=theme-import&dir=product&importSample=invalidCss" title="Theme Import Invalid Rejected"></iframe>
+    </div>
+  </div>
+</body>
+</html>

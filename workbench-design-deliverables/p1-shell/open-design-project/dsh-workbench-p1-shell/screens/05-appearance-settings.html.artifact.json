@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "screens/05-appearance-settings.html",
+  "entry": "screens/05-appearance-settings.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-11-12T16:02:06.989Z",
+  "updatedAt": "2026-11-12T16:02:06.992Z",
+  "metadata": {
+    "inferred": true
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "screens/03-conversation-context.html",
+  "entry": "screens/03-conversation-context.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-11-12T16:02:02.834Z",
+  "updatedAt": "2026-11-12T16:02:02.836Z",
+  "metadata": {
+    "inferred": true
+  }
+}

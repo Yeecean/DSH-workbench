@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "markdown-document",
+  "title": "README.md",
+  "entry": "README.md",
+  "renderer": "markdown",
+  "status": "complete",
+  "exports": [
+    "md",
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-11-12T16:01:01.016Z",
+  "updatedAt": "2026-11-12T16:01:01.019Z",
+  "metadata": {
+    "inferred": true
+  }
+}
