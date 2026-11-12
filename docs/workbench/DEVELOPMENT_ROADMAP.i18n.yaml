@@ -1,0 +1,217 @@
+# Bilingual-pair consistency record for DEVELOPMENT_ROADMAP.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/DEVELOPMENT_ROADMAP.md
+/workbench-development-roadmap:
+  en: ea356a72857a9556
+  zh: 78284d70edc0a5ab
+/workbench-development-roadmap/summary:
+  en: 9cce0b63cf8f0523
+  zh: 6fdcc405d8c34672
+/workbench-development-roadmap/table-of-contents:
+  en: c0e1143863c335d9
+  zh: 8659a75358315e28
+/workbench-development-roadmap/planning-rules:
+  en: f50540e2d0a7408f
+  zh: 7d0c9f008ba07286
+/workbench-development-roadmap/priority-order:
+  en: 1aa6f729837fea66
+  zh: d43899b9da5e141e
+/workbench-development-roadmap/p0-architecture-review:
+  en: d1343d083cede982
+  zh: b0c4692c0597a6ca
+/workbench-development-roadmap/p0-architecture-review/goal:
+  en: dd03ba9d9dc4dbf8
+  zh: fb1050692ea1edc8
+/workbench-development-roadmap/p0-architecture-review/prerequisites:
+  en: f5320d107e565936
+  zh: 5e284d8cf7f9d0c7
+/workbench-development-roadmap/p0-architecture-review/source-areas:
+  en: 9c7c1648b42547df
+  zh: b14477cb72660edd
+/workbench-development-roadmap/p0-architecture-review/expected-changes:
+  en: 32d80034f87f0c21
+  zh: ed763bf7d2330e7b
+/workbench-development-roadmap/p0-architecture-review/acceptance-condition:
+  en: f7684a9ffff5875d
+  zh: fc1000c71669580e
+/workbench-development-roadmap/p0-architecture-review/risk:
+  en: 71e11d3ea5465f03
+  zh: 54f30276de68d8a8
+/workbench-development-roadmap/p1-workbench-shell:
+  en: 4bf0faf6f488ff23
+  zh: 6262a410077f47a6
+/workbench-development-roadmap/p1-workbench-shell/goal:
+  en: ee21e7cda74745a4
+  zh: 4fb66bde1236d7c2
+/workbench-development-roadmap/p1-workbench-shell/prerequisites:
+  en: 0e7da1014df5069b
+  zh: fde7dd8dcfa48e8a
+/workbench-development-roadmap/p1-workbench-shell/source-areas:
+  en: d87956d06e3329bd
+  zh: f47b32878c97cab3
+/workbench-development-roadmap/p1-workbench-shell/expected-changes:
+  en: 37dff1e8ab1fb736
+  zh: a5ad3dda79c380cc
+/workbench-development-roadmap/p1-workbench-shell/acceptance-condition:
+  en: 75dc1439efab56c3
+  zh: fdab61569a28e492
+/workbench-development-roadmap/p1-workbench-shell/risk:
+  en: 6c145bb4efc244c1
+  zh: 15e215896c022f08
+/workbench-development-roadmap/p2-session-and-activity:
+  en: 6801d74725c8ab8c
+  zh: 546259661f04d8c3
+/workbench-development-roadmap/p2-session-and-activity/goal:
+  en: 785d3fcd8af0571a
+  zh: 8440e9f1fcd1fcc7
+/workbench-development-roadmap/p2-session-and-activity/prerequisites:
+  en: 76a48a0f1ba39bc4
+  zh: 52f366acbf630def
+/workbench-development-roadmap/p2-session-and-activity/source-areas:
+  en: 9352069ada888044
+  zh: 25220116d2e6caab
+/workbench-development-roadmap/p2-session-and-activity/expected-changes:
+  en: 21562db5a8ec4dea
+  zh: 5f0792d30e7c6f63
+/workbench-development-roadmap/p2-session-and-activity/acceptance-condition:
+  en: c57cd0c8c8bce098
+  zh: 5fa9af3abe6b86c3
+/workbench-development-roadmap/p2-session-and-activity/risk:
+  en: 152622e8557c5829
+  zh: edefba8d5b623a90
+/workbench-development-roadmap/p3-workspace-and-editor:
+  en: 0f4f0dd7665597ab
+  zh: c2072264dda0795c
+/workbench-development-roadmap/p3-workspace-and-editor/goal:
+  en: d764d88ac2cb6b97
+  zh: 8faec93f94bdb480
+/workbench-development-roadmap/p3-workspace-and-editor/prerequisites:
+  en: a2ee2968202a9f8e
+  zh: f953a52650a7ee44
+/workbench-development-roadmap/p3-workspace-and-editor/source-areas:
+  en: 3e6c93409cb865fe
+  zh: 4ceb9f07d14cbde2
+/workbench-development-roadmap/p3-workspace-and-editor/expected-changes:
+  en: 674de9e81f4af134
+  zh: 1420799d9d8b383d
+/workbench-development-roadmap/p3-workspace-and-editor/acceptance-condition:
+  en: 51f476c925b5883c
+  zh: ba71c48bd7c5b57c
+/workbench-development-roadmap/p3-workspace-and-editor/risk:
+  en: 1055e96e9dec2b44
+  zh: d77083b0d2464a1e
+/workbench-development-roadmap/p4-terminal-and-jobs:
+  en: 79afd92a272d0acd
+  zh: 2709e354252f52c2
+/workbench-development-roadmap/p4-terminal-and-jobs/goal:
+  en: 877ee60b87db0e82
+  zh: 22614e32b912bda1
+/workbench-development-roadmap/p4-terminal-and-jobs/prerequisites:
+  en: 089845c0340b7cf5
+  zh: 96f53532b7e4ffd4
+/workbench-development-roadmap/p4-terminal-and-jobs/source-areas:
+  en: 719e1fa18abb3fa4
+  zh: ad9f1a4c813e8c3b
+/workbench-development-roadmap/p4-terminal-and-jobs/expected-changes:
+  en: 1eead2ab9f135f5f
+  zh: 1e7b9b06155825e4
+/workbench-development-roadmap/p4-terminal-and-jobs/acceptance-condition:
+  en: ca3917dbd479e634
+  zh: fa566ee4956e11be
+/workbench-development-roadmap/p4-terminal-and-jobs/risk:
+  en: 4134133cc9743d7d
+  zh: b5b840f634624ad3
+/workbench-development-roadmap/p5-approval-and-plugin-center:
+  en: cb830536014390a2
+  zh: 3dc8526e3176bcfa
+/workbench-development-roadmap/p5-approval-and-plugin-center/goal:
+  en: cd51c598a47ddfcc
+  zh: f0aa5bfac46c550b
+/workbench-development-roadmap/p5-approval-and-plugin-center/prerequisites:
+  en: efeaac4813d68861
+  zh: 3b74bbf96c3f7f7c
+/workbench-development-roadmap/p5-approval-and-plugin-center/source-areas:
+  en: 8be969ee9dc8184a
+  zh: 501f9f3d5d657428
+/workbench-development-roadmap/p5-approval-and-plugin-center/expected-changes:
+  en: 10fca93fe95a5742
+  zh: da7935c521ea2c71
+/workbench-development-roadmap/p5-approval-and-plugin-center/acceptance-condition:
+  en: d00346208655aa28
+  zh: c21fdb868a6b2a34
+/workbench-development-roadmap/p5-approval-and-plugin-center/risk:
+  en: 0a689c812720a24c
+  zh: 473bdec30bd216e8
+/workbench-development-roadmap/p6-work-and-code-orchestration:
+  en: ffa74abc135c46ad
+  zh: df636aa8291ca90f
+/workbench-development-roadmap/p6-work-and-code-orchestration/goal:
+  en: 50310253667834ba
+  zh: 58d7da4bb3a9eb34
+/workbench-development-roadmap/p6-work-and-code-orchestration/prerequisites:
+  en: 148ac869f8064b95
+  zh: 3c6b9153beecf5ea
+/workbench-development-roadmap/p6-work-and-code-orchestration/source-areas:
+  en: 7ce150cdf67bc9bf
+  zh: 80c3aa836a7bf004
+/workbench-development-roadmap/p6-work-and-code-orchestration/expected-changes:
+  en: 0121331a8599152b
+  zh: 3547e3bbf2860028
+/workbench-development-roadmap/p6-work-and-code-orchestration/acceptance-condition:
+  en: 9310c1de8e2d22e0
+  zh: 59256fbc3abf1ac6
+/workbench-development-roadmap/p6-work-and-code-orchestration/risk:
+  en: af55360753b949db
+  zh: 7776a5dc3f24bb99
+/workbench-development-roadmap/p7-wsl-execution-world:
+  en: b623ed1110c1af5f
+  zh: 93c448b40c383d12
+/workbench-development-roadmap/p7-wsl-execution-world/goal:
+  en: e166b961465de6df
+  zh: e1356d9927dee3d2
+/workbench-development-roadmap/p7-wsl-execution-world/prerequisites:
+  en: 47d642dcdbb2711d
+  zh: cebcebfeb77cd286
+/workbench-development-roadmap/p7-wsl-execution-world/source-areas:
+  en: c107be7867f4b74c
+  zh: 3fe36443b3b87e9a
+/workbench-development-roadmap/p7-wsl-execution-world/expected-changes:
+  en: 214523be9d098f71
+  zh: f682fae5ed04fd09
+/workbench-development-roadmap/p7-wsl-execution-world/acceptance-condition:
+  en: ff4a36d98d975095
+  zh: 28f45d2b8e99582e
+/workbench-development-roadmap/p7-wsl-execution-world/risk:
+  en: 7c01b8f56b66c77b
+  zh: 097c177988587e3c
+/workbench-development-roadmap/p8-release-and-upstream-cadence:
+  en: df267dbaed70250d
+  zh: 886bf97713905b2d
+/workbench-development-roadmap/p8-release-and-upstream-cadence/goal:
+  en: 3514de21ce5bab89
+  zh: d0ae01f5c5703b20
+/workbench-development-roadmap/p8-release-and-upstream-cadence/prerequisites:
+  en: e1db86485d72a77f
+  zh: 3022f8b5e0fd02e2
+/workbench-development-roadmap/p8-release-and-upstream-cadence/source-areas:
+  en: ed5ca806a36482ce
+  zh: 7325d4747d4bd7df
+/workbench-development-roadmap/p8-release-and-upstream-cadence/expected-changes:
+  en: c784ae55f8b09e20
+  zh: a2596a9eaec12cd0
+/workbench-development-roadmap/p8-release-and-upstream-cadence/acceptance-condition:
+  en: 332e845f8b31af24
+  zh: c8cdd0aefb3c3843
+/workbench-development-roadmap/p8-release-and-upstream-cadence/risk:
+  en: b8ee7de0c16b53ac
+  zh: e9fdf09c87f81b5c
+/workbench-development-roadmap/milestone-exit-criteria:
+  en: dbe794a86c6b7328
+  zh: 4df2b280b53735a7
+/workbench-development-roadmap/further-exploration:
+  en: f78b6d3e62135726
+  zh: 542f6d28b9dc4287
+/workbench-development-roadmap/dev-note:
+  en: b75c8458928b72b9
+  zh: 003ba4e17b4b5269

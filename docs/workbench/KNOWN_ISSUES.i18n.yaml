@@ -1,0 +1,28 @@
+# Bilingual-pair consistency record for KNOWN_ISSUES.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/KNOWN_ISSUES.md
+/known-issues:
+  en: 0e4241b75eba744e
+  zh: 414c1bfb97714bec
+/known-issues/summary:
+  en: 3123d7127db887c6
+  zh: 16e6a41aa3b22a73
+/known-issues/table-of-contents:
+  en: 76b7e772d181c871
+  zh: 29a8c14d2b86cf89
+/known-issues/desktop-quit-inspection:
+  en: 641641ba89a2edb3
+  zh: 2f5749885d49aada
+/known-issues/mandatory-update-ipc:
+  en: 9a62feb69c7755a8
+  zh: 70eda4dc4b48ae88
+/known-issues/concurrent-gui-tests:
+  en: d3d086a74f4f8221
+  zh: b5ecf959d5f0d034
+/known-issues/further-exploration:
+  en: 499a4483bfc305d4
+  zh: 3790ee67b43f08c6
+/known-issues/dev-note:
+  en: b75c8458928b72b9
+  zh: 003ba4e17b4b5269

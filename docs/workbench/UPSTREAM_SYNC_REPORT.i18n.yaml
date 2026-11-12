@@ -1,0 +1,52 @@
+# Bilingual-pair consistency record for UPSTREAM_SYNC_REPORT.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/UPSTREAM_SYNC_REPORT.md
+/upstream-sync-and-build-baseline:
+  en: 27f715d5d44084f1
+  zh: c378c647ecc10d99
+/upstream-sync-and-build-baseline/summary:
+  en: 0e0fff35a79f611d
+  zh: da6b4dab4e8fe6f4
+/upstream-sync-and-build-baseline/table-of-contents:
+  en: 628a6ab700652e7d
+  zh: 8615b71ea45a7d9b
+/upstream-sync-and-build-baseline/repository-identity:
+  en: fa873488b966a1fd
+  zh: 43a2111e090b4586
+/upstream-sync-and-build-baseline/preserved-fork-and-isolated-worktree:
+  en: 8aef0abe3c702ada
+  zh: 72ce78bcd58a7ea5
+/upstream-sync-and-build-baseline/pinned-upstream-baseline:
+  en: 1423b4f3f2fa61b1
+  zh: ba7bc4e58dd09b74
+/upstream-sync-and-build-baseline/baseline-topology:
+  en: 9ea455ca495ac1e8
+  zh: 6ef3f07e12cb1de2
+/upstream-sync-and-build-baseline/delta-from-the-fork-snapshot:
+  en: 061e261bd74baaa1
+  zh: 4d32685d6ec8b823
+/upstream-sync-and-build-baseline/research-folder-and-google-docs:
+  en: ee053c6ec518e1da
+  zh: e4af36044dac7436
+/upstream-sync-and-build-baseline/toolchain-and-dependency-installation:
+  en: 1ba205d325a4b82b
+  zh: 0a497a3880434205
+/upstream-sync-and-build-baseline/verification-results:
+  en: 8cd2782ffc7ba7fb
+  zh: f9e1783694079233
+/upstream-sync-and-build-baseline/windows-desktop-evidence:
+  en: a945598dd111fca7
+  zh: befd4ed11e0867d6
+/upstream-sync-and-build-baseline/reproduction-commands:
+  en: d3dc0933b02d6319
+  zh: 29954b6317aa7af9
+/upstream-sync-and-build-baseline/known-limitations:
+  en: a3621b2f3d241443
+  zh: 6af4ada7a67fdafa
+/upstream-sync-and-build-baseline/further-exploration:
+  en: 988be5f2a8f7572c
+  zh: 168ee5572922feb5
+/upstream-sync-and-build-baseline/dev-note:
+  en: b75c8458928b72b9
+  zh: 003ba4e17b4b5269

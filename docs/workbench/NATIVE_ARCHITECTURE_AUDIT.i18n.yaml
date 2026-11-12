@@ -1,0 +1,58 @@
+# Bilingual-pair consistency record for NATIVE_ARCHITECTURE_AUDIT.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/NATIVE_ARCHITECTURE_AUDIT.md
+/native-architecture-audit:
+  en: cf0dc4ddcd4e6b7a
+  zh: 497bc79b49acc193
+/native-architecture-audit/summary:
+  en: 52204639f5e42c96
+  zh: 788b4ed362814c84
+/native-architecture-audit/table-of-contents:
+  en: ca65961419284234
+  zh: e71ebc16f328fc2a
+/native-architecture-audit/evidence-method:
+  en: bed24226143625fa
+  zh: aa813caecaa298d1
+/native-architecture-audit/cordis-composition:
+  en: 74670274d4f6b658
+  zh: 9d593c2dbb3ebd82
+/native-architecture-audit/profiles-bundles-patches-and-hmr:
+  en: 225373bb8a6d37f9
+  zh: 730e1eb6df8fd587
+/native-architecture-audit/agent-turn-execution:
+  en: ac9f67b11e65fa42
+  zh: f5055321e0ccbf2d
+/native-architecture-audit/inbox-session-and-durable-projection:
+  en: 25b10e858b90cba3
+  zh: 99b23154906a9a85
+/native-architecture-audit/approval-questions-tools-and-subagents:
+  en: 54fa0dee3e3fdc49
+  zh: 12b21c109321f929
+/native-architecture-audit/typert-host-client-api:
+  en: 77adc12d9f32a5ab
+  zh: 84942065fd6ae7fc
+/native-architecture-audit/streams-recovery-authentication-and-access:
+  en: 95dca7d75cd9d952
+  zh: 2e4aa85c010be025
+/native-architecture-audit/plugin-manager-and-client-modules:
+  en: c4e3b546314238f2
+  zh: 7e93709085feb295
+/native-architecture-audit/desktop-process-architecture:
+  en: a210ede48aa8a3b0
+  zh: d39bcd0dac99cb26
+/native-architecture-audit/client-ui-slots:
+  en: 0383454166158757
+  zh: 66c033beebb0113c
+/native-architecture-audit/windows-and-wsl2-source-boundary:
+  en: ac3a10360ae2f6b1
+  zh: bd8449694e51a97d
+/native-architecture-audit/audit-conclusions-and-open-evidence:
+  en: 2b1300460becbc60
+  zh: 09e28b7ba9a9ba88
+/native-architecture-audit/further-exploration:
+  en: 3ba65c2800a74ae2
+  zh: 565a71a72442a30d
+/native-architecture-audit/dev-note:
+  en: b75c8458928b72b9
+  zh: 003ba4e17b4b5269
