@@ -33,7 +33,7 @@ import { PromptStarters } from './components/PromptStarters.tsx'
 import { WorkbenchAppearanceRow } from './components/WorkbenchAppearanceRow.tsx'
 import { WorkTaskInspector } from './components/WorkTaskInspector.tsx'
 import { WORKBENCH_LOCALE_NS, de, en, es, fr, ja, pt, ru, zh, type WorkbenchKey } from './locales.ts'
-import { installSessionActivityObserver, resolveReviewNavigation } from './session-activity.ts'
+import { installSessionActivityObserver, openOrFocusRightbarTab, resolveReviewNavigation } from './session-activity.ts'
 import {
   createModeSwitcherStore,
   createWorkbenchSettingsStore,
@@ -125,7 +125,11 @@ export function apply(ctx: ClientContext): void {
 
   ctx.inject(['sidebarRight'], (child) => {
     const opener = (kind: 'files' | 'terminal' | 'browser'): void => {
-      child.sidebarRight.openTab(kind)
+      try {
+        openOrFocusRightbarTab(child.sidebarRight, kind)
+      } catch {
+        // No mounted session surface on screen yet.
+      }
     }
     openTabHandler = opener
     child.effect(() => () => {
@@ -186,6 +190,8 @@ export function apply(ctx: ClientContext): void {
       } else {
         openTabHandler?.('files')
       }
+    } else if (preset === 'debug') {
+      openTabHandler?.('browser')
     } else {
       openTabHandler?.('terminal')
     }

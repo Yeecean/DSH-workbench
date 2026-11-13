@@ -599,6 +599,42 @@ export function workbenchSubagentAddress(parentSessionId: SessionId, childSessio
   return `dsh-resource://subagentchat/session/${encodeURIComponent(childSessionId)}?${query}`
 }
 
+/** Standard right-sidebar tab kinds launched directly by Workbench presets and Inspector. */
+export type WorkbenchRightbarKind = 'files' | 'terminal' | 'browser'
+
+/** Minimal `sidebarRight` surface needed to open or reveal a tab without spawning duplicates. */
+export interface RightbarTabNavigationHost<TTabId = string> {
+  readonly mounted: { getSnapshot: () => SessionId | undefined }
+  tabsIn: (sessionId: SessionId) => readonly { readonly id: TTabId; readonly kind: string }[]
+  isExpanded: () => boolean
+  toggleExpanded: () => void
+  focus: (tabId: TTabId) => void
+  openTab: (kind: WorkbenchRightbarKind) => void
+}
+
+/**
+ * Reveal and focus an existing right-sidebar tab of `kind` in the mounted session
+ * instead of spawning duplicate terminal ConPTY processes or browser guests on preset switch;
+ * opens a new tab only when none of that kind is open yet.
+ * @param sidebarRight - Native right-sidebar service controller.
+ * @param kind - Target right-sidebar tab kind (`files`, `terminal`, or `browser`).
+ */
+export function openOrFocusRightbarTab<TTabId>(
+  sidebarRight: RightbarTabNavigationHost<TTabId>,
+  kind: WorkbenchRightbarKind,
+): void {
+  const mountedSession = sidebarRight.mounted.getSnapshot()
+  if (mountedSession !== undefined) {
+    const existing = sidebarRight.tabsIn(mountedSession).find(tab => tab.kind === kind)
+    if (existing !== undefined) {
+      if (!sidebarRight.isExpanded()) sidebarRight.toggleExpanded()
+      sidebarRight.focus(existing.id)
+      return
+    }
+  }
+  sidebarRight.openTab(kind)
+}
+
 /** Discriminated target chosen when switching into the Code Review layout preset. */
 export type WorkbenchReviewNavigationTarget =
   | { readonly kind: 'resource'; readonly address: string }

@@ -27,10 +27,12 @@ import { en } from '../src/client/locales.ts'
 import {
   EMPTY_ACTIVITY_SNAPSHOT,
   deriveActivitySnapshot,
+  openOrFocusRightbarTab,
   resolveReviewNavigation,
   workbenchChangesReviewAddress,
   workbenchPlanAddress,
   workbenchSubagentAddress,
+  type RightbarTabNavigationHost,
   type WorkbenchActivitySnapshot,
 } from '../src/client/session-activity.ts'
 import { createModeSwitcherStore } from '../src/client/stores.ts'
@@ -493,6 +495,43 @@ describe('WorkTaskInspector P2 activity & native resource links', () => {
     })
   })
 
+  it('reuses existing terminal or browser tabs instead of spawning duplicates on preset switches', () => {
+    const toggleExpanded = vi.fn()
+    const focus = vi.fn()
+    const openTab = vi.fn()
+    let expanded = false
+    const host: RightbarTabNavigationHost = {
+      mounted: { getSnapshot: () => 'sess-p4' as SessionId },
+      tabsIn: () => [{ id: 'tab-term-1', kind: 'terminal' }],
+      isExpanded: () => expanded,
+      toggleExpanded: () => {
+        expanded = true
+        toggleExpanded()
+      },
+      focus,
+      openTab,
+    }
+
+    openOrFocusRightbarTab(host, 'terminal')
+    expect(toggleExpanded).toHaveBeenCalledTimes(1)
+    expect(focus).toHaveBeenCalledWith('tab-term-1')
+    expect(openTab).not.toHaveBeenCalled()
+
+    openOrFocusRightbarTab(host, 'browser')
+    expect(openTab).toHaveBeenCalledWith('browser')
+
+    const unmountedHost: RightbarTabNavigationHost = {
+      mounted: { getSnapshot: () => undefined },
+      tabsIn: () => [],
+      isExpanded: () => false,
+      toggleExpanded: vi.fn(),
+      focus: vi.fn(),
+      openTab: vi.fn(),
+    }
+    openOrFocusRightbarTab(unmountedHost, 'files')
+    expect(unmountedHost.openTab).toHaveBeenCalledWith('files')
+  })
+
   it('wires jobs watchRows lifecycle and PromptStarters slot inside client plugin integration', async () => {
     const ctx = new Context()
     await ctx.plugin(SlotRegistry).await()
@@ -565,12 +604,36 @@ describe('WorkTaskInspector P2 activity & native resource links', () => {
       },
     } as never, () => null)
 
+    const mockFocus = vi.fn()
+    const mockOpenTab = vi.fn()
+    const mockToggleExpanded = vi.fn()
+    ctx.provide('sidebarRight', {
+      mounted: { getSnapshot: () => s1 },
+      tabsIn: () => [{ id: 'tab-term-existing', kind: 'terminal' }],
+      isExpanded: () => true,
+      toggleExpanded: mockToggleExpanded,
+      focus: mockFocus,
+      openTab: mockOpenTab,
+      openResource: vi.fn(),
+    } as never)
+
     try {
       const fiber = ctx.plugin({ inject: workbenchInject, apply: workbenchApply })
       await fiber.await()
 
       expect(watchRows).toHaveBeenCalledWith(s1)
       expect(slots.entries('conversation.input.dock').some(entry => entry.component === PromptStarters)).toBe(true)
+
+      const headerEntry = slots.entries('conversation.header.leading')[0]!
+      const headerInjected = headerEntry.inject?.(createModeSwitcherStore().create().actions as never) as {
+        selectPreset?: (preset: 'focus' | 'build' | 'review' | 'debug') => void
+      } | undefined
+      headerInjected?.selectPreset?.('build')
+      expect(mockFocus).toHaveBeenCalledWith('tab-term-existing')
+      expect(mockOpenTab).not.toHaveBeenCalledWith('terminal')
+
+      headerInjected?.selectPreset?.('debug')
+      expect(mockOpenTab).toHaveBeenCalledWith('browser')
 
       const inspectorEntry = slots.entries('shell.rightbar.global')[0]!
       const modeActions = createModeSwitcherStore().create().actions
