@@ -25,7 +25,9 @@ import { WorkTaskInspector, type WorkTaskInspectorInjected, type WorkTaskInspect
 import { apply as workbenchApply, inject as workbenchInject } from '../src/client/index.ts'
 import { en } from '../src/client/locales.ts'
 import {
+  EMPTY_ACTIVITY_SNAPSHOT,
   deriveActivitySnapshot,
+  resolveReviewNavigation,
   workbenchChangesReviewAddress,
   workbenchPlanAddress,
   workbenchSubagentAddress,
@@ -479,6 +481,16 @@ describe('WorkTaskInspector P2 activity & native resource links', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Inspect' }))
     expect(openResource).toHaveBeenCalledWith(workbenchSubagentAddress(sessionId, childId, 'continuable'))
+    expect(screen.getByText(/read-only via Host workspace access/)).toBeDefined()
+
+    expect(resolveReviewNavigation(activity)).toEqual({
+      kind: 'resource',
+      address: workbenchChangesReviewAddress(sessionId, 99, 3),
+    })
+    expect(resolveReviewNavigation({ ...EMPTY_ACTIVITY_SNAPSHOT, sessionId })).toEqual({
+      kind: 'tab',
+      tab: 'files',
+    })
   })
 
   it('wires jobs watchRows lifecycle and PromptStarters slot inside client plugin integration', async () => {

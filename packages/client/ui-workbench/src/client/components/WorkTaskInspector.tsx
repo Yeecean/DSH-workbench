@@ -490,6 +490,11 @@ export function WorkTaskInspector({
               <span className={css.actionHint}>{t('inspector.hint.theme')}</span>
             </button>
           </div>
+          {(activeSession?.cwd ?? workspace?.path) !== undefined && (
+            <div className={css.readOnlyHint} data-workbench-workspace-readonly="">
+              {t('inspector.workspace.readOnlyNote')}
+            </div>
+          )}
         </section>
 
         <details

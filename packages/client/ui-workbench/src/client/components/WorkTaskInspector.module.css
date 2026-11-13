@@ -158,7 +158,7 @@
 }
 
 .monoMeta {
-  font-family: var(--dsh-font-family-code, monospace);
+  font-family: var(--ds-font-family-code, var(--dsh-font-family-code-default));
   font-size: 11px;
   line-height: 16px;
   color: var(--dsw-alias-label-tertiary);
@@ -242,8 +242,15 @@
 }
 
 .actionHint {
-  font-family: var(--dsh-font-family-code, monospace);
+  font-family: var(--ds-font-family-code, var(--dsh-font-family-code-default));
   font-size: 10px;
+  color: var(--dsw-alias-label-tertiary);
+}
+
+.readOnlyHint {
+  margin-top: 2px;
+  font-size: 11px;
+  line-height: 16px;
   color: var(--dsw-alias-label-tertiary);
 }
 
@@ -419,7 +426,7 @@
   border-radius: var(--dsw-radius-xs);
   background: var(--dsw-alias-bg-layer-3);
   color: var(--dsw-alias-label-secondary);
-  font-family: var(--dsh-font-family-code, monospace);
+  font-family: var(--ds-font-family-code, var(--dsh-font-family-code-default));
   font-size: 11px;
   line-height: 15px;
 }

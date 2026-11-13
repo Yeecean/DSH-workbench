@@ -33,7 +33,7 @@ import { PromptStarters } from './components/PromptStarters.tsx'
 import { WorkbenchAppearanceRow } from './components/WorkbenchAppearanceRow.tsx'
 import { WorkTaskInspector } from './components/WorkTaskInspector.tsx'
 import { WORKBENCH_LOCALE_NS, de, en, es, fr, ja, pt, ru, zh, type WorkbenchKey } from './locales.ts'
-import { installSessionActivityObserver } from './session-activity.ts'
+import { installSessionActivityObserver, resolveReviewNavigation } from './session-activity.ts'
 import {
   createModeSwitcherStore,
   createWorkbenchSettingsStore,
@@ -180,7 +180,12 @@ export function apply(ctx: ClientContext): void {
       ctx.layout.closeRightbar()
       ctx.layout.closeGlobalRightbar()
     } else if (preset === 'review') {
-      openTabHandler?.('files')
+      const target = resolveReviewNavigation(activityObserver.source.getSnapshot())
+      if (target.kind === 'resource' && openResourceHandler !== undefined) {
+        openResourceHandler(target.address)
+      } else {
+        openTabHandler?.('files')
+      }
     } else {
       openTabHandler?.('terminal')
     }

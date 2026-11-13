@@ -44,6 +44,7 @@
 }
 
 :root[data-dsh-workbench='1'] body {
+  --dsw-font-mono: var(--ds-font-family-code);
   background-image: var(--wb-ambient-bg);
 }
 

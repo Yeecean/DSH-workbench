@@ -599,6 +599,26 @@ export function workbenchSubagentAddress(parentSessionId: SessionId, childSessio
   return `dsh-resource://subagentchat/session/${encodeURIComponent(childSessionId)}?${query}`
 }
 
+/** Discriminated target chosen when switching into the Code Review layout preset. */
+export type WorkbenchReviewNavigationTarget =
+  | { readonly kind: 'resource'; readonly address: string }
+  | { readonly kind: 'tab'; readonly tab: 'files' }
+
+/**
+ * Choose whether `Code · Review` opens the native `changes-review` Diff Viewer
+ * directly (when turn changes exist) or falls back to Workspace Files.
+ * @param activity - Current active session activity snapshot.
+ * @returns Resource URL or right-sidebar tab target.
+ */
+export function resolveReviewNavigation(activity: WorkbenchActivitySnapshot): WorkbenchReviewNavigationTarget {
+  const seq = activity.deliverables?.changesSeq
+  const turn = activity.deliverables?.changesTurn
+  if (activity.sessionId !== undefined && seq !== undefined && turn !== undefined) {
+    return { kind: 'resource', address: workbenchChangesReviewAddress(activity.sessionId, seq, turn) }
+  }
+  return { kind: 'tab', tab: 'files' }
+}
+
 /**
  * Subscribe to optional native DSH session/activity services using Cordis lifecycle
  * effects, releasing per-session watches cleanly on session switch or plugin unload.
