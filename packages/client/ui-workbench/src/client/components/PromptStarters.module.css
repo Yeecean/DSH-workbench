@@ -18,7 +18,7 @@
     color-mix(in srgb, var(--dsw-alias-bg-layer-2) 78%, transparent)
   );
   backdrop-filter: blur(var(--wb-blur, 18px)) saturate(150%);
-  box-shadow: inset 0 1px 0 var(--wb-glass-rim, var(--dsw-alias-border-l3));
+  box-shadow: var(--wb-glass-rim, inset 0 1px 0 var(--dsw-alias-border-l3));
   color: var(--dsw-alias-label-secondary);
   font-family: var(--dsh-font-family-text, inherit);
   font-size: 12px;
@@ -49,4 +49,16 @@
 
 :global([data-workbench-reduced-motion='true']) .chip:hover {
   transform: none;
+}
+
+@media (max-width: 767.98px) {
+  .root {
+    gap: 6px;
+    padding: 2px 8px 4px;
+  }
+
+  .chip {
+    padding: 4px 10px;
+    font-size: 11px;
+  }
 }
