@@ -1,0 +1,119 @@
+/* DSH Workbench Stage 1 — Typography & Font Role Tokens
+ * Aligns strictly with APPLE_VISUAL_SYSTEM_SPEC & DSH packages/client/ui-theme
+ */
+
+@font-face {
+  font-family: "寒蝉半圆体";
+  src: url("./fonts/ChillRoundM.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("./fonts/JetBrainsMono-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("./fonts/JetBrainsMono-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("./fonts/JetBrainsMono-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("./fonts/JetBrainsMono-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Native DSH ui-theme font family variables (default locked to spec stack) */
+  --dsh-font-family-text: "JetBrains Mono", "寒蝉半圆体", sans-serif;
+  --dsh-font-family-code: "JetBrains Mono", "寒蝉半圆体", monospace;
+  --dsh-font-family-terminal: "JetBrains Mono", "寒蝉半圆体", monospace;
+
+  /* Native DSH ui-theme font size variables (aux >= 13px floor honored everywhere) */
+  --dsh-content-font-size: 14px;
+  --dsh-code-font-size: 13px;
+  --dsh-terminal-font-size: 13px;
+
+  /* Derived typographic scale */
+  --font-size-aux: 13px;
+  --font-size-body: var(--dsh-content-font-size);
+  --font-size-body-lg: clamp(14px, calc(var(--dsh-content-font-size) + 1px), 18px);
+  --font-size-title-sm: clamp(14px, calc(var(--dsh-content-font-size) + 1px), 19px);
+  --font-size-title-md: clamp(16px, calc(var(--dsh-content-font-size) + 2px), 21px);
+  --font-size-hero: clamp(22px, calc(var(--dsh-content-font-size) + 10px), 30px);
+
+  --line-height-aux: 1.45;
+  --line-height-body: 1.64;
+  --line-height-code: 1.56;
+  --line-height-hero: 1.32;
+
+  /* Weight restraint per DSH client UI standard (<= 500) */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+}
+
+html,
+body {
+  font-family: var(--dsh-font-family-text);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-body);
+  font-synthesis-weight: none;
+  font-synthesis-style: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Balanced mixed-font x-height normalization for inline technical code within prose */
+.prose-block,
+.message-body,
+.suggestion-text {
+  font-feature-settings: "liga" 0, "calt" 0;
+}
+
+.inline-code,
+pre,
+code,
+.code-surface {
+  font-family: var(--dsh-font-family-code);
+  font-size: var(--dsh-code-font-size);
+  line-height: var(--line-height-code);
+  font-variant-ligatures: contextual;
+  font-feature-settings: "liga" 1, "calt" 1;
+}
+
+.inline-code {
+  font-size-adjust: from-font;
+}
+
+@supports not (font-size-adjust: from-font) {
+  .inline-code {
+    font-size: calc(var(--dsh-code-font-size) + 0.5px);
+  }
+}
+
+.terminal-surface,
+.terminal-line {
+  font-family: var(--dsh-font-family-terminal);
+  font-size: var(--dsh-terminal-font-size);
+  line-height: 1.54;
+}

@@ -1,0 +1,361 @@
+/* DSH Workbench Stage 1 — Visual System Tokens
+ * Apple macOS Design Language / Liquid Glass + Standard Material Separation
+ * Concentricity Geometry + DSH columns.ts Breakpoints + Light / Dark / Reduced Transparency
+ */
+
+:root {
+  color-scheme: light dark;
+
+  --in-oklab: ;
+  --in-oklch: ;
+
+  /* Accent selection defaults to restrained Apple System Blue */
+  --accent-light: #0a66e6;
+  --accent-dark: #58a6ff;
+  --accent-soft-light: rgba(10, 102, 230, 0.11);
+  --accent-soft-dark: rgba(88, 166, 255, 0.17);
+  --accent-ink-light: #ffffff;
+  --accent-ink-dark: #071324;
+
+  /* Stage desktop wallpaper (behind the floating 28px window) */
+  --desktop-bg-light: #dde4ee;
+  --desktop-bg-dark: #070b12;
+
+  /* Continuous in-window canvas surface */
+  --window-bg-light: #f6f8fb;
+  --window-bg-dark: #10141c;
+
+  /* Standard Material surfaces (high-contrast content / reading / composer / code) */
+  --surface-content-light: rgba(255, 255, 255, 0.94);
+  --surface-content-dark: rgba(22, 27, 36, 0.94);
+
+  --surface-composer-light: #ffffff;
+  --surface-composer-dark: #191f2a;
+
+  --surface-subtle-light: #eef2f7;
+  --surface-subtle-dark: #1b212d;
+
+  --surface-user-bubble-light: #ebf1f9;
+  --surface-user-bubble-dark: #202938;
+
+  --surface-code-light: #f2f5f9;
+  --surface-code-dark: #0d1118;
+
+  --surface-terminal-light: #f4f6f9;
+  --surface-terminal-dark: #0b0e14;
+
+  /* Liquid Glass functional chrome layers (Sidebar, Toolbars, Switcher, Popover, Drawer) */
+  --glass-chrome-light: rgba(246, 249, 253, 0.56);
+  --glass-chrome-dark: rgba(24, 30, 42, 0.56);
+
+  --glass-chrome-strong-light: rgba(252, 253, 255, 0.72);
+  --glass-chrome-strong-dark: rgba(28, 35, 48, 0.74);
+
+  --glass-pill-light: rgba(235, 241, 249, 0.58);
+  --glass-pill-dark: rgba(34, 42, 56, 0.62);
+
+  --glass-active-thumb-light: rgba(255, 255, 255, 0.88);
+  --glass-active-thumb-dark: rgba(58, 70, 92, 0.86);
+
+  --glass-hover-row-light: rgba(15, 23, 42, 0.055);
+  --glass-hover-row-dark: rgba(255, 255, 255, 0.075);
+
+  --glass-selected-row-light: rgba(255, 255, 255, 0.78);
+  --glass-selected-row-dark: rgba(255, 255, 255, 0.12);
+
+  /* Specular glass rim & structural borders */
+  --rim-highlight-light: rgba(255, 255, 255, 0.92);
+  --rim-highlight-dark: rgba(255, 255, 255, 0.24);
+  --rim-mid-light: rgba(255, 255, 255, 0.28);
+  --rim-mid-dark: rgba(255, 255, 255, 0.05);
+  --rim-cool-light: rgba(182, 206, 238, 0.52);
+  --rim-cool-dark: rgba(124, 168, 232, 0.18);
+
+  --border-hairline-light: rgba(15, 23, 42, 0.085);
+  --border-hairline-dark: rgba(255, 255, 255, 0.1);
+  --border-strong-light: rgba(15, 23, 42, 0.14);
+  --border-strong-dark: rgba(255, 255, 255, 0.16);
+
+  /* Solid opaque fallbacks for Reduced Transparency */
+  --solid-chrome-light: #edf1f6;
+  --solid-chrome-dark: #171c25;
+  --solid-popover-light: #ffffff;
+  --solid-popover-dark: #1d2330;
+  --solid-pill-light: #e2e8f0;
+  --solid-pill-dark: #252d3c;
+
+  /* Ink & Semantics */
+  --ink-primary-light: #131822;
+  --ink-primary-dark: #eef2f8;
+  --ink-secondary-light: #475366;
+  --ink-secondary-dark: #aeb8c8;
+  --ink-muted-light: #647084;
+  --ink-muted-dark: #8e9aac;
+
+  --status-success-light: #0f7b4c;
+  --status-success-dark: #4ad295;
+  --status-warn-light: #9a5d07;
+  --status-warn-dark: #f0b14b;
+
+  /* Resolved semantic aliases (defaults follow light-dark() when supported) */
+  --accent: var(--accent-light);
+  --accent-soft: var(--accent-soft-light);
+  --accent-ink: var(--accent-ink-light);
+
+  --desktop-bg: var(--desktop-bg-light);
+  --window-bg: var(--window-bg-light);
+  --surface-content: var(--surface-content-light);
+  --surface-composer: var(--surface-composer-light);
+  --surface-subtle: var(--surface-subtle-light);
+  --surface-user-bubble: var(--surface-user-bubble-light);
+  --surface-code: var(--surface-code-light);
+  --surface-terminal: var(--surface-terminal-light);
+
+  --glass-chrome: var(--glass-chrome-light);
+  --glass-chrome-strong: var(--glass-chrome-strong-light);
+  --glass-pill: var(--glass-pill-light);
+  --glass-active-thumb: var(--glass-active-thumb-light);
+  --glass-hover-row: var(--glass-hover-row-light);
+  --glass-selected-row: var(--glass-selected-row-light);
+
+  --rim-highlight: var(--rim-highlight-light);
+  --rim-mid: var(--rim-mid-light);
+  --rim-cool: var(--rim-cool-light);
+
+  --border-hairline: var(--border-hairline-light);
+  --border-strong: var(--border-strong-light);
+
+  --ink-primary: var(--ink-primary-light);
+  --ink-secondary: var(--ink-secondary-light);
+  --ink-muted: var(--ink-muted-light);
+  --status-success: var(--status-success-light);
+  --status-warn: var(--status-warn-light);
+
+  /* Optical Glass Parameters */
+  --glass-blur: blur(30px) saturate(185%) contrast(103%);
+  --glass-blur-popover: blur(36px) saturate(195%) contrast(104%);
+
+  /* Elevation Shadows */
+  --shadow-window:
+    0 28px 72px -18px rgba(14, 24, 42, 0.2),
+    0 8px 24px -6px rgba(14, 24, 42, 0.08),
+    0 0 0 0.5px rgba(15, 23, 42, 0.12);
+  --shadow-glass-panel:
+    0 12px 32px -10px rgba(15, 24, 42, 0.11),
+    0 2px 8px -2px rgba(15, 24, 42, 0.05);
+  --shadow-composer:
+    0 14px 36px -12px rgba(15, 24, 42, 0.11),
+    0 3px 10px -2px rgba(15, 24, 42, 0.05),
+    0 0 0 0.5px rgba(15, 23, 42, 0.1);
+  --shadow-popover:
+    0 20px 48px -12px rgba(15, 24, 42, 0.18),
+    0 4px 14px -4px rgba(15, 24, 42, 0.08);
+
+  /* Concentricity Radius & Spacing System
+   * Window (28) -> inset 10 -> Sidebar (18) -> pad 8 -> Row (10)
+   * Composer (22) -> pad 8 -> Inner Slot Controls (14)
+   */
+  --radius-window: 28px;
+  --sidebar-inset: 10px;
+  --radius-sidebar: 18px;
+  --sidebar-pad: 8px;
+  --radius-row: 10px;
+  --radius-composer: 22px;
+  --composer-pad: 8px;
+  --radius-composer-slot: 14px;
+  --radius-surface-md: 16px;
+  --radius-bubble: 18px;
+  --radius-pill: 999px;
+
+  /* DSH columns.ts Shell Geometry Constants */
+  --sidebar-width: 280px;
+  --sidebar-collapsed-width: 56px;
+  --rightbar-width: 390px;
+  --toolbar-height: 46px;
+  --session-toolbar-height: 44px;
+  --motion-fast: 160ms;
+  --motion-smooth: 240ms;
+  --ease-apple: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Scrollbar styling */
+  --scrollbar-thumb: rgba(15, 23, 42, 0.22);
+  --scrollbar-track: transparent;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+@supports (linear-gradient(in oklab, white, black)) {
+  :root {
+    --in-oklab: in oklab;
+    --in-oklch: in oklch;
+  }
+}
+
+/* Override color-scheme via <meta name="color-scheme"> per dark-mode-toggle guide */
+:root:has(> head > meta[name="color-scheme"][content="dark"]) {
+  color-scheme: dark;
+}
+
+:root:has(> head > meta[name="color-scheme"][content="light"]) {
+  color-scheme: light;
+}
+
+/* Accent Color Presets */
+:root[data-accent="indigo"] {
+  --accent-light: #4f46e5;
+  --accent-dark: #818cf8;
+  --accent-soft-light: rgba(79, 70, 229, 0.11);
+  --accent-soft-dark: rgba(129, 140, 248, 0.18);
+}
+
+:root[data-accent="teal"] {
+  --accent-light: #0d7a72;
+  --accent-dark: #3cd0c4;
+  --accent-soft-light: rgba(13, 122, 114, 0.11);
+  --accent-soft-dark: rgba(60, 208, 196, 0.18);
+}
+
+:root[data-accent="graphite"] {
+  --accent-light: #353f4f;
+  --accent-dark: #c5cedb;
+  --accent-soft-light: rgba(53, 63, 79, 0.1);
+  --accent-soft-dark: rgba(197, 206, 219, 0.16);
+}
+
+/* Modern light-dark() automatic scheme resolution */
+@supports (color: light-dark(white, black)) {
+  :root {
+    --accent: light-dark(var(--accent-light), var(--accent-dark));
+    --accent-soft: light-dark(var(--accent-soft-light), var(--accent-soft-dark));
+    --accent-ink: light-dark(var(--accent-ink-light), var(--accent-ink-dark));
+
+    --desktop-bg: light-dark(var(--desktop-bg-light), var(--desktop-bg-dark));
+    --window-bg: light-dark(var(--window-bg-light), var(--window-bg-dark));
+    --surface-content: light-dark(var(--surface-content-light), var(--surface-content-dark));
+    --surface-composer: light-dark(var(--surface-composer-light), var(--surface-composer-dark));
+    --surface-subtle: light-dark(var(--surface-subtle-light), var(--surface-subtle-dark));
+    --surface-user-bubble: light-dark(var(--surface-user-bubble-light), var(--surface-user-bubble-dark));
+    --surface-code: light-dark(var(--surface-code-light), var(--surface-code-dark));
+    --surface-terminal: light-dark(var(--surface-terminal-light), var(--surface-terminal-dark));
+
+    --glass-chrome: light-dark(var(--glass-chrome-light), var(--glass-chrome-dark));
+    --glass-chrome-strong: light-dark(var(--glass-chrome-strong-light), var(--glass-chrome-strong-dark));
+    --glass-pill: light-dark(var(--glass-pill-light), var(--glass-pill-dark));
+    --glass-active-thumb: light-dark(var(--glass-active-thumb-light), var(--glass-active-thumb-dark));
+    --glass-hover-row: light-dark(var(--glass-hover-row-light), var(--glass-hover-row-dark));
+    --glass-selected-row: light-dark(var(--glass-selected-row-light), var(--glass-selected-row-dark));
+
+    --rim-highlight: light-dark(var(--rim-highlight-light), var(--rim-highlight-dark));
+    --rim-mid: light-dark(var(--rim-mid-light), var(--rim-mid-dark));
+    --rim-cool: light-dark(var(--rim-cool-light), var(--rim-cool-dark));
+
+    --border-hairline: light-dark(var(--border-hairline-light), var(--border-hairline-dark));
+    --border-strong: light-dark(var(--border-strong-light), var(--border-strong-dark));
+
+    --ink-primary: light-dark(var(--ink-primary-light), var(--ink-primary-dark));
+    --ink-secondary: light-dark(var(--ink-secondary-light), var(--ink-secondary-dark));
+    --ink-muted: light-dark(var(--ink-muted-light), var(--ink-muted-dark));
+    --status-success: light-dark(var(--status-success-light), var(--status-success-dark));
+    --status-warn: light-dark(var(--status-warn-light), var(--status-warn-dark));
+
+    --scrollbar-thumb: light-dark(rgba(15, 23, 42, 0.22), rgba(255, 255, 255, 0.22));
+  }
+}
+
+/* Clean shadows separated cleanly for universal light/dark fidelity */
+:root:has(> head > meta[name="color-scheme"][content="dark"]) {
+  --shadow-window:
+    0 32px 84px -18px rgba(0, 0, 0, 0.68),
+    0 10px 28px -6px rgba(0, 0, 0, 0.42),
+    0 0 0 0.5px rgba(255, 255, 255, 0.14);
+  --shadow-glass-panel:
+    0 16px 38px -12px rgba(0, 0, 0, 0.5),
+    0 4px 12px -2px rgba(0, 0, 0, 0.3);
+  --shadow-composer:
+    0 18px 44px -12px rgba(0, 0, 0, 0.56),
+    0 4px 12px -3px rgba(0, 0, 0, 0.35),
+    0 0 0 0.5px rgba(255, 255, 255, 0.13);
+  --shadow-popover:
+    0 24px 56px -12px rgba(0, 0, 0, 0.66),
+    0 6px 18px -4px rgba(0, 0, 0, 0.36);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:has(> head > meta[name="color-scheme"][content="light dark"]) {
+    --shadow-window:
+      0 32px 84px -18px rgba(0, 0, 0, 0.68),
+      0 10px 28px -6px rgba(0, 0, 0, 0.42),
+      0 0 0 0.5px rgba(255, 255, 255, 0.14);
+    --shadow-glass-panel:
+      0 16px 38px -12px rgba(0, 0, 0, 0.5),
+      0 4px 12px -2px rgba(0, 0, 0, 0.3);
+    --shadow-composer:
+      0 18px 44px -12px rgba(0, 0, 0, 0.56),
+      0 4px 12px -3px rgba(0, 0, 0, 0.35),
+      0 0 0 0.5px rgba(255, 255, 255, 0.13);
+    --shadow-popover:
+      0 24px 56px -12px rgba(0, 0, 0, 0.66),
+      0 6px 18px -4px rgba(0, 0, 0, 0.36);
+  }
+}
+
+/* Fallback for pre-light-dark engines */
+@supports not (color: light-dark(white, black)) {
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --accent: var(--accent-dark);
+      --accent-soft: var(--accent-soft-dark);
+      --accent-ink: var(--accent-ink-dark);
+      --desktop-bg: var(--desktop-bg-dark);
+      --window-bg: var(--window-bg-dark);
+      --surface-content: var(--surface-content-dark);
+      --surface-composer: var(--surface-composer-dark);
+      --surface-subtle: var(--surface-subtle-dark);
+      --surface-user-bubble: var(--surface-user-bubble-dark);
+      --surface-code: var(--surface-code-dark);
+      --surface-terminal: var(--surface-terminal-dark);
+      --glass-chrome: var(--glass-chrome-dark);
+      --glass-chrome-strong: var(--glass-chrome-strong-dark);
+      --glass-pill: var(--glass-pill-dark);
+      --glass-active-thumb: var(--glass-active-thumb-dark);
+      --glass-hover-row: var(--glass-hover-row-dark);
+      --glass-selected-row: var(--glass-selected-row-dark);
+      --rim-highlight: var(--rim-highlight-dark);
+      --rim-mid: var(--rim-mid-dark);
+      --rim-cool: var(--rim-cool-dark);
+      --border-hairline: var(--border-hairline-dark);
+      --border-strong: var(--border-strong-dark);
+      --ink-primary: var(--ink-primary-dark);
+      --ink-secondary: var(--ink-secondary-dark);
+      --ink-muted: var(--ink-muted-dark);
+      --status-success: var(--status-success-dark);
+      --status-warn: var(--status-warn-dark);
+      --scrollbar-thumb: rgba(255, 255, 255, 0.22);
+    }
+  }
+}
+
+/* Reduced Transparency Solid Material Fallback */
+:root[data-transparency="reduce"] {
+  --glass-blur: none;
+  --glass-blur-popover: none;
+  --glass-chrome: light-dark(var(--solid-chrome-light), var(--solid-chrome-dark));
+  --glass-chrome-strong: light-dark(var(--solid-popover-light), var(--solid-popover-dark));
+  --glass-pill: light-dark(var(--solid-pill-light), var(--solid-pill-dark));
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root:not([data-transparency="glass"]) {
+    --glass-blur: none;
+    --glass-blur-popover: none;
+    --glass-chrome: light-dark(var(--solid-chrome-light), var(--solid-chrome-dark));
+    --glass-chrome-strong: light-dark(var(--solid-popover-light), var(--solid-popover-dark));
+    --glass-pill: light-dark(var(--solid-pill-light), var(--solid-pill-dark));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast: 0ms;
+    --motion-smooth: 0ms;
+  }
+}
