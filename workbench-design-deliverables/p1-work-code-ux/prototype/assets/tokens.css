@@ -94,8 +94,32 @@
 
   --status-success-light: #0f7b4c;
   --status-success-dark: #4ad295;
+  --status-success-soft-light: rgba(15, 123, 76, 0.1);
+  --status-success-soft-dark: rgba(74, 210, 149, 0.14);
   --status-warn-light: #9a5d07;
   --status-warn-dark: #f0b14b;
+  --status-warn-soft-light: rgba(154, 93, 7, 0.1);
+  --status-warn-soft-dark: rgba(240, 177, 75, 0.14);
+  --status-info-light: #0a66e6;
+  --status-info-dark: #69b1ff;
+  --status-info-soft-light: rgba(10, 102, 230, 0.09);
+  --status-info-soft-dark: rgba(105, 177, 255, 0.14);
+  --status-danger-light: #c9342b;
+  --status-danger-dark: #ff7a70;
+  --status-danger-soft-light: rgba(201, 52, 43, 0.09);
+  --status-danger-soft-dark: rgba(255, 122, 112, 0.14);
+
+  /* Diff Review Semantic Surfaces (High-contrast Standard Material) */
+  --diff-add-bg-light: rgba(15, 123, 76, 0.09);
+  --diff-add-bg-dark: rgba(74, 210, 149, 0.12);
+  --diff-add-gutter-light: rgba(15, 123, 76, 0.16);
+  --diff-add-gutter-dark: rgba(74, 210, 149, 0.22);
+  --diff-del-bg-light: rgba(201, 52, 43, 0.08);
+  --diff-del-bg-dark: rgba(255, 122, 112, 0.12);
+  --diff-del-gutter-light: rgba(201, 52, 43, 0.15);
+  --diff-del-gutter-dark: rgba(255, 122, 112, 0.22);
+  --diff-hunk-bg-light: #edf2f8;
+  --diff-hunk-bg-dark: #161d29;
 
   /* Resolved semantic aliases (defaults follow light-dark() when supported) */
   --accent: var(--accent-light);
@@ -129,7 +153,19 @@
   --ink-secondary: var(--ink-secondary-light);
   --ink-muted: var(--ink-muted-light);
   --status-success: var(--status-success-light);
+  --status-success-soft: var(--status-success-soft-light);
   --status-warn: var(--status-warn-light);
+  --status-warn-soft: var(--status-warn-soft-light);
+  --status-info: var(--status-info-light);
+  --status-info-soft: var(--status-info-soft-light);
+  --status-danger: var(--status-danger-light);
+  --status-danger-soft: var(--status-danger-soft-light);
+
+  --diff-add-bg: var(--diff-add-bg-light);
+  --diff-add-gutter: var(--diff-add-gutter-light);
+  --diff-del-bg: var(--diff-del-bg-light);
+  --diff-del-gutter: var(--diff-del-gutter-light);
+  --diff-hunk-bg: var(--diff-hunk-bg-light);
 
   /* Optical Glass Parameters */
   --glass-blur: blur(30px) saturate(185%) contrast(103%);
@@ -171,6 +207,8 @@
   --sidebar-width: 280px;
   --sidebar-collapsed-width: 56px;
   --rightbar-width: 390px;
+  --rightbar-split-ratio: 48%;
+  --dsh-content-line-height: 1.65;
   --toolbar-height: 46px;
   --session-toolbar-height: 44px;
   --motion-fast: 160ms;
@@ -255,7 +293,19 @@
     --ink-secondary: light-dark(var(--ink-secondary-light), var(--ink-secondary-dark));
     --ink-muted: light-dark(var(--ink-muted-light), var(--ink-muted-dark));
     --status-success: light-dark(var(--status-success-light), var(--status-success-dark));
+    --status-success-soft: light-dark(var(--status-success-soft-light), var(--status-success-soft-dark));
     --status-warn: light-dark(var(--status-warn-light), var(--status-warn-dark));
+    --status-warn-soft: light-dark(var(--status-warn-soft-light), var(--status-warn-soft-dark));
+    --status-info: light-dark(var(--status-info-light), var(--status-info-dark));
+    --status-info-soft: light-dark(var(--status-info-soft-light), var(--status-info-soft-dark));
+    --status-danger: light-dark(var(--status-danger-light), var(--status-danger-dark));
+    --status-danger-soft: light-dark(var(--status-danger-soft-light), var(--status-danger-soft-dark));
+
+    --diff-add-bg: light-dark(var(--diff-add-bg-light), var(--diff-add-bg-dark));
+    --diff-add-gutter: light-dark(var(--diff-add-gutter-light), var(--diff-add-gutter-dark));
+    --diff-del-bg: light-dark(var(--diff-del-bg-light), var(--diff-del-bg-dark));
+    --diff-del-gutter: light-dark(var(--diff-del-gutter-light), var(--diff-del-gutter-dark));
+    --diff-hunk-bg: light-dark(var(--diff-hunk-bg-light), var(--diff-hunk-bg-dark));
 
     --scrollbar-thumb: light-dark(rgba(15, 23, 42, 0.22), rgba(255, 255, 255, 0.22));
   }
@@ -328,7 +378,18 @@
       --ink-secondary: var(--ink-secondary-dark);
       --ink-muted: var(--ink-muted-dark);
       --status-success: var(--status-success-dark);
+      --status-success-soft: var(--status-success-soft-dark);
       --status-warn: var(--status-warn-dark);
+      --status-warn-soft: var(--status-warn-soft-dark);
+      --status-info: var(--status-info-dark);
+      --status-info-soft: var(--status-info-soft-dark);
+      --status-danger: var(--status-danger-dark);
+      --status-danger-soft: var(--status-danger-soft-dark);
+      --diff-add-bg: var(--diff-add-bg-dark);
+      --diff-add-gutter: var(--diff-add-gutter-dark);
+      --diff-del-bg: var(--diff-del-bg-dark);
+      --diff-del-gutter: var(--diff-del-gutter-dark);
+      --diff-hunk-bg: var(--diff-hunk-bg-dark);
       --scrollbar-thumb: rgba(255, 255, 255, 0.22);
     }
   }
@@ -358,4 +419,9 @@
     --motion-fast: 0ms;
     --motion-smooth: 0ms;
   }
+}
+
+:root[data-motion="reduce"] {
+  --motion-fast: 0ms;
+  --motion-smooth: 0ms;
 }

@@ -8,6 +8,7 @@
   const DEFAULT_APPEARANCE = {
     theme: "system",          // "system" | "light" | "dark"
     transparency: "glass",    // "glass" | "reduce"
+    motion: "auto",           // "auto" | "reduce"
     accent: "blue",           // "blue" | "indigo" | "teal" | "graphite"
     fontText: '"JetBrains Mono", "寒蝉半圆体", sans-serif',
     fontCode: '"JetBrains Mono", "寒蝉半圆体", monospace',
@@ -15,6 +16,7 @@
     sizeText: 14,
     sizeCode: 13,
     sizeTerminal: 13,
+    lineHeight: 1.65,
   };
 
   const docEl = document.documentElement;
@@ -35,6 +37,29 @@
 
   let toastTimer = null;
   function showToast(msg) {
+    // Suppress background toast while a modal dialog owns the top layer
+    if (document.querySelector("dialog[open]:modal")) return;
+    const manualToast = document.getElementById("dsh-toast-popover");
+    const manualText = document.getElementById("dsh-toast-text");
+    if (manualToast && manualText) {
+      manualText.textContent = msg;
+      try {
+        manualToast.showPopover?.();
+      } catch {
+        manualToast.hidden = false;
+      }
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        if (!manualToast.matches(":focus-within")) {
+          try {
+            manualToast.hidePopover?.();
+          } catch {
+            manualToast.hidden = true;
+          }
+        }
+      }, 3200);
+      return;
+    }
     const toast = document.getElementById("workbench-toast");
     if (!toast) return;
     toast.textContent = msg;
@@ -66,6 +91,7 @@
 
     if (lockFromUrl.has("theme")) state.theme = lockFromUrl.get("theme");
     if (lockFromUrl.has("transparency")) state.transparency = lockFromUrl.get("transparency");
+    if (lockFromUrl.has("motion")) state.motion = lockFromUrl.get("motion");
     if (lockFromUrl.has("accent")) state.accent = lockFromUrl.get("accent");
     return state;
   }
@@ -93,6 +119,7 @@
     }
 
     docEl.dataset.transparency = state.transparency === "reduce" ? "reduce" : "glass";
+    docEl.dataset.motion = state.motion === "reduce" ? "reduce" : "auto";
     docEl.dataset.accent = state.accent || "blue";
 
     docEl.style.setProperty("--dsh-font-family-text", state.fontText);
@@ -101,6 +128,17 @@
     docEl.style.setProperty("--dsh-content-font-size", `${state.sizeText}px`);
     docEl.style.setProperty("--dsh-code-font-size", `${state.sizeCode}px`);
     docEl.style.setProperty("--dsh-terminal-font-size", `${state.sizeTerminal}px`);
+    docEl.style.setProperty("--dsh-content-line-height", String(state.lineHeight || 1.65));
+
+    document.querySelectorAll("#switch-reduced-transparency, [data-switch-transparency]").forEach((el) => {
+      el.checked = docEl.dataset.transparency === "reduce";
+    });
+    document.querySelectorAll("#switch-reduced-motion, [data-switch-motion]").forEach((el) => {
+      el.checked = docEl.dataset.motion === "reduce";
+    });
+    document.querySelectorAll("#line-height-select, [data-line-height-select]").forEach((el) => {
+      el.value = String(state.lineHeight || 1.65);
+    });
 
     // Sync Popover controls if present
     document.querySelectorAll("[data-theme-choice]").forEach((btn) => {
@@ -214,6 +252,24 @@
   });
 
   document.addEventListener("change", (e) => {
+    if (e.target.id === "switch-reduced-transparency" || e.target.matches("[data-switch-transparency]")) {
+      appearance.transparency = e.target.checked ? "reduce" : "glass";
+      saveAppearance(appearance);
+      applyAppearance(appearance);
+      return;
+    }
+    if (e.target.id === "switch-reduced-motion" || e.target.matches("[data-switch-motion]")) {
+      appearance.motion = e.target.checked ? "reduce" : "auto";
+      saveAppearance(appearance);
+      applyAppearance(appearance);
+      return;
+    }
+    if (e.target.id === "line-height-select" || e.target.matches("[data-line-height-select]")) {
+      appearance.lineHeight = Number(e.target.value) || 1.65;
+      saveAppearance(appearance);
+      applyAppearance(appearance);
+      return;
+    }
     const sel = e.target.closest("[data-font-role-select]");
     if (!sel) return;
     const role = sel.dataset.fontRoleSelect;
@@ -550,15 +606,16 @@
       scrollArea.scrollTop = isCode ? 58 : 0;
     }
 
-    // Single-track Right Inspector belongs to active Code state unless toggled explicitly in Work
-    if (!isCode) {
+    // Single-track Right Inspector belongs to active Code/Stage state unless Stage 2 manages it
+    if (!isCode && workbenchWindow.dataset.stage2 !== "true") {
       closeRightInspector();
     }
 
     const breadcrumb = document.getElementById("toolbar-breadcrumb-label");
-    if (breadcrumb) {
+    if (breadcrumb && workbenchWindow.dataset.stage2 !== "true") {
       breadcrumb.textContent = isCode ? "DSH workbench / code-ux" : "临时任务 · 未绑定项目";
     }
+    document.dispatchEvent(new CustomEvent("dsh:workspace-change", { detail: { workspace: space } }));
   }
 
   document.addEventListener("click", (e) => {
@@ -616,6 +673,7 @@
       startX = e.clientX;
       startWidth = rightInspector.getBoundingClientRect().width;
       rightResizer.classList.add("is-dragging");
+      workbenchWindow.classList.add("is-resizing");
       rightResizer.setPointerCapture(e.pointerId);
       document.body.style.cursor = "col-resize";
       document.body.style.userSelect = "none";
@@ -634,6 +692,7 @@
       if (!dragging) return;
       dragging = false;
       rightResizer.classList.remove("is-dragging");
+      workbenchWindow.classList.remove("is-resizing");
       document.body.style.cursor = "";
       document.body.style.userSelect = "";
     };
@@ -645,7 +704,7 @@
   // Open right rail / activity cleanly via URL param for static review screenshots
   if (urlParams.has("right")) {
     const mode = urlParams.get("right");
-    if (["files", "terminal", "inspector"].includes(mode)) {
+    if (rightInspector?.querySelector(`[data-right-tab="${mode}"]`)) {
       openRightInspector(mode);
     }
   }
@@ -679,9 +738,16 @@
         closeRightInspector();
         if (layoutLabel) layoutLabel.textContent = "Focus";
       } else if (preset === "build") {
-        openRightInspector("terminal");
+        openRightInspector(rightInspector?.querySelector('[data-right-tab="build-split"]') ? "build-split" : "terminal");
         if (layoutLabel) layoutLabel.textContent = "Build";
+      } else if (preset === "review") {
+        openRightInspector(rightInspector?.querySelector('[data-right-tab="changes"]') ? "changes" : "files");
+        if (layoutLabel) layoutLabel.textContent = "Review";
+      } else if (preset === "debug") {
+        openRightInspector(rightInspector?.querySelector('[data-right-tab="preview"]') ? "preview" : "terminal");
+        if (layoutLabel) layoutLabel.textContent = "Debug";
       }
+      document.dispatchEvent(new CustomEvent("dsh:preset-change", { detail: { preset } }));
 
       setTimeout(() => {
         menu?.hidePopover?.();
@@ -706,7 +772,9 @@
   // -----------------------------------------
   document.querySelectorAll("[data-suggestion-prompt]").forEach((chip) => {
     chip.addEventListener("click", () => {
-      const input = document.getElementById("work-composer-input");
+      const input =
+        chip.closest("[data-stage-panel]")?.querySelector("textarea") ||
+        document.getElementById("work-composer-input");
       if (!input) return;
       input.value = chip.dataset.suggestionPrompt;
       input.focus();
@@ -772,6 +840,10 @@
         textarea.focus();
         return;
       }
+      if (workbenchWindow.dataset.stage2 === "true") {
+        document.dispatchEvent(new CustomEvent("dsh:composer-submit", { detail: { text: val, form, textarea } }));
+        return;
+      }
       const space = workbenchWindow.dataset.workspace;
       showToast(
         space === "code"
@@ -823,4 +895,28 @@
       });
     });
   }
+
+  window.DSHWorkbench = {
+    setWorkspace,
+    openRightInspector,
+    closeRightInspector,
+    selectRightTab,
+    showToast,
+    announce,
+    getAppearance: () => ({ ...appearance }),
+    setAppearance: (patch) => {
+      appearance = { ...appearance, ...patch };
+      saveAppearance(appearance);
+      applyAppearance(appearance);
+    },
+    resetAppearance: () => {
+      appearance = { ...DEFAULT_APPEARANCE };
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+      } catch {
+        // Ignore
+      }
+      applyAppearance(appearance);
+    },
+  };
 })();
