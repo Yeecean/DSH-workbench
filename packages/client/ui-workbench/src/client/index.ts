@@ -18,7 +18,7 @@ import type {} from '@deepseek-ai/dsh-client-ui-settings-general/client'
 import type {} from '@deepseek-ai/dsh-client-ui-sidebar-right/client'
 import type {} from '@deepseek-ai/dsh-client-ui-theme/client'
 import type {} from '@deepseek-ai/dsh-client-ui-workspace/client'
-import type { BoundActions } from '@deepseek-ai/dsh-client-store'
+import { createSnapshotStore, type BoundActions } from '@deepseek-ai/dsh-client-store'
 import {
   DEFAULT_WORKBENCH_PREFERENCES,
   WORKBENCH_SETTINGS_NAMESPACE,
@@ -29,9 +29,11 @@ import {
   type WorkbenchPreferences,
 } from '../workbench-settings.ts'
 import { ModeSwitcher } from './components/ModeSwitcher.tsx'
+import { PromptStarters } from './components/PromptStarters.tsx'
 import { WorkbenchAppearanceRow } from './components/WorkbenchAppearanceRow.tsx'
 import { WorkTaskInspector } from './components/WorkTaskInspector.tsx'
 import { WORKBENCH_LOCALE_NS, de, en, es, fr, ja, pt, ru, zh, type WorkbenchKey } from './locales.ts'
+import { installSessionActivityObserver } from './session-activity.ts'
 import {
   createModeSwitcherStore,
   createWorkbenchSettingsStore,
@@ -76,11 +78,30 @@ export function apply(ctx: ClientContext): void {
   let settingsWritable = true
 
   let openTabHandler: ((kind: 'files' | 'terminal' | 'browser') => void) | undefined
+  let openResourceHandler: ((address: string) => void) | undefined
   let persistFields: ((patch: Partial<WorkbenchPreferences>) => void) | undefined
+
+  const activityObserver = installSessionActivityObserver(ctx)
+  const modeSource = createSnapshotStore<WorkbenchMode>(activeMode)
+
+  ctx.inject(['sidebarRight'], (child) => {
+    const openResource = (address: string): void => {
+      try {
+        child.sidebarRight.openResource(address)
+      } catch {
+        // No mounted session surface on screen yet.
+      }
+    }
+    openResourceHandler = openResource
+    child.effect(() => () => {
+      if (openResourceHandler === openResource) openResourceHandler = undefined
+    }, 'ui-workbench: sidebarRight resource handler')
+  })
 
   const syncAll = (): void => {
     const rightbar = ctx.layout.rightbarInfo.getSnapshot()
     const inspectorActive = rightbar.owner === 'global'
+    modeSource.set(activeMode)
     syncVisuals({
       mode: activeMode,
       preset: activePreset,
@@ -207,13 +228,29 @@ export function apply(ctx: ClientContext): void {
       bound.setPreset(activePreset)
       bound.setInspectorActive(ctx.layout.rightbarInfo.getSnapshot().owner === 'global')
       return {
+        hooks: {
+          activity: activityObserver.source,
+        },
         switchMode,
         openRightbarTab: (kind: 'files' | 'terminal' | 'browser') => { openTabHandler?.(kind) },
+        openResource: (address: string) => { openResourceHandler?.(address) },
         openSettings: () => { ctx.emit('ui-settings/open', 'general') },
         closeInspector: () => { ctx.layout.closeGlobalRightbar() },
       }
     },
   }, WorkTaskInspector))
+
+  ctx.slots.inject('conversation.input.dock', () => ctx.slots.register({
+    name: 'conversation.input.dock',
+    id: 'workbench-starters',
+    order: 5,
+    locale: WORKBENCH_LOCALE_NS,
+    inject: () => ({
+      hooks: {
+        workbenchMode: modeSource,
+      },
+    }),
+  }, PromptStarters))
 
   ctx.slots.inject('settings.general.item', () => ctx.slots.register({
     name: 'settings.general.item',

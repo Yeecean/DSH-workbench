@@ -1,5 +1,8 @@
 /** Localized Workbench UI dictionaries for all shipped Harness languages. */
 
+import { p2En, p2Zh } from './locales/p2.ts'
+
+/** Translation namespace used by all Workbench UI components. */
 export const WORKBENCH_LOCALE_NS = 'workbench' as const
 
 /** English Workbench locale dictionary (baseline key set). */
@@ -69,6 +72,7 @@ export const en = {
   'settings.customTheme.error.emptyTokens': 'The "tokens" object must define at least one supported key.',
   'settings.customTheme.error.unsupportedToken': 'Unsupported theme token: {token}',
   'settings.customTheme.error.invalidTokenValue': 'Invalid CSS value for token "{token}". Use hex, rgb/rgba, hsl/hsla, oklch, color-mix, or px.',
+  ...p2En,
 } as const
 
 /** Union of valid translation keys in the `workbench` namespace. */
@@ -141,6 +145,7 @@ export const zh: Record<WorkbenchKey, string> = {
   'settings.customTheme.error.emptyTokens': '"tokens" 至少需要包含一个受支持的 token 键。',
   'settings.customTheme.error.unsupportedToken': '不支持的主题 token：{token}',
   'settings.customTheme.error.invalidTokenValue': 'token "{token}" 的 CSS 取值无效，仅允许安全颜色或 px 长度。',
+  ...p2Zh,
 }
 
 /** Japanese Workbench locale fallback dictionary. */

@@ -10,6 +10,7 @@ import type { GlobalStandardProps } from '@deepseek-ai/dsh-client-ui-slots'
 import { ModeSwitcher, type ModeSwitcherProps } from '../src/client/components/ModeSwitcher.tsx'
 import { WorkTaskInspector, type WorkTaskInspectorProps } from '../src/client/components/WorkTaskInspector.tsx'
 import { en } from '../src/client/locales.ts'
+import { EMPTY_ACTIVITY_SNAPSHOT, type WorkbenchActivitySnapshot } from '../src/client/session-activity.ts'
 import { createModeSwitcherStore } from '../src/client/stores.ts'
 
 afterEach(() => {
@@ -109,9 +110,11 @@ describe('WorkTaskInspector', () => {
       canShow: true,
       ...buildGlobalProps(),
       useStore: bindSnapshotSelector(instance),
+      useActivity: bindSnapshotSelector(createSnapshotStore<WorkbenchActivitySnapshot>(EMPTY_ACTIVITY_SNAPSHOT)),
       actions: instance.actions,
       switchMode,
       openRightbarTab,
+      openResource: vi.fn(),
       openSettings,
       closeInspector,
       t: makeTranslate(en),
@@ -181,9 +184,14 @@ describe('WorkTaskInspector', () => {
       canShow: true,
       ...buildGlobalProps({ sessions: sessionsState, workspaces }),
       useStore: bindSnapshotSelector(instance),
+      useActivity: bindSnapshotSelector(createSnapshotStore<WorkbenchActivitySnapshot>({
+        ...EMPTY_ACTIVITY_SNAPSHOT,
+        sessionId,
+      })),
       actions: instance.actions,
       switchMode: vi.fn(),
       openRightbarTab: vi.fn(),
+      openResource: vi.fn(),
       openSettings: vi.fn(),
       closeInspector: vi.fn(),
       t: makeTranslate(en),
@@ -192,7 +200,12 @@ describe('WorkTaskInspector', () => {
     render(<WorkTaskInspector {...props} />)
     expect(screen.getByText('Inspect Electron Build')).toBeDefined()
     expect(screen.getByText('Running')).toBeDefined()
-    expect(screen.getByText(/app — E:\\workspaces\\app/)).toBeDefined()
+    expect(screen.getByText('app')).toBeDefined()
+
+    const details = screen.getByTestId('workbench-technical-details') as HTMLDetailsElement
+    expect(details.open).toBe(false)
+    expect(screen.getByText('sess-wb-1')).toBeDefined()
+    expect(screen.getByText('E:\\workspaces\\app')).toBeDefined()
 
     act(() => { instance.actions.setMode('code') })
     expect(screen.getByRole('heading', { name: 'Code Overview' })).toBeDefined()
