@@ -1,18 +1,22 @@
 import { createSnapshotStore } from '@deepseek-ai/dsh-client-store'
 import { describe, expect, it, vi } from 'vitest'
 import { LayoutController } from '../src/client/service.ts'
-import type { MainPanelId, PanelActions } from '../src/client/service.ts'
+import type { MainPanelId, PanelActions, RightbarInfo } from '../src/client/service.ts'
 
 function fakePanels(): PanelActions {
   return {
     selectPanel: vi.fn(),
     retainMainPanels: vi.fn(),
+    retainGlobalRightbar: vi.fn(),
     setSidebar: vi.fn(),
     toggleSidebar: vi.fn(),
     setViewportWidth: vi.fn(),
     setRightbar: vi.fn(),
     openRightbar: vi.fn(),
     closeRightbar: vi.fn(),
+    openGlobalRightbar: vi.fn(),
+    closeGlobalRightbar: vi.fn(),
+    selectRightbarSurface: vi.fn(),
   }
 }
 
@@ -101,5 +105,20 @@ describe('LayoutController', () => {
     service.dispose()
     expect(pending.aborted).toBe(true)
     service.dispose()
+  })
+
+  it('forwards global rightbar and surface selection commands and exposes rightbarInfo', () => {
+    const panels = fakePanels()
+    const rightbarInfo = createSnapshotStore<RightbarInfo>({ owner: 'session', sessionPausedFullscreen: false, generation: 0 })
+    const service = new LayoutController(panels, () => true, createSnapshotStore({ activePanelId: null }), rightbarInfo)
+    service.openGlobalRightbar(true, false)
+    service.selectRightbarSurface('global')
+    service.closeGlobalRightbar()
+    service.selectRightbarSurface('auto')
+    expect(panels.openGlobalRightbar).toHaveBeenCalledWith(true, false)
+    expect(panels.selectRightbarSurface).toHaveBeenNthCalledWith(1, 'global')
+    expect(panels.closeGlobalRightbar).toHaveBeenCalledTimes(1)
+    expect(panels.selectRightbarSurface).toHaveBeenNthCalledWith(2, 'auto')
+    expect(service.rightbarInfo.getSnapshot()).toEqual({ owner: 'session', sessionPausedFullscreen: false, generation: 0 })
   })
 })

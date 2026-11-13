@@ -101,6 +101,7 @@ These limits define the current layout behavior. They are current package constr
 - **Extremely narrow windows** — after the right panel closes, the center may still fall below 400px; browser drawers reserve no sidebar width below 768px.
 - **Track and panel travel on one shared curve only while animating** — during a discrete open/close the frame sets `data-animating` and its track transition and the occupant's slide read the same duration and easing variables; an occupant that used its own would detach the panel's edge from the conversation's while squeezing. Drags and instant presentation switches run transition-free, so the curve does not cover them.
 - **No scroll anchoring during squeeze reflow** — layout changes may move the reader's viewport.
+- **Single right-rail arbitration** — `rightbar` (session-scoped) and `shell.rightbar.global` (shell-scoped) share one right column with independent remembered widths and mutually exclusive active presentation.
 
 <a id="dev-note"></a>
 ### Dev Note

@@ -1,0 +1,55 @@
+# Bilingual-pair consistency record for README.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write packages/client/ui-workbench/README.md
+/:
+  en: 32dd96cf395092bf
+  zh: 1b887cc6172bceaf
+/deepseek-ai-dsh-client-ui-workbench:
+  en: 3be9e51fda82cf31
+  zh: 9c242e4cc0030bdd
+/deepseek-ai-dsh-client-ui-workbench/summary:
+  en: 282304d5a85d3d2c
+  zh: 16e9dae696d4f41f
+/deepseek-ai-dsh-client-ui-workbench/table-of-contents:
+  en: d152484eb41ac6b4
+  zh: 09388d293f9be9cb
+/deepseek-ai-dsh-client-ui-workbench/use-this-package:
+  en: 5c14d80e19507850
+  zh: 4ff2add28ff92118
+/deepseek-ai-dsh-client-ui-workbench/use-this-package/minimal-configuration:
+  en: d9c0a0075108e107
+  zh: 6f0a050e0e72ab50
+/deepseek-ai-dsh-client-ui-workbench/use-this-package/top-mode-switcher-and-code-presets:
+  en: 6e5b965f130b2e4b
+  zh: d041da3f19b1a584
+/deepseek-ai-dsh-client-ui-workbench/use-this-package/global-work-task-inspector:
+  en: 1a2333a63c2e0c0f
+  zh: 9ab565c35b2db622
+/deepseek-ai-dsh-client-ui-workbench/use-this-package/workbench-appearance-and-custom-theme-json:
+  en: a4fd0954e055fdff
+  zh: aed425f3ac878920
+/deepseek-ai-dsh-client-ui-workbench/understand-the-implementation:
+  en: 42b15ac6321706aa
+  zh: c8011788e17a2cd6
+/deepseek-ai-dsh-client-ui-workbench/understand-the-implementation/typography-and-liquid-glass-layering:
+  en: 0f75ff15127f9ede
+  zh: f37966769871e2b5
+/deepseek-ai-dsh-client-ui-workbench/understand-the-implementation/client-plugin-boundaries:
+  en: 587192d0b24298e4
+  zh: 327859e5b8b90b77
+/deepseek-ai-dsh-client-ui-workbench/further-exploration:
+  en: 52f4af6832adca40
+  zh: 156fc1975f09c331
+/deepseek-ai-dsh-client-ui-workbench/model-experience:
+  en: 3120df665299c634
+  zh: 1d9f365d091d0d2a
+/deepseek-ai-dsh-client-ui-workbench/model-experience/kv-cache-effect:
+  en: ca75c51c89c2c9b0
+  zh: de54f3467ef3b9be
+/deepseek-ai-dsh-client-ui-workbench/known-limitations-and-deferred-work:
+  en: 8340658a8c9e3744
+  zh: 054a80747aaad1c0
+/deepseek-ai-dsh-client-ui-workbench/known-limitations-and-deferred-work/dev-note:
+  en: e67f633dc6fe7773
+  zh: 3bb0c20c93f16f98

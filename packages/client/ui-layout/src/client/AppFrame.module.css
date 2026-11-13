@@ -269,6 +269,14 @@
   overflow: visible;
 }
 
+.rightbarSurface {
+  display: contents;
+}
+
+.rightbarSurface[hidden] {
+  display: none;
+}
+
 .frame[data-sidebar-drawer] {
   --dsh-frame-leading-clearance: 84px;
   overflow: clip;

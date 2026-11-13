@@ -330,3 +330,35 @@ describe('desktop link-backend projections', () => {
     expect(existsSync(join(target, 'package.json'))).toBe(true)
   })
 })
+
+describe('desktop workbench bundle composition', () => {
+  it('mounts @deepseek-ai/dsh-workbench by default and omits it when DSH_WORKBENCH=0', async () => {
+    const previous = process.env.DSH_WORKBENCH
+    delete process.env.DSH_WORKBENCH
+    try {
+      const { manager } = setup()
+      await manager.applyRelease()
+      const manifest = JSON.parse(readFileSync(join(manager.paths.profile, 'package.json'), 'utf8')) as {
+        dsh: { profile: { bundles: string[] } }
+      }
+      expect(manifest.dsh.profile.bundles).toEqual([
+        '@deepseek-ai/dsh-base',
+        '@deepseek-ai/dsh-web-app',
+        '@deepseek-ai/dsh-workbench',
+      ])
+
+      process.env.DSH_WORKBENCH = '0'
+      await manager.disableAllPlugins()
+      const optedOut = JSON.parse(readFileSync(join(manager.paths.profile, 'package.json'), 'utf8')) as {
+        dsh: { profile: { bundles: string[] } }
+      }
+      expect(optedOut.dsh.profile.bundles).toEqual([
+        '@deepseek-ai/dsh-base',
+        '@deepseek-ai/dsh-web-app',
+      ])
+    } finally {
+      if (previous === undefined) delete process.env.DSH_WORKBENCH
+      else process.env.DSH_WORKBENCH = previous
+    }
+  })
+})

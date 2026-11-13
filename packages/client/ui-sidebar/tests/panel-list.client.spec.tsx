@@ -41,13 +41,18 @@ async function bench(collapsed = false, track?: TrackProductEvent) {
   runtimes.add(runtime)
   const locale = new LocaleRuntime(runtime.ctx)
   locale.setLocale('en')
+  const rightbarInfo = createSnapshotStore({ owner: 'session' as const, sessionPausedFullscreen: false, generation: 0 })
   const layout = {
     panelInfo: runtime.panelInfo,
+    rightbarInfo,
     beginNavigation: vi.fn(() => new AbortController().signal),
     toggleSidebar: vi.fn(),
     selectPanel: vi.fn((activePanelId: MainPanelId | null) => { runtime.panelInfo.set({ activePanelId }) }),
     openRightbar: vi.fn(),
     closeRightbar: vi.fn(),
+    openGlobalRightbar: vi.fn(),
+    closeGlobalRightbar: vi.fn(),
+    selectRightbarSurface: vi.fn(),
   } satisfies ILayout
   await runtime.mount({
     inject: ['slots'],

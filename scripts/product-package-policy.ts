@@ -47,5 +47,7 @@ export const PRODUCT_PACKAGE_POLICY: Readonly<Record<string, ProductPackagePolic
   'packages/test-support/session-snapshot': { category: 'test', reason: 'Published Session snapshot replay harness.' },
   'packages/client/web': { category: 'web-distribution', reason: 'Browser boot kernel bundled into the Web distribution.' },
   'packages/client/ui-dockkit': { category: 'web-distribution', reason: 'Layout library bundled into the Web distribution.' },
+  'packages/client/ui-workbench': { category: 'optional', reason: 'Desktop-default Workbench presentation overlay plugin mounted outside the CLI web profile template.' },
+  'packages/bundle/workbench': { category: 'optional', reason: 'Desktop-default Workbench overlay bundle loaded by apps/desktop outside PROFILE_TEMPLATES.web.' },
   'packages/util/package-manifest': { category: 'declarations', reason: 'Shared package metadata declarations have no runtime mount.' },
 }

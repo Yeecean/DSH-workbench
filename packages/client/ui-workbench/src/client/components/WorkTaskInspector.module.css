@@ -1,0 +1,189 @@
+/* Liquid Glass Global Work Task Inspector inside the single right-rail track. */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  background: var(--wb-glass-surface, var(--dsw-alias-bg-layer-1));
+  border-inline-start: 0.5px solid var(--wb-glass-border, var(--dsw-alias-border-l2));
+  box-shadow: var(--wb-glass-rim, none);
+  backdrop-filter: blur(var(--wb-blur, 20px)) saturate(160%);
+  color: var(--dsw-alias-label-primary);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 44px;
+  padding: 0 14px;
+  border-bottom: 0.5px solid var(--wb-glass-border, var(--dsw-alias-border-l2));
+  flex: none;
+}
+
+.title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--dsw-alias-label-primary);
+}
+
+.closeButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: var(--wb-radius-pill, 999px);
+  background: transparent;
+  color: var(--dsw-alias-label-secondary);
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .closeButton:hover {
+    background: var(--dsw-alias-interactive-bg-hover);
+    color: var(--dsw-alias-label-primary);
+  }
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  --dsh-scrollbar-thumb: var(--dsw-alias-scrollbar-bg-l2);
+  --dsh-scrollbar-thumb-hover: var(--dsw-alias-scrollbar-hover-l2);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border-radius: var(--wb-radius-card, var(--dsw-radius-md));
+  background: var(--wb-glass-elevated, var(--dsw-alias-bg-layer-2));
+  border: 0.5px solid var(--wb-glass-border, var(--dsw-alias-border-l2));
+  box-shadow: var(--wb-glass-rim, none);
+}
+
+.sectionLabel {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--dsw-alias-label-tertiary);
+}
+
+.rowBetween {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.modeBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 9px;
+  border-radius: var(--wb-radius-pill, 999px);
+  background: var(--wb-accent-tint, var(--dsw-alias-state-business-tertiary));
+  color: var(--wb-accent, var(--dsw-alias-brand-primary));
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: var(--wb-radius-pill, 999px);
+  font-size: 11px;
+  font-weight: 500;
+  background: var(--dsw-alias-bg-layer-3);
+  color: var(--dsw-alias-label-secondary);
+}
+
+.statusBadge[data-status='running'] {
+  background: var(--wb-accent-tint, var(--dsw-alias-state-business-tertiary));
+  color: var(--wb-accent, var(--dsw-alias-brand-primary));
+}
+
+.statusBadge[data-status='waiting'] {
+  background: var(--dsw-alias-state-warn-tertiary);
+  color: var(--dsw-alias-state-warn-label);
+}
+
+.primaryText {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 19px;
+  color: var(--dsw-alias-label-primary);
+  word-break: break-word;
+}
+
+.mutedText {
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--dsw-alias-label-tertiary);
+  word-break: break-word;
+}
+
+.monoMeta {
+  font-family: var(--ds-font-family-code, monospace);
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--dsw-alias-label-secondary);
+  word-break: break-all;
+}
+
+.actionList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: var(--dsw-radius-md);
+  border: 0.5px solid var(--wb-glass-border, var(--dsw-alias-border-l2));
+  background: var(--dsw-alias-bg-layer-1);
+  color: var(--dsw-alias-label-primary);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.actionButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (hover: hover) {
+  .actionButton:not(:disabled):hover {
+    background: var(--dsw-alias-interactive-bg-hover);
+    border-color: var(--wb-accent, var(--dsw-alias-brand-primary));
+  }
+}
+
+.actionHint {
+  font-family: var(--ds-font-family-code, monospace);
+  font-size: 11px;
+  color: var(--dsw-alias-label-tertiary);
+}

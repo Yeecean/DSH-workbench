@@ -1,0 +1,60 @@
+/* Apple Liquid Glass & Typography Token Refinement Layer for DSH Workbench.
+ * Preserves custom user font overrides (`--dsh-font-family-text`, `--dsh-font-family-code`)
+ * while upgrading the built-in stacks to ChillRoundM (寒蝉半圆体) + JetBrains Mono.
+ */
+
+:root[data-dsh-workbench='1'] {
+  --dsh-font-family-text-default:
+    'ChillRoundM', '寒蝉半圆体', -apple-system, BlinkMacSystemFont, 'SF Pro Text',
+    'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  --dsh-font-family-code-default:
+    'JetBrains Mono', ui-monospace, 'SF Mono', 'Fira Code', Menlo, Consolas, monospace;
+
+  --wb-accent: var(--dsw-alias-state-business-primary);
+  --wb-accent-ink: var(--dsw-alias-label-on-color);
+  --wb-accent-tint: color-mix(in srgb, var(--wb-accent) 14%, transparent);
+  --wb-radius-pill: 999px;
+  --wb-radius-panel: var(--dsw-radius-lg);
+  --wb-radius-card: var(--dsw-radius-md);
+  --wb-blur: 20px;
+
+  --wb-glass-surface: color-mix(in srgb, var(--dsw-alias-bg-layer-1) 74%, transparent);
+  --wb-glass-elevated: color-mix(in srgb, var(--dsw-alias-bg-layer-2) 86%, transparent);
+  --wb-glass-rim: inset 0 1px 0 var(--dsw-alias-border-l1);
+  --wb-glass-border: var(--dsw-alias-border-l2);
+  --wb-glass-shadow: none;
+  --wb-ambient-bg:
+    radial-gradient(960px 540px at 84% -8%, color-mix(in srgb, var(--wb-accent) 8%, transparent), transparent 64%),
+    radial-gradient(760px 440px at 12% 112%, color-mix(in srgb, var(--dsw-alias-state-done-primary) 6%, transparent), transparent 62%);
+}
+
+:root[data-dsh-workbench='1'][data-workbench-reduced-transparency='true'] {
+  --wb-blur: 0px;
+  --wb-glass-surface: var(--dsw-alias-bg-layer-1);
+  --wb-glass-elevated: var(--dsw-alias-bg-layer-2);
+  --wb-glass-rim: none;
+  --wb-ambient-bg: none;
+}
+
+:root[data-dsh-workbench='1'][data-workbench-reduced-motion='true'] *,
+:root[data-dsh-workbench='1'][data-workbench-reduced-motion='true'] *::before,
+:root[data-dsh-workbench='1'][data-workbench-reduced-motion='true'] *::after {
+  transition-duration: 0.01ms !important;
+  animation-duration: 0.01ms !important;
+}
+
+:root[data-dsh-workbench='1'] body {
+  background-image: var(--wb-ambient-bg);
+}
+
+/* Liquid Glass elevation refinement on Workbench code/numeric badges */
+:root[data-dsh-workbench='1'] code,
+:root[data-dsh-workbench='1'] pre,
+:root[data-dsh-workbench='1'] kbd {
+  font-family: var(--ds-font-family-code);
+}
+
+/* Mode accent cue across Conversation top header */
+:root[data-dsh-workbench='1'][data-workbench-mode='code'] [data-conversation-header-leading] {
+  color: var(--dsw-alias-label-primary);
+}

@@ -15,10 +15,23 @@ import type { createLayoutStore } from './stores.ts'
 /** Identity shared by a sidebar panel entry and its main-slot occupant. */
 export type MainPanelId = Branded<'MainPanelId'>
 
+/** Right-column occupant surface identifier. */
+export type RightbarSurface = 'session' | 'global'
+
 /** Root-scoped navigation state exposed to panel-aware components. */
 export interface PanelInfo {
   /** Selected global panel; null displays the current Conversation. */
   readonly activePanelId: MainPanelId | null
+}
+
+/** Root-scoped right-column arbitration state exposed through `ctx.layout.rightbarInfo`. */
+export interface RightbarInfo {
+  /** Surface currently owning the single right column track and handle. */
+  readonly owner: RightbarSurface
+  /** Whether the Session surface's fullscreen mode was paused by switching away. */
+  readonly sessionPausedFullscreen: boolean
+  /** Monotonic arbitration epoch incremented when surface ownership changes. */
+  readonly generation: number
 }
 
 /** The layout store's bound action set (framework-baked, draft params peeled). */
@@ -28,6 +41,8 @@ export type PanelActions = BoundActions<ReturnType<typeof createLayoutStore>>
 export interface ILayout {
   /** Selected central panel from the same root store used by `usePanelInfo`. */
   readonly panelInfo: HostObservable<PanelInfo>
+  /** Active right-column surface arbitration state from the root layout store. */
+  readonly rightbarInfo: HostObservable<RightbarInfo>
   /**
    * Select a global central panel without changing the current Session.
    * @param panelId - registered main key, or null to show the Conversation.
@@ -42,15 +57,28 @@ export interface ILayout {
   /** Toggle the sidebar panel (closed ⟷ contract default width). */
   toggleSidebar(): void
   /**
-   * Report the right panel's presentation without changing its expanded state.
+   * Report the Session right panel's presentation without changing its expanded state.
    * @param track - whether the normal panel width reserves a grid track,
    *   including beneath a fullscreen overlay.
    * @param fullscreen - whether the panel covers the frame and hides its outer
    *   resize handle; independent of the underlying grid track.
    */
   openRightbar(track: boolean, fullscreen: boolean): void
-  /** Report the right panel as hidden: no track, no handle. */
+  /** Report the Session right panel as hidden: no track, no handle. */
   closeRightbar(): void
+  /**
+   * Report the global right panel's presentation and claim single-rail ownership.
+   * @param track - whether the normal panel width reserves a grid track.
+   * @param fullscreen - whether the global panel covers the frame.
+   */
+  openGlobalRightbar(track: boolean, fullscreen: boolean): void
+  /** Report the global right panel as hidden and return ownership to Session. */
+  closeGlobalRightbar(): void
+  /**
+   * Switch right-column arbitration ownership explicitly or automatically.
+   * @param surface - target occupant surface (`'session'`, `'global'`, or `'auto'`).
+   */
+  selectRightbarSurface(surface: RightbarSurface | 'auto'): void
 }
 
 /** Cross-plugin panel-action face (ctx.layout). */
@@ -61,11 +89,16 @@ export class LayoutController implements ILayout {
    * @param panels - actions of the instance shared with the root entry.
    * @param hasMainPanel - checks the live main-slot registry for a panel id.
    * @param panelInfo - root store's shared central-panel selection source.
+   * @param rightbarInfo - root store's shared right-column arbitration source.
    */
   constructor(
     private readonly panels: PanelActions,
     private readonly hasMainPanel: (id: MainPanelId) => boolean,
     readonly panelInfo: HostObservable<PanelInfo>,
+    readonly rightbarInfo: HostObservable<RightbarInfo> = {
+      getSnapshot: () => ({ owner: 'session', sessionPausedFullscreen: false, generation: 0 }),
+      subscribe: () => () => {},
+    },
   ) {}
 
   /** Select a global panel or return to the Conversation. */
@@ -102,5 +135,20 @@ export class LayoutController implements ILayout {
   /** Report the right panel as hidden: no track, no handle. */
   closeRightbar(): void {
     this.panels.closeRightbar()
+  }
+
+  /** Report the global right panel's presentation and claim right-column ownership. */
+  openGlobalRightbar(track: boolean, fullscreen: boolean): void {
+    this.panels.openGlobalRightbar(track, fullscreen)
+  }
+
+  /** Report the global right panel as hidden and return right-column ownership. */
+  closeGlobalRightbar(): void {
+    this.panels.closeGlobalRightbar()
+  }
+
+  /** Switch right-column ownership explicitly or settle automatically. */
+  selectRightbarSurface(surface: RightbarSurface | 'auto'): void {
+    this.panels.selectRightbarSurface(surface)
   }
 }

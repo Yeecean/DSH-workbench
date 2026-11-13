@@ -66,6 +66,15 @@ declare module '@deepseek-ai/dsh-client-ui-slots' {
   }
 }
 
+declare module '@deepseek-ai/cordis' {
+  interface Events {
+    /**
+     * Request to open the Settings modal, optionally focusing a specific section.
+     */
+    'ui-settings/open'(sectionId?: string): void
+  }
+}
+
 /** Dictionary namespace owned by this plugin (shell chrome + General copy). */
 const NS = 'settings'
 
@@ -210,6 +219,13 @@ export function apply(ctx: ClientContext): void {
       const shellHandle = createSettingsShellStore()
       const shellInstance = shellHandle.create()
       const shellStore: typeof shellHandle = { ...shellHandle, create: () => shellInstance }
+      const disposeOpenEvent = ctx.on('ui-settings/open', (sectionId) => {
+        if (sectionId === undefined) {
+          shellInstance.actions.open()
+        } else {
+          shellInstance.actions.openSection(sectionId)
+        }
+      })
       const disposeCommand = ctx.shortcuts.register({
         id: 'settings.open' as ShortcutCommandId, label: () => t('shortcut.open'), aliases: ['settings', 'preferences'],
         defaults: {
@@ -245,7 +261,7 @@ export function apply(ctx: ClientContext): void {
         },
         inject: shellInjected,
       }, SettingsRoot)
-      return () => { disposeCommand(); disposeSlot() }
+      return () => { disposeOpenEvent(); disposeCommand(); disposeSlot() }
     }))
 
   ctx.slots.inject('settings.trigger', () =>

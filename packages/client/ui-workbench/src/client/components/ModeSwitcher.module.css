@@ -1,0 +1,143 @@
+/* Apple-inspired segmented Work × Code header switcher & Code preset pill bar. */
+
+.root {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
+  max-width: 100%;
+  /* Clear top-left collapsed controls / macOS traffic lights when published. */
+  margin-inline-start: max(0px, calc(var(--dsh-frame-leading-clearance, 0px) - 20px));
+  -webkit-app-region: no-drag;
+}
+
+.segmented {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  padding: 2px;
+  border-radius: var(--wb-radius-pill, 999px);
+  background: var(--wb-glass-surface, var(--dsw-alias-bg-layer-1));
+  border: 0.5px solid var(--wb-glass-border, var(--dsw-alias-border-l2));
+  box-shadow: var(--wb-glass-rim, none);
+  backdrop-filter: blur(var(--wb-blur, 20px)) saturate(160%);
+}
+
+.segment {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  padding: 0 9px;
+  border: none;
+  border-radius: var(--wb-radius-pill, 999px);
+  background: transparent;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: 0.01em;
+  color: var(--dsw-alias-label-secondary);
+  cursor: pointer;
+  transition: background-color 140ms ease, color 140ms ease, box-shadow 140ms ease;
+}
+
+.segment:focus-visible,
+.presetButton:focus-visible,
+.inspectorToggle:focus-visible {
+  outline: var(--dsw-focus-ring-width, 2px) solid var(--dsw-focus-ring-color, var(--dsw-alias-state-business-primary));
+  outline-offset: 1px;
+}
+
+.segment[aria-selected='true'] {
+  background: var(--wb-accent, var(--dsw-alias-brand-primary));
+  color: var(--wb-accent-ink, var(--dsw-alias-label-on-color));
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.14);
+}
+
+@media (hover: hover) {
+  .segment:not([aria-selected='true']):hover {
+    color: var(--dsw-alias-label-primary);
+    background: var(--dsw-alias-interactive-bg-hover);
+  }
+}
+
+.presetGroup {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border-radius: var(--wb-radius-pill, 999px);
+  background: var(--wb-glass-surface, var(--dsw-alias-bg-layer-1));
+  border: 0.5px solid var(--wb-glass-border, var(--dsw-alias-border-l2));
+  backdrop-filter: blur(var(--wb-blur, 20px)) saturate(160%);
+}
+
+.presetButton {
+  height: 22px;
+  padding: 0 7px;
+  border: none;
+  border-radius: var(--wb-radius-pill, 999px);
+  background: transparent;
+  font-family: var(--ds-font-family-code, monospace);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  color: var(--dsw-alias-label-secondary);
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.presetButton[aria-pressed='true'] {
+  background: var(--wb-accent-tint, var(--dsw-alias-state-business-tertiary));
+  color: var(--wb-accent, var(--dsw-alias-brand-primary));
+}
+
+@media (hover: hover) {
+  .presetButton:not([aria-pressed='true']):hover {
+    color: var(--dsw-alias-label-primary);
+    background: var(--dsw-alias-interactive-bg-hover);
+  }
+}
+
+.inspectorToggle {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 5px;
+  height: 26px;
+  padding: 0 9px;
+  border-radius: var(--wb-radius-pill, 999px);
+  border: 0.5px solid var(--wb-glass-border, var(--dsw-alias-border-l2));
+  background: var(--wb-glass-surface, var(--dsw-alias-bg-layer-1));
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--dsw-alias-label-secondary);
+  cursor: pointer;
+  backdrop-filter: blur(var(--wb-blur, 20px)) saturate(160%);
+  transition: background-color 140ms ease, color 140ms ease, border-color 140ms ease;
+}
+
+.inspectorToggle[aria-pressed='true'] {
+  background: var(--wb-accent-tint, var(--dsw-alias-state-business-tertiary));
+  border-color: var(--wb-accent, var(--dsw-alias-brand-primary));
+  color: var(--wb-accent, var(--dsw-alias-brand-primary));
+}
+
+@media (hover: hover) {
+  .inspectorToggle:not([aria-pressed='true']):hover {
+    color: var(--dsw-alias-label-primary);
+    background: var(--dsw-alias-interactive-bg-hover);
+  }
+}
+
+@media (max-width: 720px) {
+  .presetGroup {
+    display: none;
+  }
+}

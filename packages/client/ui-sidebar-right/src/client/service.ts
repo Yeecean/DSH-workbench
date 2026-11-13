@@ -150,6 +150,16 @@ export interface SidebarRightHost {
    * @param close - the synchronous cleanup and removal.
    */
   readonly closeWithFocus: (sessionId: SessionId, paneId: PaneId, close: () => void) => void
+  /**
+   * Whether the Session surface currently owns the shared right column (defaults to true).
+   * @returns true while the Session right surface is the active owner.
+   */
+  readonly isSessionSurfaceActive?: () => boolean
+  /**
+   * Claim right-column presentation ownership for the Session surface before an
+   * explicit open or reveal.
+   */
+  readonly requestSessionSurface?: () => void
 }
 
 /** Where an open lands; every field is optional and the defaults are the common case. */
@@ -450,6 +460,7 @@ export class SidebarRightController implements ISidebarRight {
       throw new Error(`sidebarRight: no registered tab type claims "${address}"`)
     }
     const claim = this.tabs.claim(address, options.kind)
+    if (options.destination !== 'float') this.host.requestSessionSurface?.()
     if (options.destination === undefined) this.place(sessionId, actions, claim, address, options, options.params)
     else this.placeIn(sessionId, actions, claim, address, options.destination, options.params)
   }
@@ -477,6 +488,7 @@ export class SidebarRightController implements ISidebarRight {
     kind: K,
     options: SidebarRightOpenTabOptions<K>,
   ): void {
+    this.host.requestSessionSurface?.()
     const definition = this.tabs.get(kind)
     if (definition === undefined) throw new Error(`sidebarRight: no tab type is registered as "${kind}"`)
     const address = definition.multiple === true ? `${pageAddress(kind)}/${randomUUID()}` : pageAddress(kind)
@@ -606,8 +618,16 @@ export class SidebarRightController implements ISidebarRight {
   /** Collapse the column, or expand it and focus its active dock pane after rendering. */
   toggleExpanded(): void {
     const { sessionId, actions } = this.require()
+    const surfaceActive = this.host.isSessionSurfaceActive?.() ?? true
     this.host.openWithFocus(sessionId, () => {
-      actions.toggleExpanded(sessionId)
+      if (!surfaceActive) {
+        this.host.requestSessionSurface?.()
+        if (!this.isExpanded()) actions.setExpanded(sessionId, true)
+      } else {
+        const wasExpanded = this.isExpanded()
+        actions.toggleExpanded(sessionId)
+        if (!wasExpanded) this.host.requestSessionSurface?.()
+      }
       const layout = this.mountedSurface()?.layout
       return layout?.expanded ? activeDockPaneId(layout) : undefined
     })
@@ -619,7 +639,9 @@ export class SidebarRightController implements ISidebarRight {
    */
   focus(tabId: TabId): void {
     const { sessionId, actions } = this.require()
-    if (this.mountedSurface()?.layout.tabs[tabId] === undefined) return
+    const layout = this.mountedSurface()?.layout
+    if (layout?.tabs[tabId] === undefined) return
+    if (findTabPane(layout, tabId).host === 'dock') this.host.requestSessionSurface?.()
     actions.focusTab(sessionId, tabId)
   }
 
@@ -768,6 +790,7 @@ export class SidebarRightController implements ISidebarRight {
     const node = layout.nodes[target]
     if (node === undefined || node.kind !== 'pane' || node.host !== 'dock') return undefined
     if (!canSplit(layout) || dockPaneIds(layout).length >= 2 || !this.canSplitPane(sessionId, target)) return undefined
+    this.host.requestSessionSurface?.()
     let created: PaneId | undefined
     this.host.openWithFocus(sessionId, () => {
       actions.splitPane(sessionId, target, (id) => { created = id })
@@ -797,6 +820,7 @@ export class SidebarRightController implements ISidebarRight {
     const { sessionId, actions } = this.require()
     const node = this.mountedSurface()?.layout.nodes[paneId]
     if (node === undefined || node.kind !== 'pane' || node.host !== 'float') return
+    this.host.requestSessionSurface?.()
     actions.unfloatPane(sessionId, paneId)
   }
 

@@ -31,7 +31,8 @@ import type { Context as ClientContext } from '@deepseek-ai/cordis'
 import type {} from '@deepseek-ai/dsh-client-resources/client'
 import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
 import type {} from '@deepseek-ai/dsh-client-ui-session/client'
-import type { ILayout } from '@deepseek-ai/dsh-client-ui-layout/client'
+import type { HostObservable } from '@deepseek-ai/dsh-client-ui-slots'
+import type { ILayout, RightbarSurface } from '@deepseek-ai/dsh-client-ui-layout/client'
 import type {} from '@deepseek-ai/dsh-client-ui-layout/client'
 import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
 import type { SessionId } from '@deepseek-ai/dsh-session/types'
@@ -123,6 +124,13 @@ export function apply(ctx: ClientContext): void {
     return () => { unsubscribe(); views.dispose() }
   }, 'ui-sidebar-right: retained Session views')
   const layout: ILayout = ctx.layout
+  const layoutArbitration: Partial<Pick<ILayout, 'rightbarInfo' | 'selectRightbarSurface'>> = layout
+  const rightbarInfo = layoutArbitration.rightbarInfo
+  const rightbarOwner: HostObservable<RightbarSurface> = {
+    getSnapshot: () => (rightbarInfo === undefined ? 'session' : rightbarInfo.getSnapshot().owner),
+    subscribe: listener => (rightbarInfo === undefined ? () => {} : rightbarInfo.subscribe(listener)),
+  }
+  const requestSessionSurface = (): void => { layoutArbitration.selectRightbarSurface?.('session') }
   // The automatic fullscreen rule as the seats last rendered it: the frame
   // hands them its width as owner props, and every seat reports the same rule.
   let autoFullscreen = false
@@ -131,6 +139,8 @@ export function apply(ctx: ClientContext): void {
     (address, signal) => { ctx.resources.pin(address, signal) },
     {
       autoFullscreen: () => autoFullscreen,
+      isSessionSurfaceActive: () => rightbarOwner.getSnapshot() === 'session',
+      requestSessionSurface,
       openWithFocus: (sessionId, open) => { openWithPaneFocus(document, sessionId, open) },
       closeWithFocus: (sessionId, paneId, close) => { closeWithPaneFocus(document, sessionId, paneId, close) },
     },
@@ -235,7 +245,7 @@ export function apply(ctx: ClientContext): void {
         name: 'rightbar',
         children: { 'rightbar.session': { kind: 'single', scope: 'session' } },
         inject: (): RightbarRootInjected => ({
-          hooks: { views: views.source },
+          hooks: { views: views.source, rightbarOwner },
           mountView: reference => views.mount(reference),
         }),
       }, RightbarRoot)
@@ -270,7 +280,7 @@ export function apply(ctx: ClientContext): void {
       name: 'conversation.session.header.corner',
       locale: NS,
       store,
-      inject: () => ({ hooks: { shortcuts: ctx.shortcuts.catalog } }),
+      inject: () => ({ hooks: { shortcuts: ctx.shortcuts.catalog, rightbarOwner }, requestSessionSurface }),
     }, ExpandButton))
     // Stage two for the guide: it declares the chain child it hosts and reads
     // the registry's entry boxes, which an ordinary type has no reason to do.
