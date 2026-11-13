@@ -4,10 +4,24 @@
   height: 100%;
   min-width: 0;
   color: var(--dsw-alias-label-primary);
-  background: var(--wb-glass-surface, color-mix(in srgb, var(--dsw-alias-bg-layer-2) 84%, transparent));
-  backdrop-filter: blur(var(--wb-blur, 20px)) saturate(160%);
+  background-color: var(
+    --wb-shell-rightbar-bg,
+    var(--wb-glass-surface, color-mix(in srgb, var(--dsw-alias-bg-layer-2) 84%, transparent))
+  );
+  background-image: var(--wb-glass-sheen, none);
+  backdrop-filter: var(--wb-glass-backdrop, blur(var(--wb-blur, 20px)) saturate(160%));
   border-left: 0.5px solid var(--wb-glass-border, var(--dsw-alias-border-l2));
+  box-shadow: var(--wb-glass-rim, none);
   font-family: var(--dsh-font-family-text, inherit);
+}
+
+:global([data-dsh-workbench='1']:not([data-workbench-reduced-transparency='true'])) .root {
+  height: calc(100% - 14px);
+  margin: 4px 10px 10px 6px;
+  border: 0.5px solid var(--wb-glass-border, var(--dsw-alias-border-l2));
+  border-radius: var(--wb-radius-panel, var(--dsw-radius-lg));
+  box-shadow: var(--wb-glass-rim, none), var(--wb-glass-panel-shadow, none);
+  overflow: hidden;
 }
 
 .header {
@@ -40,9 +54,11 @@
   cursor: pointer;
 }
 
-.closeButton:hover {
-  background: var(--dsw-alias-interactive-bg-hover);
-  color: var(--dsw-alias-label-primary);
+@media (hover: hover) {
+  .closeButton:hover {
+    background: var(--dsw-alias-interactive-bg-hover);
+    color: var(--dsw-alias-label-primary);
+  }
 }
 
 .closeButton:focus-visible,
@@ -69,11 +85,13 @@
 }
 
 .card {
-  border-radius: var(--dsw-radius-md);
+  border-radius: var(--wb-radius-card, var(--dsw-radius-md));
   padding: 12px;
-  background: var(--wb-glass-elevated, var(--dsw-alias-bg-layer-2));
+  background-color: var(--wb-glass-elevated, var(--dsw-alias-bg-layer-2));
+  background-image: var(--wb-glass-sheen, none);
+  backdrop-filter: var(--wb-glass-backdrop, none);
   border: 0.5px solid var(--wb-glass-border, var(--dsw-alias-border-l3));
-  box-shadow: var(--wb-glass-rim, inset 0 1px 0 var(--dsw-alias-border-l3));
+  box-shadow: var(--wb-glass-rim, inset 0 1px 0 var(--dsw-alias-border-l3)), var(--wb-glass-shadow, none);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -116,6 +134,7 @@
   gap: 5px;
   padding: 2px 8px;
   border-radius: 999px;
+  corner-shape: round;
   font-size: 11px;
   font-weight: 500;
   background: var(--dsw-alias-bg-layer-3);
@@ -217,9 +236,11 @@
   transition: background-color 140ms ease, border-color 140ms ease;
 }
 
-.actionButton:hover {
-  background: var(--dsw-alias-interactive-bg-hover);
-  border-color: var(--dsw-alias-border-l1);
+@media (hover: hover) {
+  .actionButton:hover {
+    background: var(--dsw-alias-interactive-bg-hover);
+    border-color: var(--dsw-alias-border-l1);
+  }
 }
 
 .compactButton {
@@ -237,8 +258,10 @@
   cursor: pointer;
 }
 
-.compactButton:hover {
-  background: var(--dsw-alias-interactive-bg-hover);
+@media (hover: hover) {
+  .compactButton:hover {
+    background: var(--dsw-alias-interactive-bg-hover);
+  }
 }
 
 .actionHint {
@@ -263,6 +286,7 @@
 .filterChip {
   padding: 3px 8px;
   border-radius: 999px;
+  corner-shape: round;
   border: 0.5px solid transparent;
   background: transparent;
   color: var(--dsw-alias-label-secondary);
@@ -272,9 +296,11 @@
   cursor: pointer;
 }
 
-.filterChip:hover {
-  background: var(--dsw-alias-interactive-bg-hover);
-  color: var(--dsw-alias-label-primary);
+@media (hover: hover) {
+  .filterChip:hover {
+    background: var(--dsw-alias-interactive-bg-hover);
+    color: var(--dsw-alias-label-primary);
+  }
 }
 
 .filterChip[aria-pressed='true'] {
@@ -342,6 +368,7 @@
 .itemCategoryPill {
   padding: 1px 6px;
   border-radius: 999px;
+  corner-shape: round;
   background: var(--dsw-alias-bg-layer-3);
   color: var(--dsw-alias-label-tertiary);
   font-size: 10px;
@@ -362,14 +389,17 @@
   flex-shrink: 0;
 }
 
-.itemAction:hover {
-  background: var(--dsw-alias-interactive-bg-hover);
+@media (hover: hover) {
+  .itemAction:hover {
+    background: var(--dsw-alias-interactive-bg-hover);
+  }
 }
 
 .statusDot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
+  corner-shape: round;
   flex-shrink: 0;
   background: var(--dsw-alias-label-quaternary);
 }
@@ -410,9 +440,11 @@
   cursor: pointer;
 }
 
-.timelineToggle:hover {
-  background: var(--dsw-alias-interactive-bg-hover);
-  color: var(--dsw-alias-label-primary);
+@media (hover: hover) {
+  .timelineToggle:hover {
+    background: var(--dsw-alias-interactive-bg-hover);
+    color: var(--dsw-alias-label-primary);
+  }
 }
 
 .fileChips {

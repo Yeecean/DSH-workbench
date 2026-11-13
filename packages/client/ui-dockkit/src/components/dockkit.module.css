@@ -169,7 +169,9 @@
 
 .tabHost:not(.float),
 .emptyTabHost {
-  background: var(--dsw-alias-bg-base);
+  background-color: var(--wb-shell-rightbar-bg, var(--dsw-alias-bg-base));
+  background-image: var(--wb-glass-sheen, none);
+  backdrop-filter: var(--wb-glass-backdrop, none);
 }
 
 .tabCell[data-dockkit-host='dock'][data-dockkit-column='0'] > .tabHost {

@@ -10,6 +10,7 @@ vi.mock('../src/preload-menu.ts', () => ({ installWindowsMenu: () => ({ update: 
 afterEach(() => {
   window.dispatchEvent(new Event('pagehide'))
   document.documentElement.removeAttribute('data-windows-titlebar')
+  document.documentElement.removeAttribute('data-workbench-reduced-transparency')
   document.documentElement.style.removeProperty('--dsh-windows-titlebar-height')
   document.documentElement.lang = 'en'
   document.body.removeAttribute('data-ds-dark-theme')
@@ -47,6 +48,9 @@ it('synchronizes live language and palette changes and stops observing a closed 
   document.documentElement.lang = 'zh-CN'
   document.body.setAttribute('data-ds-dark-theme', '')
   await vi.waitFor(() => { expect(send).toHaveBeenLastCalledWith(DESKTOP_IPC.windowsAppearance, 'zh-CN', 'rgba(27, 27, 28, 1)', 'rgba(0, 0, 0, 1)') })
+  document.body.removeAttribute('data-ds-dark-theme')
+  document.documentElement.setAttribute('data-workbench-reduced-transparency', 'false')
+  await vi.waitFor(() => { expect(send).toHaveBeenLastCalledWith(DESKTOP_IPC.windowsAppearance, 'zh-CN', 'rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)') })
   window.dispatchEvent(new Event('pagehide'))
   send.mockClear()
   document.documentElement.lang = 'en'

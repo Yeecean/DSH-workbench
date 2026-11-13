@@ -5,7 +5,11 @@
   height: 100%;
   box-sizing: border-box;
   overflow: hidden;
-  background: var(--dsw-alias-bg-base);
+  background: var(--wb-shell-frame-bg, var(--dsw-alias-bg-base));
+}
+
+:global([data-dsh-workbench='1']:not([data-workbench-reduced-transparency='true'])) .frame {
+  isolation: isolate;
 }
 
 /* Only discrete collapse/expand and fold changes ease the tracks (the TSX holds
@@ -28,11 +32,11 @@
   --dsh-windows-content-radius: 16px;
   box-sizing: border-box;
   padding-top: var(--dsh-windows-titlebar-height);
-  background: var(--dsw-specific-sidebar-fill);
+  background: var(--wb-shell-frame-bg, var(--dsw-specific-sidebar-fill));
 }
 
 :global([data-windows-titlebar]) .centerCol {
-  background: var(--dsw-alias-bg-base);
+  background: var(--wb-shell-center-col-bg, var(--dsw-alias-bg-base));
   border-radius: var(--dsh-windows-content-radius) 0 0 0;
   corner-shape: round;
 }
@@ -42,7 +46,8 @@
   position: absolute;
   inset: 0 0 auto;
   height: var(--dsh-windows-titlebar-height);
-  background: var(--dsw-specific-sidebar-fill);
+  background: var(--wb-shell-titlebar-bg, var(--dsw-specific-sidebar-fill));
+  backdrop-filter: var(--wb-glass-backdrop, none);
   -webkit-app-region: drag;
 }
 
@@ -61,7 +66,7 @@
   grid-row: 1;
   min-width: 0;
   overflow: hidden;
-  background: var(--dsw-specific-sidebar-fill);
+  background: var(--wb-shell-sidebar-col-bg, var(--dsw-specific-sidebar-fill));
   border-right: 0.5px solid var(--dsw-alias-border-l3);
 }
 
@@ -147,7 +152,7 @@
 }
 
 :global([data-platform='darwin']) .centerCol {
-  background: var(--dsw-alias-bg-base);
+  background: var(--wb-shell-center-col-bg, var(--dsw-alias-bg-base));
   border-left: 0.5px solid var(--dsw-alias-border-l3);
 }
 
@@ -157,7 +162,7 @@
    diverge would otherwise show vibrancy glass between the centre's right edge
    and the incoming panel. The occupant's opaque panel covers this at rest. */
 :global([data-platform='darwin']) .rightbarCol {
-  background: var(--dsw-alias-bg-base);
+  background: var(--wb-shell-rightbar-bg, var(--dsw-alias-bg-base));
 }
 
 /* The darwin closed sidebar has no rail: the centre reaches the window edge,
@@ -365,7 +370,7 @@
   min-width: 0;
   min-height: 0;
   overflow: auto;
-  background: var(--dsw-alias-bg-base);
+  background: var(--wb-shell-center-col-bg, var(--dsw-alias-bg-base));
 }
 
 .overlayLayer {

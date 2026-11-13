@@ -1,6 +1,9 @@
 .bubble {
   max-width: 100%;
-  background: var(--dsw-specific-bubble);
+  background-color: var(--wb-shell-user-bubble-bg, var(--dsw-specific-bubble));
+  background-image: var(--wb-glass-sheen, none);
+  backdrop-filter: var(--wb-glass-backdrop, none);
+  box-shadow: var(--wb-glass-rim, none);
   border-radius: var(--dsw-radius-xl);
   padding: 10px 16px;
   font-size: var(--dsh-content-font-size, 14px);

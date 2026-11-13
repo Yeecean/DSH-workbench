@@ -147,5 +147,18 @@ describe('normalizeWorkbenchPreferences & buildWorkbenchTokenOverrides', () => {
     })
     expect(overrides['--wb-accent']).toEqual({ light: '#112233', dark: '#0A84FF' })
     expect(overrides['--wb-radius-panel']).toEqual({ light: '20px', dark: '18px' })
+    expect(overrides['--wb-windows-caption-bg']).toEqual({ light: 'transparent', dark: 'transparent' })
+  })
+
+  it('restores solid caption and glass token overrides when reducedTransparency is enabled', () => {
+    const overrides = buildWorkbenchTokenOverrides({
+      ...DEFAULT_WORKBENCH_PREFERENCES,
+      reducedTransparency: true,
+    })
+    expect(overrides['--wb-glass-backdrop']).toEqual({ light: 'none', dark: 'none' })
+    expect(overrides['--wb-windows-caption-bg']).toEqual({
+      light: 'var(--dsw-specific-sidebar-fill)',
+      dark: 'var(--dsw-specific-sidebar-fill)',
+    })
   })
 })

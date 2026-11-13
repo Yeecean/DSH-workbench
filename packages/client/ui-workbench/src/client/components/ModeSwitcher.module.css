@@ -25,10 +25,12 @@
   align-items: center;
   padding: 2px;
   border-radius: var(--wb-radius-pill, 999px);
-  background: var(--wb-glass-surface, var(--dsw-alias-bg-layer-1));
+  corner-shape: round;
+  background-color: var(--wb-glass-surface, var(--dsw-alias-bg-layer-1));
+  background-image: var(--wb-glass-sheen, none);
   border: 0.5px solid var(--wb-glass-border, var(--dsw-alias-border-l2));
-  box-shadow: var(--wb-glass-rim, none);
-  backdrop-filter: blur(var(--wb-blur, 20px)) saturate(160%);
+  box-shadow: var(--wb-glass-rim, none), var(--wb-glass-shadow, none);
+  backdrop-filter: var(--wb-glass-backdrop, blur(var(--wb-blur, 20px)) saturate(160%));
 }
 
 .segment {
@@ -40,6 +42,7 @@
   padding: 0 8px;
   border: none;
   border-radius: var(--wb-radius-pill, 999px);
+  corner-shape: round;
   background: transparent;
   font-family: inherit;
   font-size: 12px;
@@ -78,9 +81,12 @@
   gap: 2px;
   padding: 2px;
   border-radius: var(--wb-radius-pill, 999px);
-  background: var(--wb-glass-surface, var(--dsw-alias-bg-layer-1));
+  corner-shape: round;
+  background-color: var(--wb-glass-surface, var(--dsw-alias-bg-layer-1));
+  background-image: var(--wb-glass-sheen, none);
   border: 0.5px solid var(--wb-glass-border, var(--dsw-alias-border-l2));
-  backdrop-filter: blur(var(--wb-blur, 20px)) saturate(160%);
+  box-shadow: var(--wb-glass-rim, none), var(--wb-glass-shadow, none);
+  backdrop-filter: var(--wb-glass-backdrop, blur(var(--wb-blur, 20px)) saturate(160%));
 }
 
 .presetButton {
@@ -88,6 +94,7 @@
   padding: 0 6px;
   border: none;
   border-radius: var(--wb-radius-pill, 999px);
+  corner-shape: round;
   background: transparent;
   font-family: var(--ds-font-family-code, monospace);
   font-size: 11px;
@@ -118,14 +125,17 @@
   height: 24px;
   padding: 0 8px;
   border-radius: var(--wb-radius-pill, 999px);
+  corner-shape: round;
   border: 0.5px solid var(--wb-glass-border, var(--dsw-alias-border-l2));
-  background: var(--wb-glass-surface, var(--dsw-alias-bg-layer-1));
+  background-color: var(--wb-glass-surface, var(--dsw-alias-bg-layer-1));
+  background-image: var(--wb-glass-sheen, none);
+  box-shadow: var(--wb-glass-rim, none);
   font-family: inherit;
   font-size: 12px;
   font-weight: 500;
   color: var(--dsw-alias-label-secondary);
   cursor: pointer;
-  backdrop-filter: blur(var(--wb-blur, 20px)) saturate(160%);
+  backdrop-filter: var(--wb-glass-backdrop, blur(var(--wb-blur, 20px)) saturate(160%));
   transition: background-color 140ms ease, color 140ms ease, border-color 140ms ease;
 }
 

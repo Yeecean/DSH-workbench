@@ -16,7 +16,7 @@
   height: 100%;
   padding: 6px var(--dsh-sidebar-inline-padding);
   box-sizing: border-box;
-  background: var(--dsw-specific-sidebar-fill);
+  background-color: var(--wb-shell-sidebar-bg, var(--dsw-specific-sidebar-fill));
   color: var(--dsw-alias-label-primary);
   font-size: 14px;
   /* The sidebar is elevated above the conversation surface, so a revealed
@@ -431,7 +431,8 @@
   box-sizing: border-box;
   border: 0.5px solid var(--dsw-alias-border-l3);
   border-radius: var(--dsw-radius-md);
-  background: var(--dsw-alias-button-elevated-fill);
+  background: var(--wb-shell-sidebar-cta-bg, var(--dsw-alias-button-elevated-fill));
+  box-shadow: var(--wb-glass-rim, none);
   color: var(--dsw-alias-label-primary);
   font-size: 14px;
   font-weight: 500;
@@ -442,7 +443,7 @@
 
 @media (hover: hover) {
   .newSession:hover {
-    background: var(--dsw-alias-button-floating-hover);
+    background: var(--wb-shell-sidebar-cta-hover, var(--dsw-alias-button-floating-hover));
   }
 }
 
@@ -588,7 +589,7 @@
   inset-inline: 0;
   bottom: 0;
   height: 24px;
-  background: linear-gradient(to bottom, transparent, var(--dsw-specific-sidebar-fill));
+  background: linear-gradient(to bottom, transparent, var(--wb-shell-sidebar-fade, var(--dsw-specific-sidebar-fill)));
   pointer-events: none;
 }
 
@@ -804,6 +805,51 @@
   display: flex;
   justify-content: center;
   width: auto;
+}
+
+:global([data-dsh-workbench='1']:not([data-workbench-reduced-transparency='true']))
+  .root:not([role='dialog']) {
+  position: relative;
+  background-color: transparent;
+}
+
+:global([data-dsh-workbench='1']:not([data-workbench-reduced-transparency='true']))
+  .root:not([role='dialog'])::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: inherit;
+  background-color: var(--wb-shell-sidebar-bg, var(--dsw-specific-sidebar-fill));
+  background-image: var(--wb-glass-sheen, none);
+  backdrop-filter: var(--wb-glass-backdrop, none);
+}
+
+:global([data-dsh-workbench='1']:not([data-workbench-reduced-transparency='true']))
+  .root:not([role='dialog']):not(.collapsed) {
+  height: calc(100% - 14px);
+  max-width: calc(100% - 16px);
+  margin: 4px 6px 10px 10px;
+  border: 0.5px solid var(--wb-glass-border, var(--dsw-alias-border-l2));
+  border-radius: var(--wb-radius-panel, var(--dsw-radius-lg));
+  box-shadow: var(--wb-glass-rim, none), var(--wb-glass-panel-shadow, none);
+}
+
+:global([data-dsh-workbench='1']:not([data-workbench-reduced-transparency='true']))
+  .root.fading {
+  max-width: none;
+}
+
+:global([data-dsh-workbench='1']:not([data-workbench-reduced-transparency='true']))
+  .root.collapsed:not([role='dialog']) {
+  height: calc(100% - 14px);
+  width: calc(100% - 6px);
+  margin: 4px 0 10px 6px;
+  padding-inline: 7px;
+  border: 0.5px solid var(--wb-glass-border, var(--dsw-alias-border-l2));
+  border-radius: var(--wb-radius-panel, var(--dsw-radius-lg));
+  box-shadow: var(--wb-glass-rim, none), var(--wb-glass-panel-shadow, none);
 }
 
 @media (prefers-reduced-motion: reduce) {

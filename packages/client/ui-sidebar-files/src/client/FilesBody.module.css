@@ -41,7 +41,9 @@
   color: var(--dsw-alias-label-primary);
   font-size: var(--dsh-content-font-size-secondary, 13px);
   line-height: 1.5;
-  background: var(--dsw-alias-bg-base);
+  background-color: var(--wb-shell-rightbar-bg, var(--dsw-alias-bg-base));
+  background-image: var(--wb-glass-sheen, none);
+  backdrop-filter: var(--wb-glass-backdrop, none);
   border-left: 0.5px solid var(--dsw-alias-border-l3);
 }
 

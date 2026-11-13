@@ -227,22 +227,237 @@ const ACCENT_PALETTES: Readonly<Record<Exclude<AccentPresetId, 'custom'>, {
   readonly accent: AccentPaletteModes
   readonly tint: AccentPaletteModes
   readonly ink: AccentPaletteModes
+  readonly ambient: AccentPaletteModes
 }>> = {
   blue: {
     accent: { light: '#007AFF', dark: '#0A84FF' },
     tint: { light: 'rgba(0, 122, 255, 0.12)', dark: 'rgba(10, 132, 255, 0.18)' },
     ink: { light: '#FFFFFF', dark: '#FFFFFF' },
+    ambient: {
+      light: 'radial-gradient(1120px 680px at 84% -8%, rgba(56, 152, 255, 0.24), transparent 62%),'
+        + ' radial-gradient(880px 580px at 10% 106%, rgba(45, 212, 191, 0.16), transparent 60%),'
+        + ' radial-gradient(660px 460px at 22% 8%, rgba(129, 140, 248, 0.14), transparent 64%),'
+        + ' linear-gradient(155deg, #d8e6f7 0%, #e9f0f9 48%, #f4f7fc 100%)',
+      dark: 'radial-gradient(1120px 680px at 84% -8%, rgba(48, 140, 255, 0.26), transparent 62%),'
+        + ' radial-gradient(880px 580px at 10% 106%, rgba(20, 184, 166, 0.16), transparent 60%),'
+        + ' radial-gradient(660px 460px at 22% 8%, rgba(99, 102, 241, 0.18), transparent 64%),'
+        + ' linear-gradient(155deg, #162033 0%, #101622 48%, #0b0f17 100%)',
+    },
   },
   graphite: {
     accent: { light: '#4B5563', dark: '#9CA3AF' },
     tint: { light: 'rgba(75, 85, 99, 0.12)', dark: 'rgba(156, 163, 175, 0.18)' },
     ink: { light: '#FFFFFF', dark: '#0F172A' },
+    ambient: {
+      light: 'radial-gradient(1120px 680px at 84% -8%, rgba(100, 116, 139, 0.20), transparent 62%),'
+        + ' radial-gradient(880px 580px at 10% 106%, rgba(148, 163, 184, 0.16), transparent 60%),'
+        + ' linear-gradient(155deg, #dfe5ee 0%, #edf1f6 52%, #f5f7fa 100%)',
+      dark: 'radial-gradient(1120px 680px at 84% -8%, rgba(148, 163, 184, 0.16), transparent 62%),'
+        + ' radial-gradient(880px 580px at 10% 106%, rgba(71, 85, 105, 0.18), transparent 60%),'
+        + ' linear-gradient(155deg, #191d26 0%, #12151d 52%, #0c0e14 100%)',
+    },
   },
   amber: {
     accent: { light: '#C25E00', dark: '#FF9F0A' },
     tint: { light: 'rgba(194, 94, 0, 0.12)', dark: 'rgba(255, 159, 10, 0.18)' },
     ink: { light: '#FFFFFF', dark: '#1C1917' },
+    ambient: {
+      light: 'radial-gradient(1120px 680px at 84% -8%, rgba(245, 158, 11, 0.18), transparent 62%),'
+        + ' radial-gradient(880px 580px at 10% 106%, rgba(56, 189, 248, 0.12), transparent 60%),'
+        + ' linear-gradient(155deg, #f3e9dc 0%, #f5f1eb 52%, #f8f6f2 100%)',
+      dark: 'radial-gradient(1120px 680px at 84% -8%, rgba(245, 158, 11, 0.20), transparent 62%),'
+        + ' radial-gradient(880px 580px at 10% 106%, rgba(59, 130, 246, 0.14), transparent 60%),'
+        + ' linear-gradient(155deg, #211a14 0%, #161311 52%, #0d0c0b 100%)',
+    },
   },
+}
+
+const SOLID_COMPOSER_SEAT_BG = 'linear-gradient('
+  + '180deg, color-mix(in srgb, var(--dsw-alias-bg-base) 0%, transparent) 0px, var(--dsw-alias-bg-base) 36px)'
+
+function applySurfaceTransparencyMode(
+  overrides: Record<string, { light: string; dark: string }>,
+  ambient: AccentPaletteModes,
+  reduced: boolean,
+): void {
+  if (reduced) {
+    overrides['--wb-blur'] = { light: '0px', dark: '0px' }
+    overrides['--wb-glass-backdrop'] = { light: 'none', dark: 'none' }
+    overrides['--wb-glass-modal-backdrop'] = { light: 'none', dark: 'none' }
+    overrides['--wb-glass-mask-backdrop'] = { light: 'var(--dsw-mask-blur)', dark: 'var(--dsw-mask-blur)' }
+    overrides['--wb-glass-surface'] = { light: 'var(--dsw-alias-bg-layer-1)', dark: 'var(--dsw-alias-bg-layer-1)' }
+    overrides['--wb-glass-elevated'] = { light: 'var(--dsw-alias-bg-layer-2)', dark: 'var(--dsw-alias-bg-layer-2)' }
+    overrides['--wb-glass-chrome'] = { light: 'var(--dsw-alias-bg-layer-2)', dark: 'var(--dsw-alias-bg-layer-2)' }
+    overrides['--wb-glass-sheen'] = { light: 'none', dark: 'none' }
+    overrides['--wb-glass-rim'] = { light: 'none', dark: 'none' }
+    overrides['--wb-glass-border'] = { light: 'var(--dsw-alias-border-l2)', dark: 'var(--dsw-alias-border-l2)' }
+    overrides['--wb-glass-panel-shadow'] = { light: 'none', dark: 'none' }
+    overrides['--wb-glass-composer-shadow'] = { light: 'var(--dsw-elevation-soft)', dark: 'var(--dsw-elevation-soft)' }
+    overrides['--wb-ambient-bg'] = { light: 'none', dark: 'none' }
+    overrides['--wb-shell-frame-bg'] = {
+      light: 'var(--dsw-specific-sidebar-fill)',
+      dark: 'var(--dsw-specific-sidebar-fill)',
+    }
+    overrides['--wb-shell-titlebar-bg'] = {
+      light: 'var(--dsw-specific-sidebar-fill)',
+      dark: 'var(--dsw-specific-sidebar-fill)',
+    }
+    overrides['--wb-windows-caption-bg'] = {
+      light: 'var(--dsw-specific-sidebar-fill)',
+      dark: 'var(--dsw-specific-sidebar-fill)',
+    }
+    overrides['--wb-shell-sidebar-col-bg'] = {
+      light: 'var(--dsw-specific-sidebar-fill)',
+      dark: 'var(--dsw-specific-sidebar-fill)',
+    }
+    overrides['--wb-shell-sidebar-bg'] = {
+      light: 'var(--dsw-specific-sidebar-fill)',
+      dark: 'var(--dsw-specific-sidebar-fill)',
+    }
+    overrides['--wb-shell-sidebar-fade'] = {
+      light: 'var(--dsw-specific-sidebar-fill)',
+      dark: 'var(--dsw-specific-sidebar-fill)',
+    }
+    overrides['--wb-shell-sidebar-cta-bg'] = {
+      light: 'var(--dsw-alias-button-elevated-fill)',
+      dark: 'var(--dsw-alias-button-elevated-fill)',
+    }
+    overrides['--wb-shell-sidebar-cta-hover'] = {
+      light: 'var(--dsw-alias-button-floating-hover)',
+      dark: 'var(--dsw-alias-button-floating-hover)',
+    }
+    overrides['--wb-shell-center-col-bg'] = { light: 'var(--dsw-alias-bg-base)', dark: 'var(--dsw-alias-bg-base)' }
+    overrides['--wb-shell-center-bg'] = { light: 'var(--dsw-alias-bg-base)', dark: 'var(--dsw-alias-bg-base)' }
+    overrides['--wb-shell-header-bg'] = { light: 'transparent', dark: 'transparent' }
+    overrides['--wb-shell-composer-seat-bg'] = {
+      light: SOLID_COMPOSER_SEAT_BG,
+      dark: SOLID_COMPOSER_SEAT_BG,
+    }
+    overrides['--wb-shell-composer-bg'] = {
+      light: 'var(--dsw-specific-input-major)',
+      dark: 'var(--dsw-specific-input-major)',
+    }
+    overrides['--wb-shell-rightbar-bg'] = { light: 'var(--dsw-alias-bg-base)', dark: 'var(--dsw-alias-bg-base)' }
+    overrides['--wb-shell-user-bubble-bg'] = {
+      light: 'var(--dsw-specific-bubble)',
+      dark: 'var(--dsw-specific-bubble)',
+    }
+    overrides['--wb-shell-floating-btn-bg'] = {
+      light: 'var(--dsw-alias-button-floating-fill)',
+      dark: 'var(--dsw-alias-button-floating-fill)',
+    }
+    overrides['--wb-shell-modal-bg'] = { light: 'var(--dsw-alias-bg-layer-2)', dark: 'var(--dsw-alias-bg-layer-2)' }
+    overrides['--wb-shell-sticky-row-bg'] = { light: 'var(--dsw-alias-bg-base)', dark: 'var(--dsw-alias-bg-base)' }
+    return
+  }
+
+  overrides['--wb-blur'] = { light: '28px', dark: '28px' }
+  overrides['--wb-glass-backdrop'] = {
+    light: 'blur(28px) saturate(185%) contrast(103%)',
+    dark: 'blur(28px) saturate(185%) contrast(103%)',
+  }
+  overrides['--wb-glass-modal-backdrop'] = {
+    light: 'blur(36px) saturate(195%) contrast(104%)',
+    dark: 'blur(36px) saturate(195%) contrast(104%)',
+  }
+  overrides['--wb-glass-mask-backdrop'] = {
+    light: 'blur(14px) saturate(140%)',
+    dark: 'blur(14px) saturate(140%)',
+  }
+  overrides['--wb-glass-surface'] = {
+    light: 'rgba(248, 251, 255, 0.58)',
+    dark: 'rgba(24, 30, 42, 0.58)',
+  }
+  overrides['--wb-glass-elevated'] = {
+    light: 'rgba(255, 255, 255, 0.78)',
+    dark: 'rgba(30, 38, 54, 0.74)',
+  }
+  overrides['--wb-glass-chrome'] = {
+    light: 'rgba(246, 250, 255, 0.62)',
+    dark: 'rgba(22, 29, 43, 0.62)',
+  }
+  overrides['--wb-glass-sheen'] = {
+    light: 'linear-gradient(155deg, rgba(255, 255, 255, 0.52) 0%, '
+      + 'rgba(255, 255, 255, 0.08) 45%, rgba(255, 255, 255, 0.24) 100%)',
+    dark: 'linear-gradient(155deg, rgba(255, 255, 255, 0.11) 0%, '
+      + 'rgba(255, 255, 255, 0.015) 45%, rgba(255, 255, 255, 0.05) 100%)',
+  }
+  overrides['--wb-glass-rim'] = {
+    light: 'inset 0 1px 0 rgba(255, 255, 255, 0.94), inset 0 -0.5px 0 rgba(15, 23, 42, 0.05)',
+    dark: 'inset 0 1px 0 rgba(255, 255, 255, 0.22), inset 0 -0.5px 0 rgba(255, 255, 255, 0.05)',
+  }
+  overrides['--wb-glass-border'] = {
+    light: 'rgba(255, 255, 255, 0.72)',
+    dark: 'rgba(255, 255, 255, 0.14)',
+  }
+  overrides['--wb-glass-panel-shadow'] = {
+    light: '0 1px 2px rgba(15, 23, 42, 0.05), 0 12px 32px -12px rgba(15, 23, 42, 0.14)',
+    dark: '0 1px 2px rgba(0, 0, 0, 0.35), 0 18px 42px -16px rgba(0, 0, 0, 0.68)',
+  }
+  overrides['--wb-glass-composer-shadow'] = {
+    light: 'inset 0 1px 0 rgba(255, 255, 255, 0.96), 0 0 0 0.5px rgba(255, 255, 255, 0.78), '
+      + '0 2px 6px rgba(15, 23, 42, 0.06), 0 14px 36px -12px rgba(15, 23, 42, 0.16)',
+    dark: 'inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 0 0 0.5px rgba(255, 255, 255, 0.16), '
+      + '0 2px 6px rgba(0, 0, 0, 0.35), 0 18px 44px -14px rgba(0, 0, 0, 0.72)',
+  }
+  overrides['--wb-ambient-bg'] = { ...ambient }
+  overrides['--wb-shell-frame-bg'] = { ...ambient }
+  overrides['--wb-shell-titlebar-bg'] = {
+    light: 'rgba(246, 249, 254, 0.36)',
+    dark: 'rgba(18, 24, 36, 0.40)',
+  }
+  overrides['--wb-windows-caption-bg'] = { light: 'transparent', dark: 'transparent' }
+  overrides['--wb-shell-sidebar-col-bg'] = { light: 'transparent', dark: 'transparent' }
+  overrides['--wb-shell-sidebar-bg'] = {
+    light: 'rgba(248, 251, 255, 0.56)',
+    dark: 'rgba(22, 29, 43, 0.56)',
+  }
+  overrides['--wb-shell-sidebar-fade'] = { light: 'transparent', dark: 'transparent' }
+  overrides['--wb-shell-sidebar-cta-bg'] = {
+    light: 'rgba(255, 255, 255, 0.74)',
+    dark: 'rgba(255, 255, 255, 0.09)',
+  }
+  overrides['--wb-shell-sidebar-cta-hover'] = {
+    light: 'rgba(255, 255, 255, 0.92)',
+    dark: 'rgba(255, 255, 255, 0.15)',
+  }
+  overrides['--wb-shell-center-col-bg'] = {
+    light: 'rgba(255, 255, 255, 0.16)',
+    dark: 'rgba(12, 17, 27, 0.18)',
+  }
+  overrides['--wb-shell-center-bg'] = {
+    light: 'rgba(255, 255, 255, 0.14)',
+    dark: 'rgba(12, 17, 27, 0.16)',
+  }
+  overrides['--wb-shell-header-bg'] = {
+    light: 'rgba(248, 251, 255, 0.54)',
+    dark: 'rgba(22, 28, 42, 0.54)',
+  }
+  overrides['--wb-shell-composer-seat-bg'] = { light: 'transparent', dark: 'transparent' }
+  overrides['--wb-shell-composer-bg'] = {
+    light: 'rgba(255, 255, 255, 0.64)',
+    dark: 'rgba(26, 33, 48, 0.62)',
+  }
+  overrides['--wb-shell-rightbar-bg'] = {
+    light: 'rgba(248, 251, 255, 0.56)',
+    dark: 'rgba(22, 29, 43, 0.58)',
+  }
+  overrides['--wb-shell-user-bubble-bg'] = {
+    light: 'rgba(224, 237, 255, 0.72)',
+    dark: 'rgba(34, 52, 82, 0.68)',
+  }
+  overrides['--wb-shell-floating-btn-bg'] = {
+    light: 'rgba(255, 255, 255, 0.76)',
+    dark: 'rgba(32, 40, 56, 0.78)',
+  }
+  overrides['--wb-shell-modal-bg'] = {
+    light: 'rgba(250, 252, 255, 0.78)',
+    dark: 'rgba(24, 30, 44, 0.80)',
+  }
+  overrides['--wb-shell-sticky-row-bg'] = {
+    light: 'rgba(246, 250, 255, 0.74)',
+    dark: 'rgba(18, 24, 36, 0.76)',
+  }
 }
 
 /**
@@ -254,42 +469,26 @@ export function buildWorkbenchTokenOverrides(
   prefs: WorkbenchPreferences,
 ): Record<string, { light: string; dark: string }> {
   const palette = prefs.accentPreset === 'custom' ? ACCENT_PALETTES.blue : ACCENT_PALETTES[prefs.accentPreset]
-  const blur = prefs.reducedTransparency ? '0px' : '20px'
   const overrides: Record<string, { light: string; dark: string }> = {
     '--wb-accent': { ...palette.accent },
     '--wb-accent-tint': { ...palette.tint },
     '--wb-accent-ink': { ...palette.ink },
-    '--wb-blur': { light: blur, dark: blur },
     '--wb-radius-pill': { light: '999px', dark: '999px' },
     '--wb-radius-panel': { light: '18px', dark: '18px' },
     '--wb-radius-card': { light: '14px', dark: '14px' },
-    '--wb-glass-surface': prefs.reducedTransparency
-      ? { light: 'var(--dsw-alias-bg-layer-1)', dark: 'var(--dsw-alias-bg-layer-1)' }
-      : { light: 'rgba(255, 255, 255, 0.72)', dark: 'rgba(28, 30, 36, 0.72)' },
-    '--wb-glass-elevated': prefs.reducedTransparency
-      ? { light: 'var(--dsw-alias-bg-layer-2)', dark: 'var(--dsw-alias-bg-layer-2)' }
-      : { light: 'rgba(255, 255, 255, 0.86)', dark: 'rgba(38, 40, 48, 0.84)' },
-    '--wb-glass-rim': prefs.reducedTransparency
-      ? { light: 'none', dark: 'none' }
-      : { light: 'inset 0 1px 0 rgba(255, 255, 255, 0.78)', dark: 'inset 0 1px 0 rgba(255, 255, 255, 0.09)' },
-    '--wb-glass-border': { light: 'rgba(15, 23, 42, 0.08)', dark: 'rgba(255, 255, 255, 0.11)' },
+    '--wb-radius-composer': { light: '20px', dark: '20px' },
+    '--wb-radius-modal': { light: '22px', dark: '22px' },
     '--wb-glass-shadow': {
       light: '0 1px 2px rgba(15, 23, 42, 0.04), 0 10px 30px -12px rgba(15, 23, 42, 0.12)',
       dark: '0 1px 2px rgba(0, 0, 0, 0.25), 0 14px 36px -14px rgba(0, 0, 0, 0.56)',
     },
-    '--wb-ambient-bg': prefs.reducedTransparency
-      ? { light: 'none', dark: 'none' }
-      : {
-        light: 'radial-gradient(960px 540px at 82% -10%, rgba(10, 132, 255, 0.07), transparent 64%),'
-          + ' radial-gradient(760px 440px at 14% 110%, rgba(99, 102, 241, 0.05), transparent 62%)',
-        dark: 'radial-gradient(960px 540px at 84% -8%, rgba(10, 132, 255, 0.10), transparent 64%),'
-          + ' radial-gradient(760px 440px at 12% 112%, rgba(94, 92, 230, 0.08), transparent 62%)',
-      },
     '--dsw-alias-brand-primary': { ...palette.accent },
     '--dsw-alias-link': { ...palette.accent },
     '--dsw-alias-state-business-primary': { ...palette.accent },
     '--dsw-alias-state-business-tertiary': { ...palette.tint },
   }
+
+  applySurfaceTransparencyMode(overrides, palette.ambient, prefs.reducedTransparency)
 
   if (prefs.accentPreset === 'custom' && prefs.customThemeJson.trim().length > 0) {
     const parsed = parseCustomThemeJson(prefs.customThemeJson)
@@ -312,11 +511,7 @@ export function buildWorkbenchTokenOverrides(
   }
 
   if (prefs.reducedTransparency) {
-    overrides['--wb-blur'] = { light: '0px', dark: '0px' }
-    overrides['--wb-glass-surface'] = { light: 'var(--dsw-alias-bg-layer-1)', dark: 'var(--dsw-alias-bg-layer-1)' }
-    overrides['--wb-glass-elevated'] = { light: 'var(--dsw-alias-bg-layer-2)', dark: 'var(--dsw-alias-bg-layer-2)' }
-    overrides['--wb-glass-rim'] = { light: 'none', dark: 'none' }
-    overrides['--wb-ambient-bg'] = { light: 'none', dark: 'none' }
+    applySurfaceTransparencyMode(overrides, palette.ambient, true)
   }
   return overrides
 }
