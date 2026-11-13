@@ -246,6 +246,7 @@
         // Ignore
       }
       applyAppearance(appearance);
+      document.dispatchEvent(new CustomEvent("dsh:appearance-reset"));
       announce("已恢复默认外观与字体设置");
       showToast("已恢复默认外观与字体配置");
     }
@@ -583,6 +584,14 @@
 
   function setWorkspace(space) {
     if (!workbenchWindow.dataset.switchable) return;
+    const previousWorkspace = workbenchWindow.dataset.workspace || "work";
+    if (previousWorkspace !== space) {
+      document.dispatchEvent(
+        new CustomEvent("dsh:before-workspace-change", {
+          detail: { workspace: space, previousWorkspace },
+        })
+      );
+    }
     const isCode = space === "code";
     workbenchWindow.dataset.workspace = space;
 
@@ -615,7 +624,9 @@
     if (breadcrumb && workbenchWindow.dataset.stage2 !== "true") {
       breadcrumb.textContent = isCode ? "DSH workbench / code-ux" : "临时任务 · 未绑定项目";
     }
-    document.dispatchEvent(new CustomEvent("dsh:workspace-change", { detail: { workspace: space } }));
+    document.dispatchEvent(
+      new CustomEvent("dsh:workspace-change", { detail: { workspace: space, previousWorkspace } })
+    );
   }
 
   document.addEventListener("click", (e) => {
@@ -822,11 +833,29 @@
       }
     });
 
-    // IME-safe Enter submit per modern-web-guidance/ime-safe-enter-submit
+    // IME-safe Enter submit: guard composition BEFORE calling preventDefault()
+    let isImeComposing = false;
+    let justEndedComposition = false;
+
+    textarea?.addEventListener("compositionstart", () => {
+      isImeComposing = true;
+      justEndedComposition = false;
+    });
+
+    textarea?.addEventListener("compositionend", () => {
+      isImeComposing = false;
+      justEndedComposition = true;
+      setTimeout(() => {
+        justEndedComposition = false;
+      }, 0);
+    });
+
     textarea?.addEventListener("keydown", (event) => {
+      if (event.isComposing || isImeComposing || event.keyCode === 229 || justEndedComposition) {
+        return;
+      }
       if (event.key === "Enter" && !event.shiftKey) {
         event.preventDefault();
-        if (event.isComposing || event.keyCode === 229) return;
         form.requestSubmit?.();
       }
     });

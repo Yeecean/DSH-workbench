@@ -14,7 +14,7 @@
   - [assets/typography.css](./assets/typography.css)：本地托管 `JetBrains Mono`（400/500/600/700）与 `寒蝉半圆体`（`ChillRoundM.ttf`）、DSH 字体角色变量、`font-size-adjust: from-font` 混排对齐及字重约束（`<= 500`）；
   - [assets/workbench.css](./assets/workbench.css)：macOS 浮窗舞台、Liquid Glass 与 Standard Material 严格分层、Unified & Side-by-Side Diff 样式、Conic Spinner、Top-Layer Dialog & Toast、Container Query 断点适配；
   - [assets/workbench.js](./assets/workbench.js)：外观设置 Popover、`<input type="checkbox" switch>` / `role="switch"` 同步、`<=1024px` / `<768px` 侧栏与抽屉交互、右栏宽度拖拽、`focusgroup` / Popover 回退与 IME 安全输入；
-  - [assets/stage2.js](./assets/stage2.js)：Stage 2 状态路由、Per-Session 草稿保留、右栏纵向/横向双轴分割拖拽、Work 审批/澄清与排入下一轮队列交互、Code Unified/Side-by-Side/Wrap Diff 渲染及 `S1` 原生 `<dialog closedby="any">` 主题 JSON Token 允许列表预览。
+  - [assets/stage2.js](./assets/stage2.js)：Stage 2 状态路由、跨空间与多会话 Per-Session 草稿保留、右栏纵向/横向双轴分割拖拽、Work 审批/澄清与排入下一轮队列交互、Code Unified/Side-by-Side/Wrap Diff 渲染，以及 `S1` 原生 `<dialog closedby="any">` 主题 JSON 严格校验与本地预览持久化。
 
 ## 2. 材质分层与视觉规范
 
@@ -54,13 +54,13 @@
    - `C6 Debug` 在单轨右栏中集成 `Preview (WebView) + Terminal` 上下分栏调试视口。
 3. **Shared 全局设置 (`S1`)**：
    - 既提供独立画板 [settings-appearance.html](./screens/settings-appearance.html)，也支持在 [index.html](./index.html) 顶栏点击 `设置 S1` 呼出原生模态 `<dialog id="appearance-dialog" closedby="any">`（带 `::backdrop` 虚化、外部轻点/Escape 关闭及无支持浏览器的按压-释放回退）。
-   - 支持 **主题 (`light | dark | system`)、强调色预设、减弱透明度、减弱动态效果、`text / code / terminal` 三组字体/字号/行高调节**，以及带 Token 白名单过滤的 **主题 JSON 导入预览**。
+   - 支持 **主题 (`light | dark | system`)、强调色预设、减弱透明度、减弱动态效果、`text / code / terminal` 三组字体/字号/行高调节**，以及带 Token 允许列表与颜色值安全校验的 **主题 JSON 导入预览**（支持在非独立审阅模式下持久化至当前浏览器 `localStorage`，可一键重置清除）。
 
 ## 5. URL 状态直达参数与快捷键
 
 - **快捷键**：
   - `Ctrl + \` / `Cmd + \`：切换左侧边栏展开、收起与移动端抽屉；
-  - `Enter` / `Shift + Enter`：Composer 提交 / 换行（严格防护 `event.isComposing || event.keyCode === 229` 中文输入法组合态）；
+  - `Enter` / `Shift + Enter`：Composer 提交 / 换行（在调用 `preventDefault()` 前优先检查 `event.isComposing`、`compositionstart/compositionend` 状态与 `keyCode === 229`，确保中文输入法组合态上屏不误触发）；
   - 分栏拖拽分隔条焦点下支持 `ArrowUp` / `ArrowDown` 调整右栏上下分栏比例；
   - `Escape`：关闭移动抽屉、Popover 与原生 Modal Dialog。
 - **URL 直达查询参数（便于直接打开审查对应状态）**：

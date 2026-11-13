@@ -15,7 +15,7 @@
     workState: "w1",
     codeState: "c2",
     activeWorkSession: "w-triage",
-    activeCodeSession: "c-replay",
+    activeCodeSession: "s101",
     activeDiffFile: "session-guard.ts",
     diffViewMode: "unified", // "unified" | "split"
     diffWrap: false,
@@ -397,7 +397,9 @@
     });
   }
 
-  // Theme JSON Import Preview (Safe allowlist of CSS tokens, never touches host files)
+  // Theme JSON Import Preview (Strict CSS color validation + localStorage preview cache)
+  const THEME_IMPORT_STORAGE_KEY = "dsh-workbench-imported-theme-v1";
+  const MAX_THEME_JSON_BYTES = 32 * 1024;
   const ALLOWED_THEME_TOKENS = [
     "--accent-light",
     "--accent-dark",
@@ -408,6 +410,9 @@
     "--surface-content-light",
     "--surface-content-dark",
   ];
+  const ALLOWED_THEME_TOKEN_SET = new Set(ALLOWED_THEME_TOKENS);
+  const RESERVED_KEYS = new Set(["__proto__", "constructor", "prototype"]);
+  const WRAPPER_METADATA_KEYS = new Set(["name", "description", "version", "author", "$schema"]);
 
   const SAMPLE_THEME_PACKS = {
     graphiteDusk: {
@@ -430,29 +435,172 @@
     },
   };
 
-  function applyThemeImportJson(rawText, feedbackEl) {
+  function isPlainObject(value) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+    const proto = Object.getPrototypeOf(value);
+    return proto === Object.prototype || proto === null;
+  }
+
+  function validateThemeColorValue(rawValue) {
+    if (typeof rawValue !== "string") return { ok: false, reason: "色值必须为字符串" };
+    const trimmed = rawValue.trim();
+    if (!trimmed || trimmed.length > 96) {
+      return { ok: false, reason: "色值长度无效" };
+    }
+    if (/[;{}<>\\"'`]|url\s*\(|expression\s*\(|var\s*\(|calc\s*\(|env\s*\(/i.test(trimmed)) {
+      return { ok: false, reason: "禁止包含 CSS 函数注入或控制字符" };
+    }
+    const isHex = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(trimmed);
+    const isFuncColor = /^(?:rgb|rgba|hsl|hsla|oklch|oklab)\(\s*[0-9.+%\-\s,/degturnrad]+\s*\)$/i.test(trimmed);
+    if (!isHex && !isFuncColor) {
+      return { ok: false, reason: "仅支持标准 Hex (#RGB/#RRGGBB/#RRGGBBAA) 或 rgb/hsl/oklch 色值" };
+    }
+    if (typeof CSS !== "undefined" && typeof CSS.supports === "function" && !CSS.supports("color", trimmed)) {
+      return { ok: false, reason: "浏览器未能识别该 CSS 颜色语法" };
+    }
+    return { ok: true, value: trimmed };
+  }
+
+  function validateAndExtractThemePack(rawText) {
+    if (typeof rawText !== "string" || !rawText.trim()) {
+      return { ok: false, error: "请输入或选择 JSON 主题配置后再应用" };
+    }
+    if (rawText.length > MAX_THEME_JSON_BYTES) {
+      return { ok: false, error: `主题 JSON 超过大小限制（上限 ${MAX_THEME_JSON_BYTES} 字符）` };
+    }
+    let parsed;
     try {
-      const parsed = JSON.parse(rawText);
-      const tokenSource = parsed.tokens && typeof parsed.tokens === "object" ? parsed.tokens : parsed;
-      const applied = [];
-      for (const [k, v] of Object.entries(tokenSource)) {
-        if (ALLOWED_THEME_TOKENS.includes(k) && typeof v === "string" && /^#[0-9a-fA-F]{3,8}$|^rgba?\(/.test(v.trim())) {
-          document.documentElement.style.setProperty(k, v.trim());
-          applied.push(k);
-        }
-      }
-      if (!applied.length) {
-        if (feedbackEl) feedbackEl.textContent = "未识别到安全白名单色值 Token（支持 --accent-light / --desktop-bg-light 等）";
-        return;
-      }
-      const msg = `已预览 ${applied.length} 个主题 Token（仅当前页效果，未写入正式 ui-theme 配置）`;
-      if (feedbackEl) feedbackEl.textContent = msg;
-      announce(msg);
-      toast(msg);
+      parsed = JSON.parse(rawText);
     } catch {
-      if (feedbackEl) feedbackEl.textContent = "JSON 解析失败，请检查括号或引号格式";
+      return { ok: false, error: "JSON 解析失败，请检查括号或引号格式" };
+    }
+    if (!isPlainObject(parsed)) {
+      return { ok: false, error: "主题 JSON 顶层必须为普通对象" };
+    }
+
+    const hasTokensWrapper = Object.prototype.hasOwnProperty.call(parsed, "tokens");
+    const tokenSource = hasTokensWrapper ? parsed.tokens : parsed;
+    if (!isPlainObject(tokenSource)) {
+      return { ok: false, error: "tokens 字段必须为键值对对象" };
+    }
+
+    const sanitizedTokens = {};
+    const errors = [];
+    for (const key of Object.keys(tokenSource)) {
+      if (RESERVED_KEYS.has(key)) {
+        errors.push(`禁止保留键名：${key}`);
+        continue;
+      }
+      if (!hasTokensWrapper && WRAPPER_METADATA_KEYS.has(key)) {
+        continue;
+      }
+      if (!ALLOWED_THEME_TOKEN_SET.has(key)) {
+        errors.push(`未授权 Token：${key}`);
+        continue;
+      }
+      const checked = validateThemeColorValue(tokenSource[key]);
+      if (!checked.ok) {
+        errors.push(`${key}：${checked.reason}`);
+        continue;
+      }
+      sanitizedTokens[key] = checked.value;
+    }
+
+    if (errors.length > 0) {
+      return { ok: false, error: `校验未通过：${errors.slice(0, 2).join("；")}` };
+    }
+    if (Object.keys(sanitizedTokens).length === 0) {
+      return { ok: false, error: "未包含任何安全白名单色值 Token（如 --accent-light）" };
+    }
+    const name = typeof parsed.name === "string" ? parsed.name.trim().slice(0, 64) : "自定义预览主题";
+    return { ok: true, name, tokens: sanitizedTokens };
+  }
+
+  function persistImportedThemePack(pack) {
+    if (document.body.dataset.standalone === "true") return;
+    try {
+      localStorage.setItem(THEME_IMPORT_STORAGE_KEY, JSON.stringify({ name: pack.name, tokens: pack.tokens }));
+    } catch {
+      // Ignore blocked storage
     }
   }
+
+  function clearImportedThemePack({ announceClear = false, scope = document } = {}) {
+    ALLOWED_THEME_TOKENS.forEach((k) => document.documentElement.style.removeProperty(k));
+    if (document.body.dataset.standalone !== "true") {
+      try {
+        localStorage.removeItem(THEME_IMPORT_STORAGE_KEY);
+      } catch {
+        // Ignore blocked storage
+      }
+    }
+    const feedback = scope.querySelector("[data-theme-import-feedback]");
+    if (feedback) {
+      feedback.textContent = "已清除导入预览变量与本地缓存，恢复系统默认令牌";
+    }
+    if (announceClear) toast("已恢复默认 Apple 材质令牌");
+  }
+
+  function applyThemeImportJson(rawText, feedbackEl, { persist = true, silent = false } = {}) {
+    const result = validateAndExtractThemePack(rawText);
+    if (!result.ok) {
+      if (feedbackEl) feedbackEl.textContent = result.error;
+      if (!silent) toast(result.error);
+      return false;
+    }
+
+    ALLOWED_THEME_TOKENS.forEach((k) => document.documentElement.style.removeProperty(k));
+    const entries = Object.entries(result.tokens);
+    entries.forEach(([k, v]) => document.documentElement.style.setProperty(k, v));
+    if (persist) persistImportedThemePack(result);
+
+    const cacheNote =
+      document.body.dataset.standalone === "true"
+        ? "仅当前画板会话预览"
+        : "已缓存至本地浏览器预览（localStorage），未写入正式 ui-theme 配置";
+    const msg = `已严格校验并应用 ${entries.length} 个主题 Token（${cacheNote}）`;
+    if (feedbackEl) feedbackEl.textContent = msg;
+    if (!silent) {
+      announce(msg);
+      toast(msg);
+    }
+    return true;
+  }
+
+  function restorePersistedImportedTheme() {
+    if (document.body.dataset.standalone === "true") return;
+    let raw = null;
+    try {
+      raw = localStorage.getItem(THEME_IMPORT_STORAGE_KEY);
+    } catch {
+      return;
+    }
+    if (!raw) return;
+    const result = validateAndExtractThemePack(raw);
+    if (!result.ok) {
+      try {
+        localStorage.removeItem(THEME_IMPORT_STORAGE_KEY);
+      } catch {
+        // Ignore
+      }
+      return;
+    }
+    Object.entries(result.tokens).forEach(([k, v]) => document.documentElement.style.setProperty(k, v));
+    document.querySelectorAll("[data-theme-import-root]").forEach((root) => {
+      const textarea = root.querySelector("[data-theme-json-input]");
+      const feedback = root.querySelector("[data-theme-import-feedback]");
+      if (textarea) textarea.value = JSON.stringify({ name: result.name, tokens: result.tokens }, null, 2);
+      if (feedback) {
+        feedback.textContent = `已从本地预览缓存恢复 ${Object.keys(result.tokens).length} 个主题 Token（未写入正式 ui-theme 配置）`;
+      }
+    });
+  }
+
+  restorePersistedImportedTheme();
+
+  document.addEventListener("dsh:appearance-reset", () => {
+    clearImportedThemePack({ announceClear: false });
+  });
 
   document.addEventListener("click", (e) => {
     const sampleBtn = e.target.closest("[data-theme-sample]");
@@ -479,11 +627,8 @@
 
     const resetTokensBtn = e.target.closest("[data-reset-theme-json]");
     if (resetTokensBtn) {
-      ALLOWED_THEME_TOKENS.forEach((k) => document.documentElement.style.removeProperty(k));
       const scope = resetTokensBtn.closest("[data-theme-import-root]") || document;
-      const feedback = scope.querySelector("[data-theme-import-feedback]");
-      if (feedback) feedback.textContent = "已清除导入预览变量，恢复系统默认令牌";
-      toast("已恢复默认 Apple 材质令牌");
+      clearImportedThemePack({ announceClear: true, scope });
     }
   });
 
@@ -494,6 +639,10 @@
     const scope = fileInput.closest("[data-theme-import-root]") || document;
     const textarea = scope.querySelector("[data-theme-json-input]");
     const feedback = scope.querySelector("[data-theme-import-feedback]");
+    if (file.size > MAX_THEME_JSON_BYTES) {
+      if (feedback) feedback.textContent = `主题文件过大（上限 ${MAX_THEME_JSON_BYTES} 字节）`;
+      return;
+    }
     const reader = new FileReader();
     reader.onload = () => {
       if (textarea) textarea.value = String(reader.result || "");
@@ -519,6 +668,27 @@
         bc.textContent = `${repoName} / 选择或新建会话`;
       }
       toast(`已绑定工作区仓库：${repoName}`);
+      return;
+    }
+
+    if (!isUnifiedShell) {
+      const simParallelBtn = e.target.closest("[data-switch-parallel-session]");
+      if (simParallelBtn) {
+        const sid = simParallelBtn.dataset.switchParallelSession;
+        sessionStore.activeCodeSession = sid;
+        document.querySelectorAll("[data-switch-parallel-session]").forEach((b) => {
+          const active = b.dataset.switchParallelSession === sid;
+          b.classList.toggle("is-selected", active);
+          b.setAttribute("aria-current", active ? "true" : "false");
+        });
+        document.querySelectorAll("[data-parallel-thread]").forEach((th) => {
+          th.hidden = th.dataset.parallelThread !== sid;
+        });
+        const label = simParallelBtn.dataset.sessionLabel || sid;
+        const bc = document.getElementById("toolbar-breadcrumb-label");
+        if (bc) bc.textContent = `DSH workbench · ${label}`;
+        toast(`已切换至会话 ${label}（未决审批与草稿已在后台保留）`);
+      }
     }
   });
 
@@ -604,18 +774,68 @@
     },
   };
 
-  function currentDraftKey() {
-    return workbenchWindow.dataset.workspace === "work"
-      ? `work:${sessionStore.workState}`
-      : `code:${sessionStore.codeState}`;
+  function draftKeyForWorkspace(space = workbenchWindow.dataset.workspace || "work") {
+    if (space === "work") return `work:${sessionStore.workState}`;
+    if (sessionStore.codeState === "c5") return `code:c5:${sessionStore.activeCodeSession}`;
+    return `code:${sessionStore.codeState}`;
   }
 
-  function saveCurrentComposerDraft() {
-    const area =
-      document.querySelector(`[data-stage-panel]:not([hidden]) textarea`) ||
-      document.querySelector(`[data-code-state-composer]:not([hidden]) textarea`);
-    if (area) sessionStore.drafts.set(currentDraftKey(), area.value);
+  function currentDraftKey() {
+    return draftKeyForWorkspace(workbenchWindow.dataset.workspace || "work");
   }
+
+  function getVisibleComposerFor(space = workbenchWindow.dataset.workspace || "work") {
+    if (space === "work") {
+      return document.querySelector(
+        `[data-stage-panel="work"]:not([hidden]) [data-work-state-panel="${sessionStore.workState}"]:not([hidden]) textarea`
+      );
+    }
+    if (sessionStore.codeState === "c1") {
+      return document.querySelector(
+        `[data-stage-panel="code"]:not([hidden]) [data-code-state-panel="c1"]:not([hidden]) textarea`
+      );
+    }
+    return document.querySelector(
+      `#code-composer-dock:not([hidden]) [data-code-state-composer="${sessionStore.codeState}"]:not([hidden]) textarea`
+    );
+  }
+
+  function saveCurrentComposerDraft(spaceOverride) {
+    const space = spaceOverride || workbenchWindow.dataset.workspace || "work";
+    const area = getVisibleComposerFor(space);
+    if (area && !area.closest("[hidden]")) {
+      sessionStore.drafts.set(draftKeyForWorkspace(space), area.value);
+    }
+  }
+
+  function restoreComposerDraft(space = workbenchWindow.dataset.workspace || "work") {
+    const area = getVisibleComposerFor(space);
+    if (!area) return;
+    const key = draftKeyForWorkspace(space);
+    area.value = sessionStore.drafts.has(key) ? sessionStore.drafts.get(key) : "";
+  }
+
+  document.addEventListener("input", (e) => {
+    const textarea = e.target;
+    if (!(textarea instanceof HTMLTextAreaElement)) return;
+    if (textarea.closest("[hidden]")) return;
+    const workPanel = textarea.closest("[data-work-state-panel]");
+    if (workPanel) {
+      sessionStore.drafts.set(`work:${workPanel.dataset.workStatePanel}`, textarea.value);
+      return;
+    }
+    const dockedCode = textarea.closest("[data-code-state-composer]");
+    if (dockedCode) {
+      const cid = dockedCode.dataset.codeStateComposer;
+      const key = cid === "c5" ? `code:c5:${sessionStore.activeCodeSession}` : `code:${cid}`;
+      sessionStore.drafts.set(key, textarea.value);
+      return;
+    }
+    const inlineCode = textarea.closest("[data-code-state-panel]");
+    if (inlineCode) {
+      sessionStore.drafts.set(`code:${inlineCode.dataset.codeStatePanel}`, textarea.value);
+    }
+  });
 
   function syncRightTabsForWorkspace(space) {
     document.querySelectorAll("#right-inspector [data-tab-space]").forEach((btn) => {
@@ -634,8 +854,8 @@
     });
   }
 
-  function renderWorkView(stateId) {
-    saveCurrentComposerDraft();
+  function renderWorkView(stateId, { skipSaveDraft = false } = {}) {
+    if (!skipSaveDraft) saveCurrentComposerDraft();
     sessionStore.workState = stateId;
     window.DSHWorkbench?.setWorkspace("work");
     syncRightTabsForWorkspace("work");
@@ -665,16 +885,34 @@
       centerScroll.scrollTop = meta.scrollTop;
     }
 
-    const activePanel = document.querySelector(`[data-work-state-panel="${stateId}"]`);
-    const textarea = activePanel?.querySelector("textarea");
-    if (textarea && sessionStore.drafts.has(`work:${stateId}`)) {
-      textarea.value = sessionStore.drafts.get(`work:${stateId}`);
-    }
+    restoreComposerDraft("work");
     announce(`已切换 Work 状态：${meta.crumb}`);
   }
 
-  function renderCodeView(stateId) {
-    saveCurrentComposerDraft();
+  function applyParallelSessionState(simParallelBtn, { showFeedback = true, skipSaveDraft = false } = {}) {
+    if (!simParallelBtn) return;
+    const sid = simParallelBtn.dataset.switchParallelSession;
+    if (!sid) return;
+    if (!skipSaveDraft) saveCurrentComposerDraft("code");
+    sessionStore.activeCodeSession = sid;
+    document.querySelectorAll("[data-switch-parallel-session]").forEach((b) => {
+      const active = b.dataset.switchParallelSession === sid;
+      b.classList.toggle("is-selected", active);
+      b.setAttribute("aria-current", active ? "true" : "false");
+    });
+    document.querySelectorAll("[data-parallel-thread]").forEach((th) => {
+      th.hidden = th.dataset.parallelThread !== sid;
+    });
+    const label = simParallelBtn.dataset.sessionLabel || sid;
+    if (breadcrumb) breadcrumb.textContent = `DSH workbench · ${label}`;
+    restoreComposerDraft("code");
+    if (showFeedback) {
+      toast(`已切换至会话 ${label}（未决审批与草稿已在后台保留）`);
+    }
+  }
+
+  function renderCodeView(stateId, { skipSaveDraft = false } = {}) {
+    if (!skipSaveDraft) saveCurrentComposerDraft();
     sessionStore.codeState = stateId;
     window.DSHWorkbench?.setWorkspace("code");
     syncRightTabsForWorkspace("code");
@@ -711,13 +949,7 @@
       centerScroll.scrollTop = meta.scrollTop;
     }
 
-    const activePanel = document.querySelector(`[data-code-state-panel="${stateId}"]`);
-    const textarea =
-      document.querySelector(`[data-code-state-composer="${stateId}"] textarea`) ||
-      activePanel?.querySelector("textarea");
-    if (textarea && sessionStore.drafts.has(`code:${stateId}`)) {
-      textarea.value = sessionStore.drafts.get(`code:${stateId}`);
-    }
+    restoreComposerDraft("code");
     announce(`已切换 Code 状态：${meta.crumb}`);
   }
 
@@ -730,29 +962,24 @@
     }
 
     const cBtn = e.target.closest("[data-select-code-state]");
-    if (cBtn) {
-      renderCodeView(cBtn.dataset.selectCodeState);
-      return;
-    }
-
     const simParallelBtn = e.target.closest("[data-switch-parallel-session]");
-    if (simParallelBtn) {
-      const sid = simParallelBtn.dataset.switchParallelSession;
+    if (cBtn || simParallelBtn) {
       saveCurrentComposerDraft();
-      sessionStore.activeCodeSession = sid;
-      document.querySelectorAll("[data-switch-parallel-session]").forEach((b) => {
-        b.classList.toggle("is-selected", b.dataset.switchParallelSession === sid);
-      });
-      document.querySelectorAll("[data-parallel-thread]").forEach((th) => {
-        th.hidden = th.dataset.parallelThread !== sid;
-      });
-      const label = simParallelBtn.dataset.sessionLabel || sid;
-      if (breadcrumb) breadcrumb.textContent = `DSH workbench · ${label}`;
-      toast(`已切换至会话 ${label}（未决审批与草稿已在后台保留）`);
+      if (cBtn) {
+        renderCodeView(cBtn.dataset.selectCodeState, { skipSaveDraft: true });
+      }
+      if (simParallelBtn) {
+        applyParallelSessionState(simParallelBtn, { skipSaveDraft: true });
+      }
+      return;
     }
   });
 
   // Coordinate top Workspace segmented switcher cleanly with active Work/Code sub-state
+  document.addEventListener("dsh:before-workspace-change", (e) => {
+    saveCurrentComposerDraft(e.detail?.previousWorkspace);
+  });
+
   document.addEventListener("dsh:workspace-change", (e) => {
     const space = e.detail?.workspace;
     if (space === "work") {
@@ -766,6 +993,7 @@
       workbenchWindow.dataset.rightWide = "false";
       if (meta?.right) window.DSHWorkbench?.openRightInspector(meta.right);
       else window.DSHWorkbench?.closeRightInspector();
+      restoreComposerDraft("work");
     } else if (space === "code") {
       syncRightTabsForWorkspace("code");
       syncCodeDockedComposer(sessionStore.codeState);
@@ -777,6 +1005,7 @@
       workbenchWindow.dataset.rightWide = meta?.wide ? "true" : "false";
       if (meta?.right) window.DSHWorkbench?.openRightInspector(meta.right);
       else window.DSHWorkbench?.closeRightInspector();
+      restoreComposerDraft("code");
     }
   });
 
