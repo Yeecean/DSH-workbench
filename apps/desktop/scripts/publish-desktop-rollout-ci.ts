@@ -5,7 +5,7 @@ import { dirname, join, resolve } from 'node:path'
 import { z } from 'zod'
 import { readDesktopPublishConfig, readDesktopUploadCredentials } from './desktop-publish-config.ts'
 import { desktopReleasesRoot } from './retain-desktop-ci.ts'
-import { readRetainedDesktopManifest, retainedDesktopPath } from './desktop-release-store.ts'
+import { assertPublishableDesktopManifest, readRetainedDesktopManifest, retainedDesktopPath } from './desktop-release-store.ts'
 import { resolveRetainedDesktopPublication, retainedDesktopPublishApi } from './resolve-retained-desktop-publish-ci.ts'
 import { createDesktopPublicationRecord, findDesktopPublication, withDesktopChannelLock } from './desktop-publish-record.ts'
 import { prepareDesktopRollout, rolloutDesktopRelease } from './desktop-rollout.ts'
@@ -40,7 +40,7 @@ export async function prepareDesktopRolloutCi(env: NodeJS.ProcessEnv) {
     throw new Error('desktop rollout: website publication requires production and DOWNLOAD_PROD_EO_ZONE_ID')
   }
   const root = desktopReleasesRoot(env)
-  const manifest = await readRetainedDesktopManifest(root, route.runId, route.attempt)
+  const manifest = assertPublishableDesktopManifest(await readRetainedDesktopManifest(root, route.runId, route.attempt))
   const source = manifest.source
   for (const field of ['runId', 'attempt', 'commit', 'sourceRef', 'runnerName', 'target', 'channel', 'preset'] as const) {
     if (source[field] !== route[field]) throw new Error('desktop rollout: route differs from retained package')

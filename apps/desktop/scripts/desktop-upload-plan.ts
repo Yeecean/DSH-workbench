@@ -1,7 +1,5 @@
 /** Validate packaged Desktop update artifacts before any network upload begins. */
 
-import { createHash } from 'node:crypto'
-import { createReadStream } from 'node:fs'
 import { readFile, stat } from 'node:fs/promises'
 import { basename, join, resolve } from 'node:path'
 import { dump, load } from 'js-yaml'
@@ -14,6 +12,12 @@ import {
 } from './desktop-auto-update-environment.mjs'
 import { desktopTargetBuildPaths } from './desktop-build-paths.mjs'
 import { validateDesktopBuildVersion } from './desktop-build-version.mjs'
+import {
+  assertPublishableDesktopManifest,
+  fingerprintDesktopFile,
+  type DesktopRetainedManifest,
+  type DesktopRetainedManifestV2,
+} from './desktop-release-store.ts'
 
 const APP_ROOT = resolve(import.meta.dirname, '..')
 const REPOSITORY_ROOT = resolve(APP_ROOT, '..', '..')
@@ -69,6 +73,8 @@ export interface DesktopUploadPlanOptions {
   readonly artifactsRoot?: string
   /** Original product version from a verified retained build; absent reads the checkout manifests. */
   readonly packagedProductVersion?: string
+  /** Verified retained release manifest; when provided, enforces v2 provenance and dual-hash verification. */
+  readonly retainedManifest?: DesktopRetainedManifest
 }
 
 interface UpdateFileInfo {
@@ -126,15 +132,28 @@ function updateFileInfo(value: unknown, label: string, expectedFilename: string)
   }
 }
 
-async function sha512(path: string): Promise<string> {
-  const hash = createHash('sha512')
-  for await (const chunk of createReadStream(path)) hash.update(chunk)
-  return hash.digest('base64')
+async function verifyAgainstRetainedManifest(
+  path: string,
+  filename: string,
+  manifest?: DesktopRetainedManifestV2,
+): Promise<{ size: number; sha256: string; sha512: string }> {
+  const actual = await fingerprintDesktopFile(path)
+  if (manifest !== undefined) {
+    const entry = manifest.files.find(file => file.name === filename)
+    if (entry === undefined) {
+      throw new Error(`desktop upload: ${filename} is absent from retained v2 manifest`)
+    }
+    if (actual.size !== entry.size || actual.sha256 !== entry.sha256 || actual.sha512 !== entry.sha512) {
+      throw new Error(`desktop upload: ${filename} SHA-256, SHA-512, or size does not match retained v2 manifest`)
+    }
+  }
+  return actual
 }
 
 async function verifyChecksummedArtifact(
   artifactsRoot: string,
   info: UpdateFileInfo,
+  manifest?: DesktopRetainedManifestV2,
 ): Promise<string> {
   const path = join(artifactsRoot, info.filename)
   const details = await stat(path).catch(() => undefined)
@@ -144,19 +163,24 @@ async function verifyChecksummedArtifact(
   if (details.size !== info.size) {
     throw new Error(`desktop upload: ${info.filename} size ${details.size} does not match update metadata ${info.size}`)
   }
-  const actual = await sha512(path)
-  if (actual !== info.sha512) {
+  const actual = await verifyAgainstRetainedManifest(path, info.filename, manifest)
+  if (actual.sha512 !== info.sha512) {
     throw new Error(`desktop upload: ${info.filename} SHA-512 does not match update metadata`)
   }
   return path
 }
 
-async function requireArtifact(artifactsRoot: string, filename: string): Promise<string> {
+async function requireArtifact(
+  artifactsRoot: string,
+  filename: string,
+  manifest?: DesktopRetainedManifestV2,
+): Promise<string> {
   const path = join(artifactsRoot, filename)
   const details = await stat(path).catch(() => undefined)
   if (details === undefined || !details.isFile() || details.size === 0) {
     throw new Error(`desktop upload: missing or empty artifact ${path}`)
   }
+  await verifyAgainstRetainedManifest(path, filename, manifest)
   return path
 }
 
@@ -191,6 +215,9 @@ export async function createDesktopUploadPlan(
     throw new Error(`desktop upload: unsupported target ${String(targetName)}`)
   }
   const environment = options.environment ?? process.env
+  const retainedManifest = options.retainedManifest === undefined
+    ? undefined
+    : assertPublishableDesktopManifest(options.retainedManifest)
   const repositoryRoot = options.repositoryRoot ?? REPOSITORY_ROOT
   const appRoot = options.appRoot ?? APP_ROOT
   const artifactsRoot = options.artifactsRoot ?? desktopTargetBuildPaths(targetName).artifacts
@@ -244,14 +271,14 @@ export async function createDesktopUploadPlan(
   const base = `deepseek-harness-${buildVersion}-${target.os}-${target.arch}`
   const updaterExtension = target.platform === 'darwin' ? 'zip' : 'exe'
   const updaterInfo = updateFileInfo(metadata.files[0], `${metadataFilename}.files[0]`, `${base}.${updaterExtension}`)
-  const updaterPath = await verifyChecksummedArtifact(artifactsRoot, updaterInfo)
+  const updaterPath = await verifyChecksummedArtifact(artifactsRoot, updaterInfo, retainedManifest)
   const artifacts: DesktopUploadArtifact[] = []
   const binaryPrefix = update.binaryKeyPrefix
   let installerArtifact: DesktopUploadArtifact
 
   if (target.platform === 'darwin') {
-    const dmgPath = await requireArtifact(artifactsRoot, `${base}.dmg`)
-    const blockmapPath = await requireArtifact(artifactsRoot, `${base}.zip.blockmap`)
+    const dmgPath = await requireArtifact(artifactsRoot, `${base}.dmg`, retainedManifest)
+    const blockmapPath = await requireArtifact(artifactsRoot, `${base}.zip.blockmap`, retainedManifest)
     installerArtifact = uploadArtifact(dmgPath, binaryPrefix, 'application/x-apple-diskimage')
     artifacts.push(
       installerArtifact,
@@ -260,7 +287,7 @@ export async function createDesktopUploadPlan(
     )
   }
   else {
-    const blockmapPath = await requireArtifact(artifactsRoot, `${base}.exe.blockmap`)
+    const blockmapPath = await requireArtifact(artifactsRoot, `${base}.exe.blockmap`, retainedManifest)
     installerArtifact = uploadArtifact(
       updaterPath,
       binaryPrefix,

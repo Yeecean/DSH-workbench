@@ -2,7 +2,7 @@
 import { createHash } from 'node:crypto'
 import { open, lstat, type FileHandle } from 'node:fs/promises'
 import { join } from 'node:path'
-import type { DesktopRetainedManifest } from './desktop-release-store.ts'
+import { assertPublishableDesktopManifest, type DesktopRetainedManifest } from './desktop-release-store.ts'
 import type { DesktopPublishRoute } from './desktop-publish-route.ts'
 import { desktopLatestInstallerFilename, desktopWebsiteInstallerUrl } from './desktop-auto-update-environment.mjs'
 import { createDesktopCos, DESKTOP_COS_REGION, type DesktopCosCredentials } from './desktop-cos.ts'
@@ -31,7 +31,8 @@ export interface DesktopWebsiteInstaller {
  */
 export async function prepareWebsiteInstaller(directory: string, manifest: DesktopRetainedManifest,
   route: DesktopPublishRoute, repository: string, bucket: string): Promise<DesktopWebsiteInstaller> {
-  const source = manifest.source
+  const v2Manifest = assertPublishableDesktopManifest(manifest)
+  const source = v2Manifest.source
   if (route.preset !== 'production' || source.preset !== 'production'
     || source.repository !== repository || source.runId !== route.runId || source.attempt !== route.attempt
     || source.commit !== route.commit || source.runnerName !== route.runnerName || source.target !== route.target
@@ -42,23 +43,27 @@ export async function prepareWebsiteInstaller(directory: string, manifest: Deskt
   }
   const windows = route.target === 'win-x64'
   const filename = `deepseek-harness-${source.version}-${route.target}.${windows ? 'exe' : 'dmg'}`
-  const file = manifest.files.find(item => item.name === filename)
+  const file = v2Manifest.files.find(item => item.name === filename)
   if (!file) throw new Error('website installer: selected installer is absent from build manifest')
   const path = join(directory, file.name)
   const info = await lstat(path)
   if (!info.isFile() || info.isSymbolicLink()) throw new Error('website installer: expected a regular installer file')
   const handle = await open(path, 'r')
   try {
+    const sha256 = createHash('sha256')
     const sha512 = createHash('sha512')
     const md5 = createHash('md5')
     let size = 0
     for await (const bytes of handle.createReadStream({ autoClose: false, start: 0 })) {
       size += bytes.length
+      sha256.update(bytes)
       sha512.update(bytes)
       md5.update(bytes)
     }
     const digest = { size, sha512: sha512.digest('base64') }
-    if (size !== file.size || digest.sha512 !== file.sha512) throw new Error('website installer: SHA-512 or size differs from build manifest')
+    if (size !== file.size || sha256.digest('hex') !== file.sha256 || digest.sha512 !== file.sha512) {
+      throw new Error('website installer: SHA-256, SHA-512, or size differs from build manifest')
+    }
     const key = `desktop/${desktopLatestInstallerFilename(route.target)}`
     const contentDisposition = `attachment; filename="${file.name}"`
     return { handle, digest, contentDisposition, md5: md5.digest('base64'), plan: {

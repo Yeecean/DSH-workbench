@@ -58,6 +58,7 @@ export async function retainDesktopCi(env: NodeJS.ProcessEnv, appRoot = resolve(
   const preset = settings.DSH_PACKAGING_PRESET
   if (preset !== 'test' && preset !== 'production') throw new Error('desktop retention: a machine preset is required')
   if (windows && !['signed', 'unsigned'].includes(env.PACKAGE_SIGNING ?? '')) throw new Error('desktop retention: invalid signing selection')
+  if (windows && env.PACKAGE_SIGNING === 'signed') throw new Error('desktop retention: signed Windows packaging is disabled in P8-S1 (fail-closed)')
   if (!windows && !['true', 'false'].includes(env.PACKAGE_SKIP_NOTARIZATION ?? '')) throw new Error('desktop retention: invalid notarization selection')
   const qualification = windows ? (env.PACKAGE_SIGNING === 'signed' ? 'signed' : 'unsigned')
     : (env.PACKAGE_SKIP_NOTARIZATION === 'true' ? 'unnotarized' : 'notarized')

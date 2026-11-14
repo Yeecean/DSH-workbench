@@ -5,7 +5,7 @@ import { dirname, join, resolve } from 'node:path'
 import { z } from 'zod'
 import { readDesktopPublishConfig, readDesktopUploadCredentials } from './desktop-publish-config.ts'
 import { desktopReleasesRoot } from './retain-desktop-ci.ts'
-import { retainedDesktopPath, verifyRetainedDesktopRelease } from './desktop-release-store.ts'
+import { assertPublishableDesktopManifest, retainedDesktopPath, verifyRetainedDesktopRelease } from './desktop-release-store.ts'
 import { verifyRetainedDesktopSignatures } from './verify-retained-desktop.ts'
 import { createDesktopUploadPlan } from './desktop-upload-plan.ts'
 import { desktopPublishCos } from './desktop-publish-cos.ts'
@@ -36,7 +36,7 @@ export async function prepareDesktopPublication(env: NodeJS.ProcessEnv, verifySi
   const route = routeSchema.parse(JSON.parse(env.DESKTOP_PUBLISH_ROUTE || '{}'))
   if (route.runnerName !== env.RUNNER_NAME) throw new Error('desktop publish: task was dispatched to a different machine')
   const root = desktopReleasesRoot(env)
-  const manifest = await verifyRetainedDesktopRelease(root, route.runId, route.attempt)
+  const manifest = assertPublishableDesktopManifest(await verifyRetainedDesktopRelease(root, route.runId, route.attempt))
   const source = manifest.source
   if (source.repository !== env.GITHUB_REPOSITORY || source.runnerName !== route.runnerName || source.target !== route.target
     || source.channel !== route.channel || source.sourceRef !== route.sourceRef || source.commit !== route.commit
@@ -47,6 +47,11 @@ export async function prepareDesktopPublication(env: NodeJS.ProcessEnv, verifySi
   if (diagnostic) throw new Error(diagnostic)
   if (source.qualification !== (source.target === 'win-x64' ? 'signed' : 'notarized')) throw new Error('desktop publish: package qualification does not match its platform')
   const config = await readDesktopPublishConfig(env.DSH_PACKAGING_CONFIG_DIR!, source.preset)
+  if (source.target === 'win-x64' && config.windows) {
+    if (manifest.provenance.signer?.certificateThumbprint.toLowerCase() !== config.windows.certificateThumbprint.toLowerCase()) {
+      throw new Error('desktop publish: signer certificate thumbprint does not match expected publication certificate')
+    }
+  }
   const directory = retainedDesktopPath(root, route.runId, route.attempt)
   const environment = source.preset === 'test'
     ? { DSH_DESKTOP_AUTO_UPDATE_ENV: 'test', DOWNLOAD_TEST_ORIGIN: config.origin,
@@ -54,6 +59,7 @@ export async function prepareDesktopPublication(env: NodeJS.ProcessEnv, verifySi
     : { DSH_DESKTOP_AUTO_UPDATE_ENV: 'production', DOWNLOAD_PROD_COS_BUCKET: config.bucket }
   const plan = await createDesktopUploadPlan(source.target, { artifactsRoot: directory,
     stagingPercentage,
+    retainedManifest: manifest,
     packagedProductVersion: source.productVersion, environment: { ...environment, DSH_DESKTOP_UPDATE_CHANNEL: source.channel } })
   if (plan.version !== source.version || plan.commit !== source.commit || plan.dirty !== false) throw new Error('desktop publish: completion record differs from retained source or has uncommitted changes')
   await verifySignatures(directory, manifest, config)

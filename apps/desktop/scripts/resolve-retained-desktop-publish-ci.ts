@@ -3,7 +3,7 @@ import { appendFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { z } from 'zod'
 import { desktopReleasesRoot } from './retain-desktop-ci.ts'
-import { verifyRetainedDesktopRelease } from './desktop-release-store.ts'
+import { assertPublishableDesktopManifest, verifyRetainedDesktopRelease } from './desktop-release-store.ts'
 import { resolveDesktopPublishRoute } from './desktop-publish-route.ts'
 
 /**
@@ -18,7 +18,9 @@ export async function resolveRetainedDesktopPublication(env: NodeJS.ProcessEnv, 
   const selection = z.object({ run: z.object({ id: z.number().int().positive(), run_attempt: z.number().int().positive() }).passthrough(),
     jobs: z.array(z.unknown()), routes: z.unknown(), runnerName: z.string() }).parse(JSON.parse(env.DESKTOP_PACKAGE_SELECTION || '{}'))
   if (!env.GITHUB_REPOSITORY || env.RUNNER_NAME !== selection.runnerName) throw new Error('desktop publish: task was dispatched to a different machine')
-  const manifest = await readManifest(desktopReleasesRoot(env), String(selection.run.id), String(selection.run.run_attempt))
+  const manifest = assertPublishableDesktopManifest(
+    await readManifest(desktopReleasesRoot(env), String(selection.run.id), String(selection.run.run_attempt)),
+  )
   const route = resolveDesktopPublishRoute(env.GITHUB_REPOSITORY, selection.run, manifest, selection.jobs, selection.routes)
   if (route.runnerName !== env.RUNNER_NAME) throw new Error('desktop publish: retained package belongs to another machine')
   const repository = env.GITHUB_REPOSITORY

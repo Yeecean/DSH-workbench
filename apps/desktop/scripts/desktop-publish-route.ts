@@ -2,6 +2,7 @@
 import { z } from 'zod'
 import { desktopPublishRunnersSchema, desktopPackageWorkflows } from './desktop-publish-targets.ts'
 import { desktopPublishQualificationError } from './desktop-publish-qualification.mjs'
+import { provenanceSchema } from './desktop-release-store.ts'
 
 const positive = z.number().int().positive()
 const runSchema = z.object({
@@ -9,14 +10,21 @@ const runSchema = z.object({
   path: z.string(), event: z.literal('workflow_dispatch'),
   repository: z.object({ full_name: z.string() }),
 })
-const requestSchema = z.object({ source: z.object({
-  repository: z.string(), runId: z.string(), attempt: z.string(), commit: z.string().regex(/^[a-f0-9]{40}$/u),
-  workflowCommit: z.string(), sourceRef: z.string().min(1),
-  channel: z.enum(['nightly', 'stable']),
-  runnerName: z.string(), target: z.enum(['mac-arm64', 'mac-x64', 'win-x64']), preset: z.enum(['test', 'production']),
-  qualification: z.enum(['signed', 'notarized', 'unsigned', 'unnotarized']),
-}).refine(source => source.preset === 'test' || /^(?:master|dsh-v[0-9][0-9A-Za-z.-]*)$/u.test(source.sourceRef),
-  'Production source must be master or dsh-v*') })
+const requestSchema = z.object({
+  schemaVersion: z.literal(2),
+  source: z.object({
+    repository: z.string(), runId: z.string(), attempt: z.string(), commit: z.string().regex(/^[a-f0-9]{40}$/u),
+    workflowCommit: z.string(), sourceRef: z.string().min(1),
+    channel: z.enum(['nightly', 'stable']),
+    runnerName: z.string(), target: z.enum(['mac-arm64', 'mac-x64', 'win-x64']), preset: z.enum(['test', 'production']),
+    qualification: z.enum(['signed', 'notarized', 'unsigned', 'unnotarized']),
+  }).refine(source => source.preset === 'test' || /^(?:master|dsh-v[0-9][0-9A-Za-z.-]*)$/u.test(source.sourceRef),
+    'Production source must be master or dsh-v*')
+    .refine(source => source.qualification !== 'signed' || /^(?:master|dsh-v[0-9][0-9A-Za-z.-]*)$/u.test(source.sourceRef),
+      'Signed source must be master or dsh-v*'),
+  provenance: provenanceSchema,
+}).refine(manifest => manifest.source.qualification !== 'signed' || manifest.provenance.signer !== undefined,
+  'Signed manifest requires signer provenance')
 const jobsSchema = z.array(z.object({ name: z.string(), runner_name: z.string().nullable(), conclusion: z.string().nullable() }))
 
 /** Validated values handed to the privileged publisher; no caller-selected shell fragments. */
