@@ -1,0 +1,28 @@
+# Bilingual-pair consistency record for INSTRUCTION.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/instructions/2026-11-14-agent-governance-rules/INSTRUCTION.md
+/workbench-execution-instruction-2026-11-14-agent-governance-rules:
+  en: cbaeb66b0a0a281f
+  zh: c1cd3c13f1cff419
+/workbench-execution-instruction-2026-11-14-agent-governance-rules/task-objective:
+  en: 406a283e636aa500
+  zh: 54a238d323220e07
+/workbench-execution-instruction-2026-11-14-agent-governance-rules/required-reading:
+  en: 55ac2b91e9dec0d8
+  zh: 7d4b7ab6d5ff368a
+/workbench-execution-instruction-2026-11-14-agent-governance-rules/authorized-changes:
+  en: 755288aee024e7d1
+  zh: d5d8d706796b49be
+/workbench-execution-instruction-2026-11-14-agent-governance-rules/constraints:
+  en: af6c1d6c0390ff97
+  zh: 43be355d0e7cc8d3
+/workbench-execution-instruction-2026-11-14-agent-governance-rules/execution-and-acceptance:
+  en: 8fd9a9298193cda4
+  zh: 042b9ffd68ab99e2
+/workbench-execution-instruction-2026-11-14-agent-governance-rules/original-instruction-as-delivered:
+  en: 74cfc4bc7b953e82
+  zh: b648ecf779efad70
+/workbench-execution-instruction-2026-11-14-agent-governance-rules/instruction-revision-history:
+  en: ac5306a7b6b3d877
+  zh: 1eb8b8bad765efc5

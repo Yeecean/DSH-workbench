@@ -19,11 +19,12 @@ DSH Workbench 是基于 [DeepSeek Harness](https://github.com/deepseek-ai/deepse
 
 ## 文档阅读顺序
 
-1. [文档治理与总索引](docs/workbench/DOCUMENTATION_GUIDE.zh.md)：权威来源、目录规范、追踪链。
-2. [Workbench 架构](docs/workbench/WORKBENCH_ARCHITECTURE.zh.md)：模块所有权和原生扩展边界。
-3. [开发路线图](docs/workbench/DEVELOPMENT_ROADMAP.zh.md)：P0–P8 目标和退出标准。
-4. [执行指令索引](docs/workbench/instructions/README.md) → [工作报告索引](workbench-reports/README.md)：实施与证据。
-5. [已知问题](docs/workbench/KNOWN_ISSUES.zh.md)：问题上下文；实际状态以对应提交、测试和最新验收报告为准。
+1. [Agent 执行规范](docs/workbench/AGENT_RULES.zh.md)：所有 Workbench 任务的必读资料、执行和交付要求。
+2. [文档治理与总索引](docs/workbench/DOCUMENTATION_GUIDE.zh.md)：权威来源、目录规范、追踪链。
+3. [Workbench 架构](docs/workbench/WORKBENCH_ARCHITECTURE.zh.md)：模块所有权和原生扩展边界。
+4. [开发路线图](docs/workbench/DEVELOPMENT_ROADMAP.zh.md)：P0–P8 目标和退出标准。
+5. [执行指令索引](docs/workbench/instructions/README.md) → [工作报告索引](workbench-reports/README.md)：实施与证据。
+6. [已知问题](docs/workbench/KNOWN_ISSUES.zh.md)：问题上下文；实际状态以对应提交、测试和最新验收报告为准。
 
 **状态说明：** 阶段规划、历史基线文档和提交事实是不同层次。某份旧文档的“尚未开始”或“已完成”不自动代表仓库当前状态；必须以对应分支的源码、提交和可复核测试为依据。
 

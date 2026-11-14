@@ -17,7 +17,7 @@ DSH Workbench is a desktop agent workbench built on [DeepSeek Harness](https://g
 | `docs/workbench/instructions/` | Versioned execution-agent instructions |
 | `workbench-reports/` | Implementation, commit, verification and acceptance evidence |
 
-Read the [documentation policy and index](docs/workbench/DOCUMENTATION_GUIDE.zh.md), [architecture](docs/workbench/WORKBENCH_ARCHITECTURE.md), [roadmap](docs/workbench/DEVELOPMENT_ROADMAP.md), [instruction index](docs/workbench/instructions/README.md), and [report index](workbench-reports/README.md).
+Read the [agent execution rules](docs/workbench/AGENT_RULES.md), [documentation policy and index](docs/workbench/DOCUMENTATION_GUIDE.zh.md), [architecture](docs/workbench/WORKBENCH_ARCHITECTURE.md), [roadmap](docs/workbench/DEVELOPMENT_ROADMAP.md), [instruction index](docs/workbench/instructions/README.md), and [report index](workbench-reports/README.md).
 
 **Source of truth:** A roadmap or old phase-baseline document does not establish current implementation status. Verify the active branch, commits, source, tests, and acceptance evidence.
 
