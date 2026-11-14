@@ -5,7 +5,7 @@ import { join } from 'node:path'
 import { unzipSync } from 'fflate'
 import { afterEach, expect, it } from 'vitest'
 import { desktopReleasesRoot, retainDesktopCi, resolveDesktopRetentionRunner } from '../scripts/retain-desktop-ci.ts'
-import { verifyRetainedDesktopRelease } from '../scripts/desktop-release-store.ts'
+import { retainDesktopRelease, verifyRetainedDesktopRelease } from '../scripts/desktop-release-store.ts'
 import { verifyDesktopArchive } from '../scripts/archive-desktop-ci.ts'
 import { prepareDesktopPublication } from '../scripts/publish-desktop-ci.ts'
 
@@ -36,7 +36,20 @@ async function retainedFixture(target: 'win-x64' | 'mac-x64' | 'mac-arm64', qual
     DESKTOP_PUBLISH_RUNNERS: JSON.stringify({ dedicated: { label: 'dsh-dedicated', target: [target] } }),
     GITHUB_REPOSITORY: 'owner/repository', GITHUB_SHA: 'b'.repeat(40), RUNNER_NAME: 'dedicated',
   }
-  const directory = await retainDesktopCi(env, appRoot)
+  const directory = target === 'win-x64' && qualification === 'signed'
+    ? await retainDesktopRelease(join(config, '..', 'releases'), {
+      repository: 'owner/repository', runId: '123', attempt: '2', commit: 'b'.repeat(40),
+      workflowCommit: 'b'.repeat(40), sourceRef: 'master', channel: 'nightly', runnerName: 'dedicated',
+      target: 'win-x64', preset: 'test', productVersion: '1.0.0', version: '1.0.0',
+      testReleaseId: 'a'.repeat(32), qualification: 'signed',
+    }, names.map(name => join(artifacts, name)), {
+      builderRunner: 'dsh-win-builder', builderRunId: '123', builderAttempt: '2', workflowSha: 'b'.repeat(40),
+      signer: {
+        runnerName: 'dsh-win-signer-isolated', runId: '123', attempt: '2',
+        environment: 'windows-sign-test', certificateThumbprint: 'A'.repeat(40), signedAt: '2026-11-14T12:00:00.000Z',
+      },
+    })
+    : await retainDesktopCi(env, appRoot)
   const archiveEnv = { ...env, GITHUB_RUN_ATTEMPT: '3', DESKTOP_RETAINED_DIRECTORY: directory,
     DESKTOP_PACKAGE_ATTEMPT: '2', DESKTOP_PACKAGE_RUNNER: env.RUNNER_NAME }
   return { root, debug, names, env, directory, archiveEnv }
@@ -95,8 +108,28 @@ it.each(['../escape.zip', '-option.zip', 'missing-extension', 'missing-output'])
   await expect(readFile(output)).rejects.toMatchObject({ code: 'ENOENT' })
 })
 
+it('fails closed when retaining signed Windows CI artifacts in P8-S1', async () => {
+  await expect(async () => {
+    const root = await mkdtemp(join(tmpdir(), 'retain-ci-fail-'))
+    roots.push(root)
+    const appRoot = join(root, 'checkout')
+    const config = join(root, 'packaging')
+    await mkdir(join(config, 'presets'), { recursive: true })
+    await mkdir(appRoot, { recursive: true })
+    await writeFile(join(appRoot, 'package.json'), '{"version":"1.0.0"}')
+    await writeFile(join(config, 'presets/test.env'), `DSH_DESKTOP_AUTO_UPDATE_ENV=test\nDOWNLOAD_TEST_RELEASE_ID=${'a'.repeat(32)}\n`)
+    await retainDesktopCi({
+      DSH_PACKAGING_CONFIG_DIR: config, DSH_PACKAGING_PRESET: 'test', DSH_DESKTOP_TARGET_PLATFORM: 'win32',
+      DSH_DESKTOP_TARGET_ARCH: 'x64', PACKAGE_SOURCE_REF: 'master', PACKAGE_SOURCE_SHA: 'b'.repeat(40),
+      PACKAGE_VERSION: '1.0.0', PACKAGE_SIGNING: 'signed', GITHUB_RUN_ID: '123', GITHUB_RUN_ATTEMPT: '2',
+      DESKTOP_PUBLISH_RUNNERS: JSON.stringify({ dedicated: { label: 'dsh-dedicated', target: ['win-x64'] } }),
+      GITHUB_REPOSITORY: 'owner/repository', GITHUB_SHA: 'b'.repeat(40), RUNNER_NAME: 'dedicated',
+    }, appRoot)
+  }).rejects.toThrow(/disabled in P8-S1/u)
+})
+
 it.each([
-  ['mac-arm64', 'notarized'], ['mac-x64', 'notarized'], ['mac-x64', 'unnotarized'], ['win-x64', 'signed'], ['mac-arm64', 'unnotarized'], ['win-x64', 'unsigned'],
+  ['mac-arm64', 'notarized'], ['mac-x64', 'notarized'], ['mac-x64', 'unnotarized'], ['mac-arm64', 'unnotarized'], ['win-x64', 'unsigned'],
 ] as const)('retains the complete %s %s release without signing or upload credentials', async (target, qualification) => {
   const { debug, names, env, archiveEnv } = await retainedFixture(target, qualification)
   await verifyDesktopArchive(archiveEnv)

@@ -22,6 +22,7 @@ import type { DesktopPublishEvent, DesktopRemoteObject, DesktopPublishTransport 
 const digest = (contents: string) => ({
   size: Buffer.byteLength(contents), sha512: createHash('sha512').update(contents).digest('base64'),
 })
+const sha256 = (contents: string) => createHash('sha256').update(contents).digest('hex')
 
 async function fixture(target: 'mac-arm64' | 'mac-x64' | 'win-x64' = 'mac-arm64',
   preset: 'production' | 'test' = 'production', channel: 'nightly' | 'stable' = 'nightly') {
@@ -31,14 +32,36 @@ async function fixture(target: 'mac-arm64' | 'mac-x64' | 'win-x64' = 'mac-arm64'
     await mkdir(directory, { recursive: true })
     const version = '0.2.2-rc.1'
     const payload = `deepseek-harness-${version}-${target}.${target === 'win-x64' ? 'exe' : 'zip'}`
-    const contents = dump({ version, files: [{ url: payload, ...digest('installer') }],
+    const contents = dump({ version, files: [{ url: payload, size: digest('installer').size, sha512: digest('installer').sha512 }],
       path: payload, sha512: digest('installer').sha512, releaseDate: '2026-11-04T00:00:00.000Z' })
     const filename = `${channel}${target === 'win-x64' ? '' : '-mac'}.yml`
-    const manifest: DesktopRetainedManifest = { schemaVersion: 1, source: {
-      repository: 'owner/repo', runId: '42', attempt: '1', commit: 'a'.repeat(40), workflowCommit: 'b'.repeat(40),
-      sourceRef: 'dsh-v0.2.2-rc.1', runnerName: 'runner', target, preset, channel,
-      productVersion: version, version, testReleaseId: preset === 'test' ? 'a'.repeat(32) : null, qualification: target === 'win-x64' ? 'signed' : 'notarized',
-    }, files: [{ name: filename, ...digest(contents) }, { name: payload, ...digest('installer') }] }
+    const manifest: DesktopRetainedManifest = {
+      schemaVersion: 2,
+      source: {
+        repository: 'owner/repo', runId: '42', attempt: '1', commit: 'a'.repeat(40), workflowCommit: 'b'.repeat(40),
+        sourceRef: 'dsh-v0.2.2-rc.1', runnerName: 'runner', target, preset, channel,
+        productVersion: version, version, testReleaseId: preset === 'test' ? 'a'.repeat(32) : null, qualification: target === 'win-x64' ? 'signed' : 'notarized',
+      },
+      files: [{ name: filename, ...digest(contents), sha256: sha256(contents) }, { name: payload, ...digest('installer'), sha256: sha256('installer') }],
+      provenance: {
+        builderRunner: 'runner',
+        builderRunId: '42',
+        builderAttempt: '1',
+        workflowSha: 'b'.repeat(40),
+        ...(target === 'win-x64'
+          ? {
+            signer: {
+              runnerName: 'runner',
+              runId: '42',
+              attempt: '1',
+              environment: preset === 'production' ? 'windows-sign-production' : 'windows-sign-test',
+              certificateThumbprint: 'A'.repeat(40),
+              signedAt: '2026-11-14T12:00:00.000Z',
+            },
+          }
+          : {}),
+      },
+    }
     await writeFile(join(directory, filename), contents)
     await writeFile(join(directory, 'manifest.json'), JSON.stringify(manifest))
     const environment = { DSH_DESKTOP_AUTO_UPDATE_ENV: preset, DOWNLOAD_PROD_COS_BUCKET: 'bucket-123',

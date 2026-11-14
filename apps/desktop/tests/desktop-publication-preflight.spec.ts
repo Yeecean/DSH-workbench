@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { expect, it } from 'vitest'
 import { retainDesktopCi } from '../scripts/retain-desktop-ci.ts'
+import { retainDesktopRelease } from '../scripts/desktop-release-store.ts'
 import { desktopPublicationSummary } from '../scripts/desktop-publication-summary.ts'
 import { prepareDesktopPublication } from '../scripts/publish-desktop-ci.ts'
 
@@ -46,7 +47,24 @@ it.each(['mac-arm64', 'win-x64'] as const)('preflights a complete retained %s bu
       GITHUB_RUN_ID: '10', GITHUB_RUN_ATTEMPT: '2', GITHUB_REPOSITORY: 'owner/repo', GITHUB_SHA: commit, RUNNER_NAME: 'fixture-runner',
       DESKTOP_PUBLISH_ROUTE: JSON.stringify({ sourceRef: 'master', channel: 'nightly', runId: '10', attempt: '2', commit, runnerName: 'fixture-runner', target, preset: 'test' }),
     }
-    const retained = await retainDesktopCi(env, app)
+    const retained = target === 'win-x64'
+      ? await retainDesktopRelease(join(root, 'releases'), {
+        repository: 'owner/repo', runId: '10', attempt: '2', commit, workflowCommit: commit,
+        sourceRef: 'master', channel: 'nightly', runnerName: 'fixture-runner', target: 'win-x64',
+        preset: 'test', productVersion: '1.0.0', version: '1.0.0', testReleaseId: releaseId, qualification: 'signed',
+      }, [
+        join(artifacts, `${base}.exe`),
+        join(artifacts, `${base}.exe.blockmap`),
+        join(artifacts, 'win-x64-release.json'),
+        join(artifacts, 'nightly.yml'),
+      ], {
+        builderRunner: 'dsh-win-builder', builderRunId: '10', builderAttempt: '2', workflowSha: commit,
+        signer: {
+          runnerName: 'dsh-win-signer-isolated', runId: '10', attempt: '2',
+          environment: 'windows-sign-test', certificateThumbprint: 'A'.repeat(40), signedAt: '2026-11-14T12:00:00.000Z',
+        },
+      })
+      : await retainDesktopCi(env, app)
     await rm(app, { recursive: true })
     let signatureChecks = 0
     const signature = async () => { signatureChecks++ }

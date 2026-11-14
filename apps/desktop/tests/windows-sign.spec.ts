@@ -394,4 +394,15 @@ describe('Windows token signing', () => {
       await rm(directory, { recursive: true })
     }
   })
+
+  it('keeps S1 CI reachable jobs isolated from windows-sign.cmd and documents legacy /kc PIN risk for S2', () => {
+    const workflowPath = resolve(import.meta.dirname, '../../../.github/workflows/windows-package.yml')
+    const workflowText = readFileSync(workflowPath, 'utf8')
+    expect(workflowText).not.toContain('windows-sign.cmd')
+    expect(workflowText).not.toContain('sign:primary-runtime')
+    expect(workflowText).toContain('default: unsigned')
+    expect(workflowText).toContain('PACKAGE_SIGNING: unsigned')
+    // Legacy risk in windows-sign.cmd remains unfixed in P8-S1 and is deferred to S2 with hardware verification.
+    expect(readFileSync(SIGN_SCRIPT, 'utf8')).toContain('/kc "[{{%tokenPin%}}]=%keyContainer%"')
+  })
 })

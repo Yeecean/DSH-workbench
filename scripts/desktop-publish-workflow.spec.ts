@@ -101,3 +101,11 @@ it('defaults to production website upload and separates cache-only recovery', ()
   expect(purge.steps.find(step => step.id === 'website')?.run).toBe('node --import tsx apps/desktop/scripts/publish-website-ci.ts purge')
   expect(purge.steps.some(step => step.run?.includes('publish-desktop-ci.ts'))).toBe(false)
 })
+
+it('rejects unsigned Windows artifacts in preflight before dependency installation or credential access', async () => {
+  const { preflightDesktopPublish } = await import('../apps/desktop/scripts/preflight-desktop-publish.mjs')
+  expect(() => preflightDesktopPublish('owner/repo', { package_run_id: '10', package_run_attempt: '1' }, (path) => {
+    expect(path).toContain('/artifacts')
+    return [{ artifacts: [{ name: 'windows-x64-unsigned-1.0.0-10-1.zip' }] }]
+  })).toThrow(/unsigned/u)
+})

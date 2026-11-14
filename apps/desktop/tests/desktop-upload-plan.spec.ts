@@ -356,4 +356,65 @@ describe('desktop upload plan', () => {
     })}\n`)
     await expect(createDesktopUploadPlan('mac-arm64', paths)).rejects.toThrow(/mac-arm64\.zip/u)
   })
+
+  it('verifies dual SHA-256 and SHA-512 against retained v2 manifest and rejects v1 or unsigned manifests', async () => {
+    const paths = await fixture('win-x64')
+    const exeName = 'deepseek-harness-1.2.3-win-x64.exe'
+    const blockmapName = `${exeName}.blockmap`
+    const exeBytes = await readFile(join(paths.artifactsRoot, exeName))
+    const blockmapBytes = await readFile(join(paths.artifactsRoot, blockmapName))
+    const fileEntry = (name: string, bytes: Buffer) => ({
+      name,
+      size: bytes.length,
+      sha256: createHash('sha256').update(bytes).digest('hex'),
+      sha512: createHash('sha512').update(bytes).digest('base64'),
+    })
+    const baseSource = {
+      repository: 'owner/repo', runId: '10', attempt: '1', commit: 'a'.repeat(40),
+      workflowCommit: 'a'.repeat(40), sourceRef: 'master', channel: 'nightly' as const,
+      runnerName: 'dsh-win-signer-isolated', target: 'win-x64' as const, preset: 'test' as const,
+      productVersion: '1.2.3', version: '1.2.3', testReleaseId: RELEASE_ID, qualification: 'signed' as const,
+    }
+    const v2Manifest = {
+      schemaVersion: 2 as const,
+      source: baseSource,
+      files: [fileEntry(exeName, exeBytes), fileEntry(blockmapName, blockmapBytes)],
+      provenance: {
+        builderRunner: 'dsh-win-builder', builderRunId: '10', builderAttempt: '1', workflowSha: 'a'.repeat(40),
+        signer: {
+          runnerName: 'dsh-win-signer-isolated', runId: '10', attempt: '1',
+          environment: 'windows-sign-test', certificateThumbprint: 'A'.repeat(40), signedAt: '2026-11-14T12:00:00.000Z',
+        },
+      },
+    }
+
+    const plan = await createDesktopUploadPlan('win-x64', { ...paths, retainedManifest: v2Manifest })
+    expect(plan.version).toBe('1.2.3')
+
+    await expect(createDesktopUploadPlan('win-x64', {
+      ...paths,
+      retainedManifest: {
+        schemaVersion: 1,
+        source: baseSource,
+        files: [{ name: exeName, size: exeBytes.length, sha512: fileEntry(exeName, exeBytes).sha512 }],
+      },
+    })).rejects.toThrow(/legacy schemaVersion 1/u)
+
+    await expect(createDesktopUploadPlan('win-x64', {
+      ...paths,
+      retainedManifest: {
+        ...v2Manifest,
+        source: { ...baseSource, qualification: 'unsigned' },
+        provenance: { builderRunner: 'dsh-win-builder', builderRunId: '10', builderAttempt: '1', workflowSha: 'a'.repeat(40) },
+      },
+    })).rejects.toThrow(/unsigned/u)
+
+    await expect(createDesktopUploadPlan('win-x64', {
+      ...paths,
+      retainedManifest: {
+        ...v2Manifest,
+        files: [{ ...fileEntry(exeName, exeBytes), sha256: '0'.repeat(64) }, fileEntry(blockmapName, blockmapBytes)],
+      },
+    })).rejects.toThrow(/SHA-256/u)
+  })
 })
