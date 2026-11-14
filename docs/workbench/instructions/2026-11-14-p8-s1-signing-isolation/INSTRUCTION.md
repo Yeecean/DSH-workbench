@@ -18,8 +18,8 @@
 
 ### 关联的设计/事实依据
 
-- [原创架构](../../WORKBENCH_ARCHITECTURE.zh.md)、[P0–P8 路线](../../DEVELOPMENT_ROADMAP.zh.md)、[文档规范](../DOCUMENTATION_GUIDE.zh.md)。
-- [上一轮签名/安装器/更新器报告](../../../workbench-reports/2026-11-14-round2-signing-installer-updater/WORK_REPORT.md)，重点 `2.1–2.5`；**其中方案为设计建议，不等于已实施**。
+- [原创架构](../../WORKBENCH_ARCHITECTURE.zh.md)、[P0–P8 路线](../../DEVELOPMENT_ROADMAP.zh.md)、[文档规范](../../DOCUMENTATION_GUIDE.zh.md)。
+- [上一轮签名/安装器/更新器报告](../../../../workbench-reports/2026-11-14-round2-signing-installer-updater/WORK_REPORT.md)，重点 `2.1–2.5`；**其中方案为设计建议，不等于已实施**。
 - 现状（编写时核实）：`.github/workflows/windows-package.yml` 的 `signing` 默认 `signed`，`package` 使用 `dsh-win-package-trial` 自托管 Runner，`test` 对任意仓内开发分支开放；`apps/desktop/scripts/windows-sign.cmd` 仍把 Token PIN 写入 SignTool 命令参数；`apps/desktop/scripts/desktop-release-store.ts` 采用 `schemaVersion: 1` 且仅记录 SHA-512；`scripts/windows-package-workflow.spec.ts` 有依赖旧 workflow 形状的断言及曾经的 PowerShell 超时。**以上是代码基线事实，不是本轮结果。**
 
 ## 1. 作业边界和禁止事项（必须先检查）
