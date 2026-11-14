@@ -1,5 +1,7 @@
 # DeepSeek Harness
 
+> **DSH Workbench fork:** Read the [Workbench project README](WORKBENCH.md) ([中文](WORKBENCH.zh.md)) for the desktop product, architecture, roadmap, and development records. The original DeepSeek Harness README continues below.
+
 English | [中文](README.zh.md)
 
 DeepSeek Harness (`dsh`) is an open-source agent harness developed by [DeepSeek AI](https://deepseek.com).
