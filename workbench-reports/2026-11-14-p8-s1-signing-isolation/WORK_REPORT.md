@@ -5,7 +5,7 @@
 - Actual branch: `feature/p8-s1-windows-release-security`
 - Related instruction: [INSTRUCTION.md](../../docs/workbench/instructions/2026-11-14-p8-s1-signing-isolation/INSTRUCTION.md)
 - Related architecture / ADR / milestone: [WORKBENCH_ARCHITECTURE.zh.md](../../docs/workbench/WORKBENCH_ARCHITECTURE.zh.md) · [DEVELOPMENT_ROADMAP.zh.md](../../docs/workbench/DEVELOPMENT_ROADMAP.zh.md)（P8）
-- PR URL: `PENDING`（推送并创建 PR 后回填）
+- PR URL: `PENDING`（分支已推送至 `origin/feature/p8-s1-windows-release-security`，本机 `gh pr create` 因 token 缺少 `CreatePullRequest` 权限未自动建单；可于 https://github.com/Yeecean/DSH-workbench/pull/new/feature/p8-s1-windows-release-security 创建 PR）
 - Report update date: 2026-11-14
 
 ## 目标、边界与授权
@@ -23,7 +23,8 @@
 | `c562a35a31486a50179355a6a0fe41baf3054229` | `ci`：将 `windows-package.yml` 拆分为 `preflight-policy`、无密钥 `build`、隔离 `sign` 骨架与 `upload-artifact` | `.github/workflows/windows-package.yml` | `windows-package-workflow.spec.ts` PASS |
 | `7c021c2a5e1a04470cb4a6ab60a085c9a82a3e85` | `security/release`：Manifest 升级至 `schemaVersion: 2`（SHA-256 + SHA-512 + `provenance`），v1 仅可读不可发布，发布端校验指纹与双哈希 | `desktop-release-store.ts`、`desktop-upload-plan.ts`、`desktop-website-installer.ts`、`desktop-publish-route.ts`、`retain-desktop-ci.ts`、`publish-desktop-ci.ts`、`publish-desktop-rollout-ci.ts`、`resolve-retained-desktop-publish-ci.ts` | `vitest` + `typecheck` + `build` PASS |
 | `2b92be47aadfd02603d5ec1e3dac472c93a7afba` | `test`：更新多 Job 工作流单测并修复 `pwsh` 9x 冷启动超时；补齐 v2/双哈希/v1 拒绝/S1 禁用签名测试 | `scripts/windows-package-workflow.spec.ts`、`desktop-publish-workflow.spec.ts`、`desktop-archive-workflow-test.ts`、`apps/desktop/tests/*.spec.ts` | `vitest` 12 files 180/180 + `typecheck` 5/5 + `oxlint` PASS |
-| `PENDING` | `docs`：调用链、信任边界图、运维前置条件、工作报告及索引 | `workbench-reports/2026-11-14-p8-s1-signing-isolation/WORK_REPORT.md`、`docs/workbench/instructions/README.md`、`workbench-reports/README.md` | `git diff --check` PASS |
+| `438f58a77ee711c59a45a32f4809fe382a97cc32` | `docs`：调用链、信任边界图、运维前置条件、工作报告及索引 | `workbench-reports/2026-11-14-p8-s1-signing-isolation/WORK_REPORT.md`、`docs/workbench/instructions/README.md`、`workbench-reports/README.md` | `git diff --check` PASS |
+| `PENDING` | `docs`：回填工作报告 SHA 与分支推送状态 | `workbench-reports/2026-11-14-p8-s1-signing-isolation/WORK_REPORT.md` | `git diff --check` PASS |
 
 ## 实际调用链与信任边界
 
