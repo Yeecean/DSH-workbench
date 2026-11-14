@@ -6,6 +6,7 @@ import { desktopCiVersion as windowsCiVersion } from './desktop-ci-version.mjs'
 export { desktopCiVersion as windowsCiVersion } from './desktop-ci-version.mjs'
 import { loadDesktopPackageEnvironment, validateDesktopPackageEnvironment } from './desktop-package-environment.mjs'
 import { resolveWindowsPackageSettings } from './windows-package-settings.mjs'
+import { assertWindowsPackagePolicy } from './windows-package-policy.mjs'
 
 if (process.argv[1] !== undefined && resolve(process.argv[1]) === import.meta.filename) {
   const appRoot = resolve(import.meta.dirname, '..')
@@ -14,6 +15,15 @@ if (process.argv[1] !== undefined && resolve(process.argv[1]) === import.meta.fi
   const mode = process.env.PACKAGE_SIGNING
   if (mode !== 'unsigned' && mode !== 'signed') throw new Error('Select unsigned or signed packaging')
   if (!process.env.DSH_PACKAGING_PRESET) throw new Error('Select a machine preset')
+  assertWindowsPackagePolicy({
+    repository: process.env.GITHUB_REPOSITORY,
+    sourceRef: process.env.PACKAGE_SOURCE_REF ?? '',
+    preset: process.env.DSH_PACKAGING_PRESET,
+    signing: mode,
+    updateChannel: process.env.DSH_DESKTOP_UPDATE_CHANNEL,
+    versionMode: process.env.PACKAGE_VERSION_MODE,
+    compressionLevel: process.env.PACKAGE_WINDOWS_COMPRESSION_LEVEL || undefined,
+  })
   const environment = loadDesktopPackageEnvironment('win32', process.env, appRoot, { unsigned: mode === 'unsigned' })
   // Machine-owned secrets are not automatically known to the Actions log masker.
   for (const [name, value] of Object.entries(environment)) {
