@@ -4,12 +4,12 @@ on:
   workflow_dispatch:
     inputs:
       source_ref:
-        description: '打包源码：test 支持仓库内分支或 dsh-v* tag；production 仅支持 master 或 dsh-v* tag；源码须包含 CI 适配脚本'
+        description: '打包源码：test 仅支持仓库内分支或 dsh-v* tag（unsigned 调试）；P8-S1 阶段禁止任何 signed 打包'
         type: string
         default: master
         required: true
       preset:
-        description: '打包环境：选择机器上的 test 或 production 配置；同时决定后续发布环境'
+        description: '打包环境：P8-S1 仅允许 test + unsigned 调试；production 禁止 unsigned 且 signed 尚未开放'
         type: choice
         options: [test, production]
         default: test
@@ -43,10 +43,10 @@ on:
         default: '3'
         required: true
       signing:
-        description: '签名方式：unsigned 仅限内部调试，禁止发布到 test / production 或用于自动更新；需要发布请选择 signed（EV 硬件令牌）'
+        description: '签名方式：默认 unsigned（仅限内部调试，禁止发布到 test / production 或用于自动更新）；P8-S1 阶段 signed 保持 fail-closed 禁用，待 S2 隔离签名机与无 CLI PIN 就绪后开放'
         type: choice
-        options: [signed, unsigned]
-        default: signed
+        options: [unsigned, signed]
+        default: unsigned
         required: true
       cache_namespace:
         description: '缓存测量命名空间：留空使用共享缓存；新名称用于冷缓存，再次使用同名测热缓存，不清除现有缓存'
@@ -62,7 +62,43 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  package:
+  preflight-policy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      allowed: ${{ steps.policy.outputs.allowed }}
+      signing: ${{ steps.policy.outputs.signing }}
+      preset: ${{ steps.policy.outputs.preset }}
+      source-ref: ${{ steps.policy.outputs.source_ref }}
+      ref-kind: ${{ steps.policy.outputs.ref_kind }}
+      resolved-sha: ${{ steps.policy.outputs.resolved_sha }}
+    env:
+      PACKAGE_SOURCE_REF: ${{ inputs.source_ref }}
+      # TODO: Remove this legacy source_ref mode mapping on 2027-01-04 with the parser aliases.
+      PACKAGE_VERSION_MODE: ${{ inputs.version_mode == 'follow-dsh' && 'product' || inputs.version_mode == 'build-number' && 'auto' || inputs.version_mode }}
+      DSH_DESKTOP_UPDATE_CHANNEL: ${{ inputs.update_channel }}
+      DSH_PACKAGING_PRESET: ${{ inputs.preset }}
+      PACKAGE_SIGNING: ${{ inputs.signing }}
+      PACKAGE_WINDOWS_COMPRESSION_LEVEL: ${{ inputs.compression_level }}
+    steps:
+      - name: Checkout trusted workflow policy
+        uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+          ref: ${{ github.workflow_sha }}
+          sparse-checkout: apps/desktop/scripts
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: '24'
+      - name: Evaluate fail-closed packaging policy
+        id: policy
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node apps/desktop/scripts/windows-package-policy.mjs
+
+  build:
+    needs: preflight-policy
+    if: ${{ needs.preflight-policy.outputs.allowed == 'true' && needs.preflight-policy.outputs.signing == 'unsigned' }}
     outputs:
       directory: ${{ steps.retained.outputs.directory }}
       runner: ${{ steps.retained.outputs.runner }}
@@ -70,7 +106,8 @@ jobs:
       attempt: ${{ steps.retained.outputs.attempt }}
       version: ${{ steps.settings.outputs.version }}
       mode: ${{ steps.settings.outputs.mode }}
-    runs-on: dsh-win-package-trial
+      signing: unsigned
+    runs-on: dsh-win-builder
     timeout-minutes: 120
     defaults:
       run:
@@ -83,7 +120,7 @@ jobs:
       DSH_TELEMETRY_DISABLED: '1'
       DSH_PACKAGING_PRESET: ${{ inputs.preset }}
       PACKAGE_TEST_RELEASE_ID: ${{ inputs.test_release_id }}
-      PACKAGE_SIGNING: ${{ inputs.signing }}
+      PACKAGE_SIGNING: unsigned
       PACKAGE_CACHE_NAMESPACE: ${{ inputs.cache_namespace }}
       PACKAGE_WINDOWS_COMPRESSION_LEVEL: ${{ inputs.compression_level }}
     steps:
@@ -108,7 +145,7 @@ jobs:
         run: |
           $helpers = Join-Path $env:RUNNER_TEMP "packaging-helpers-$env:GITHUB_RUN_ID-$env:GITHUB_RUN_ATTEMPT"
           New-Item -ItemType Directory -Path $helpers -ErrorAction Stop | Out-Null
-          foreach ($name in @('windows-packaging-priority.ps1')) {
+          foreach ($name in @('windows-packaging-priority.ps1', 'windows-package-policy.mjs')) {
             Copy-Item -LiteralPath (Join-Path 'apps/desktop/scripts' $name) -Destination $helpers -ErrorAction Stop
           }
           "PACKAGE_CI_HELPERS=$helpers" >> $env:GITHUB_ENV
@@ -119,17 +156,19 @@ jobs:
           clean: true
           ref: ${{ inputs.source_ref }}
       - name: Validate selected source and adapter support
+        env:
+          PREFLIGHT_RESOLVED_SHA: ${{ needs.preflight-policy.outputs.resolved-sha }}
         run: >-
           node -e "const fs=require('node:fs'); const ref=process.env.PACKAGE_SOURCE_REF;
           const cp=require('node:child_process'); const preset=process.env.DSH_PACKAGING_PRESET;
-          if(!['test','production'].includes(preset)) throw Error('Unknown packaging preset');
+          if(preset!=='test') throw Error('Unsigned builder only permits test preset');
+          const head=cp.execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
+          if(head!==process.env.PREFLIGHT_RESOLVED_SHA) throw Error('Checkout SHA changed after preflight policy check');
           const tag=/^dsh-v[0-9][0-9A-Za-z.-]*$/.test(ref);
-          if(preset==='production' && ref!=='master' && !tag) throw Error('Production source must be master or dsh-v*');
           if(tag) {
           const v=JSON.parse(fs.readFileSync('package.json','utf8')).version;
           if(ref!=='dsh-v'+v) throw Error('Source tag must match product version');
           const tagged=cp.execFileSync('git',['rev-parse','--verify','refs/tags/'+ref+'^{commit}'],{encoding:'utf8'}).trim();
-          const head=cp.execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
           if(tagged!==head) throw Error('Checkout does not match source tag');
           } else {
           const branch=cp.execFileSync('git',['rev-parse','--abbrev-ref','HEAD'],{encoding:'utf8'}).trim();
@@ -180,8 +219,7 @@ jobs:
         env:
           PACKAGE_VERSION: ${{ steps.settings.outputs.version }}
         run: |
-          $packageArgs = @('run', 'package:desktop:win:x64', '--check', '--build-version', $env:PACKAGE_VERSION)
-          if ($env:PACKAGE_SIGNING -eq 'unsigned') { $packageArgs += '--unsigned' }
+          $packageArgs = @('run', 'package:desktop:win:x64', '--check', '--build-version', $env:PACKAGE_VERSION, '--unsigned')
           pnpm @packageArgs
           exit $LASTEXITCODE
       - name: Build installer and verify packaged runtime
@@ -189,8 +227,7 @@ jobs:
           PACKAGE_VERSION: ${{ steps.settings.outputs.version }}
         run: |
           & "$env:PACKAGE_CI_HELPERS/windows-packaging-priority.ps1" -BestEffort
-          $packageArgs = @('run', 'package:desktop:win:x64', '--build-version', $env:PACKAGE_VERSION)
-          if ($env:PACKAGE_SIGNING -eq 'unsigned') { $packageArgs += '--unsigned' }
+          $packageArgs = @('run', 'package:desktop:win:x64', '--build-version', $env:PACKAGE_VERSION, '--unsigned')
           pnpm @packageArgs
           exit $LASTEXITCODE
       - name: Retain complete package outside the checkout
@@ -211,19 +248,41 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
+  sign:
+    needs: [preflight-policy, build]
+    if: ${{ needs.preflight-policy.outputs.allowed == 'true' && needs.preflight-policy.outputs.signing == 'signed' }}
+    runs-on: dsh-win-signer-isolated
+    environment: ${{ inputs.preset == 'production' && 'windows-sign-production' || 'windows-sign-test' }}
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Checkout trusted signing scripts only
+        uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+          ref: ${{ github.workflow_sha }}
+          sparse-checkout: apps/desktop/scripts
+      - name: Fail closed in P8-S1 until S2 signer isolation and PIN-less signing are approved
+        run: |
+          Write-Error 'P8-S1 fail-closed: Windows signing is disabled until S2 physical signer isolation, GitHub Environment approvals, and PIN-less signing are deployed.'
+          exit 1
+
   upload-artifact:
     defaults:
       run:
         shell: pwsh
-    needs: package
-    runs-on: [self-hosted, '${{ needs.package.outputs.runner }}']
+    needs: [preflight-policy, build]
+    if: ${{ success() && needs.preflight-policy.outputs.signing == 'unsigned' }}
+    runs-on: [self-hosted, '${{ needs.build.outputs.runner }}']
     timeout-minutes: 30
     env:
       PACKAGE_CACHE_NAMESPACE: ${{ inputs.cache_namespace }}
-      DESKTOP_RETAINED_DIRECTORY: ${{ needs.package.outputs.directory }}
-      DESKTOP_ARCHIVE_NAME: windows-x64-${{ inputs.signing }}-${{ needs.package.outputs.version }}-${{ github.run_id }}-${{ needs.package.outputs.attempt }}.zip
-      DESKTOP_PACKAGE_ATTEMPT: ${{ needs.package.outputs.attempt }}
-      DESKTOP_PACKAGE_RUNNER: ${{ needs.package.outputs.runner-name }}
+      DESKTOP_RETAINED_DIRECTORY: ${{ needs.build.outputs.directory }}
+      DESKTOP_ARCHIVE_NAME: windows-x64-unsigned-${{ needs.build.outputs.version }}-${{ github.run_id }}-${{ needs.build.outputs.attempt }}.zip
+      DESKTOP_PACKAGE_ATTEMPT: ${{ needs.build.outputs.attempt }}
+      DESKTOP_PACKAGE_RUNNER: ${{ needs.build.outputs.runner-name }}
     steps:
       - uses: actions/checkout@v7.0.1
         with:
