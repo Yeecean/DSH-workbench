@@ -8,6 +8,6 @@
 | --- | --- | --- | --- |
 | 2026-11-14 文档治理 | 本次变更由对话授权；历史指令文件未补造 | [工作报告](../../../workbench-reports/2026-11-14-docs-governance/WORK_REPORT.md) | 文档建设；指令归档规则自本轮起适用 |
 
-| 2026-11-14 · P8-S1 发布链路安全整改 | [详细执行指令](2026-11-14-p8-s1-signing-isolation/INSTRUCTION.md) | 待执行：执行后建立 `workbench-reports/2026-11-14-p8-s1-signing-isolation/WORK_REPORT.md` | Ready / 未执行；禁止真实签名与发布 |
+| 2026-11-14 · P8-S1 发布链路安全整改 | [详细执行指令](2026-11-14-p8-s1-signing-isolation/INSTRUCTION.md) | [工作报告](../../../workbench-reports/2026-11-14-p8-s1-signing-isolation/WORK_REPORT.md) | S1 代码与单测已完成（待 PR 审阅）；S2 硬件签名与真实发布仍禁用 |
 
 早期轮次的指令若仍在外部对话或本地，不假定已经存档；核实后再逐轮迁入。
