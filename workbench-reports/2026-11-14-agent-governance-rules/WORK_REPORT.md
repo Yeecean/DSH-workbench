@@ -23,7 +23,8 @@
 
 | 完整 commit SHA（提交后填写） | 变更目的和工作内容 | 修改文件 | 验证证据编号及验收状态 |
 | --- | --- | --- | --- |
-| PENDING | 建立本轮治理规则、入口、模板、指令、报告及索引 | 详见下方本轮文件清单 | V4、V5、V8、V10 为 PASS；V6、V7 为 FAIL，见验收结论 |
+| `b59dc099aa299ffb2ceb47fec2cead475d9ae049` | 建立本轮治理规则、入口、模板、指令、报告及索引 | 详见下方本轮文件清单 | V4、V5、V8、V10、V11 为 PASS；V6、V7 为 FAIL，见验收结论 |
+| PENDING | 回填上一提交的完整 SHA、提交前检查结果和本条记录 | `workbench-reports/2026-11-14-agent-governance-rules/WORK_REPORT.md` | 本提交的暂存差异检查和 hook 结果在交付时报告 |
 
 **说明**：提交无法在自身内容中包含自身 SHA；完成提交后通过后续提交回填。最终回填提交自身保留 `PENDING`，实际 SHA 在交付时提供。
 
@@ -51,9 +52,10 @@
 | V5 / 本轮链接与索引检查 | 见下方实际命令；另检查三个入口及本轮指令与报告的双向引用。 | PASS，exit 0；12 个 Markdown 文件、0 条断链；4 份报告及 2 份指令、0 项索引缺失；3 个入口及 2 个双向引用、0 项缺失。 | 本机命令会话；未归档原始日志 |
 | V6 / 文档快速检查 | `pnpm run test:docs` | FAIL，exit 1；最终复跑 16 项通过、5 项失败、0 项跳过。首次为 15 项通过、6 项失败；根 `AGENTS.md` 字数超限已修正并复跑。 | 本机命令会话；未归档原始日志 |
 | V7 / 文档完整检查 | `pnpm run doc-sync` | FAIL，exit 1；36 项通过、7 项失败、0 项跳过。 | 本机命令会话；未归档原始日志 |
-| V8 / 差异检查 | `git diff --check` | PASS，exit 0；未报告空白错误，工具未提供计数。 | 本机命令会话；提交前暂存内容另由 Git hook 检查 |
+| V8 / 差异检查 | `git diff --check`；`git diff --cached --check` | PASS，均 exit 0；未报告空白错误，工具未提供计数。 | 本机命令会话；首个提交的暂存内容另由 Git hook 检查 |
 | V9 / 产品功能及真实发布 | 未运行 | NOT_RUN；本轮无产品代码或发布授权。 | 无 |
 | V10 / 文档字数 | `pnpm run verify-doc-budgets` | PASS，exit 0；7 个受限文档均在上限内。 | 本机命令会话；根 `AGENTS.md` 为 2080 / 2080 词 |
+| V11 / 首次提交检查 | `git commit -m 'docs(workbench): establish agent governance rules'` | PASS，exit 0；3 个 hook 通过、3 个因无匹配文件跳过，暂存的 2 组双语配对一致。 | 本机命令会话；未归档原始日志 |
 
 V5 使用仓库 Markdown 解析器检查本轮全部 Markdown 文件，实际命令如下：
 
