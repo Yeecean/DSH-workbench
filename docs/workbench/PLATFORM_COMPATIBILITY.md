@@ -71,6 +71,8 @@ The official Windows Desktop launched from the pinned upstream worktree. Electro
 
 The Desktop security settings remained `nodeIntegration: false`, `contextIsolation: true`, and `sandbox: true`. The Host used loopback on a dynamic port, and the signed Desktop cookie was not stored in the regular Electron session. These are the native trust boundaries a Workbench Desktop customization should retain.
 
+The proposed visual review also covers Windows compositor and GPU cost, high DPI, scaling, reduced motion, and reduced transparency where the platform exposes them. Glass must fall back to an opaque semantic surface when unsupported or unsuitable; these appearance behaviors remain unverified for Workbench. See [material guidelines](design/p1-shell/MATERIAL_GUIDELINES.md).
+
 -----
 
 <a id="windows-provider-inventory"></a>

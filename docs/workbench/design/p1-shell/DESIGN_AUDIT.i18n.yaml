@@ -1,0 +1,19 @@
+# Bilingual-pair consistency record for DESIGN_AUDIT.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/design/p1-shell/DESIGN_AUDIT.md
+/native-desktop-design-audit:
+  en: 489e5235a4db2e26
+  zh: 50b96863b741aa50
+/native-desktop-design-audit/summary:
+  en: 99bd2d41d0ce6e58
+  zh: 1f49a8212a30328e
+/native-desktop-design-audit/source-observations:
+  en: 42df186ec26391e0
+  zh: 9bdff239c308882c
+/native-desktop-design-audit/required-visual-follow-up:
+  en: b572ca2c16c1caf3
+  zh: 6730dee365b9d1d4
+/native-desktop-design-audit/dev-note:
+  en: 05bcac83759e15cb
+  zh: e6b7f9b986eb6292

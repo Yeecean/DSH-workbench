@@ -1,0 +1,25 @@
+# Bilingual-pair consistency record for OPEN_DESIGN_AGENT_BRIEF.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/design/p1-shell/OPEN_DESIGN_AGENT_BRIEF.md
+/open-design-agent-brief-dsh-workbench-p1:
+  en: e2aa34178a9dedee
+  zh: 7886044a7819bf4f
+/open-design-agent-brief-dsh-workbench-p1/assignment:
+  en: 82c847045284fac5
+  zh: 33bd02b29aae3ffc
+/open-design-agent-brief-dsh-workbench-p1/read-first:
+  en: e3afb3fe8bff1baa
+  zh: bc36fea927ecd89c
+/open-design-agent-brief-dsh-workbench-p1/design-scope:
+  en: 0d930ab6efd8175f
+  zh: 3c8715a4903ffa90
+/open-design-agent-brief-dsh-workbench-p1/required-outputs:
+  en: 9a3c621d38421c72
+  zh: 18bdf4b6685793e2
+/open-design-agent-brief-dsh-workbench-p1/boundaries:
+  en: 3e4933b35b866b82
+  zh: 26f914ece0e239f0
+/open-design-agent-brief-dsh-workbench-p1/dev-note:
+  en: 12cfe880ae257660
+  zh: 6b28989f04720a11

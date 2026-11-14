@@ -10,6 +10,7 @@
 
 - [批准与前置条件](#approval-and-prerequisites)
 - [源码约束](#source-constraints)
+- [视觉设计评审](#visual-design-review)
 - [实施顺序](#implementation-sequence)
 - [Windows 验收矩阵](#windows-acceptance-matrix)
 - [失败与恢复](#failure-and-recovery)
@@ -34,6 +35,17 @@
 - 原生右栏位置在 `canShow` 为 false 时会折叠已展开的非全屏 Session 右栏，活动位置清理时也会报告关闭，见 [SidebarRight.tsx:385–449](../../packages/client/ui-sidebar-right/src/client/shell/SidebarRight.tsx)。窄视口自动全屏行为由第 397–405 行计算；仲裁不能把隐藏但保留的位置误当成用户折叠，也不能让旧清理关闭全局界面。
 - Terminal 与 Files 在 [ui-sidebar-terminal index.ts:95](../../packages/client/ui-sidebar-terminal/src/client/index.ts) 和 [ui-sidebar-files index.ts:174](../../packages/client/ui-sidebar-files/src/client/index.ts) 贡献 Session 右栏标签页。源码存在不等于原型测试通过。
 - Desktop 在 [paths.ts:17–20](../../apps/desktop/src/paths.ts) 解析 `profiles/desktop`，其 Host 在 [desktop-host index.ts:22–34](../../apps/desktop-host/src/index.ts) 提供 `desktop` 名称。不能据此假定 Desktop 可以选择单独命名的 Profile。
+
+-----
+
+<a id="visual-design-review"></a>
+## 视觉设计评审
+
+生产 UI 实现前，在可编辑的 Open Design 设计中比较原生延续型与轻度产品化型。两种方向均展示 Home 与全局 Context、Conversation 与原生 Session 栏、Conversation 与全局 Context，以及窄窗口状态；保留原生 Session、Terminal 与 Files 的可识别性。详见[视觉方向](design/p1-shell/VISUAL_DIRECTION.zh.md)。
+
+包含玻璃与不透明表面对比、明暗外观，以及代表性背景上文字、图标、边界和焦点对比度的可测量检查。展示主题、强调色、表面色、UI 与等宽字体、字号、导入和恢复默认的 Appearance Settings 入口；以设计流程展示主题导入、预览、取消、错误与恢复。视觉原型不实现文件导入，也不代表现有设置 API 已提供这些能力。
+
+使用有明确回退值的语义 Token，保留技术界面的信息密度。检查 Windows 高 DPI、窗口缩放、可用时的减少动态和透明效果，以及 GPU 与窗口合成成本。用户评审后选择最终视觉方向；布局和 Desktop Profile 决策仍需单独批准。
 
 -----
 

@@ -1,0 +1,22 @@
+# Bilingual-pair consistency record for DESIGN_BRIEF.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/design/p1-shell/DESIGN_BRIEF.md
+/p1-desktop-design-brief:
+  en: ddc24014ac08770e
+  zh: 4a8e14b7172d00c5
+/p1-desktop-design-brief/summary:
+  en: f21f56f444c999ea
+  zh: 92c525f645cc0dc0
+/p1-desktop-design-brief/design-directions:
+  en: ad6e73def1bb943a
+  zh: 53147664ed5ff646
+/p1-desktop-design-brief/visual-principles:
+  en: 8f235eb1f38fc0aa
+  zh: ff6c15ef91a21721
+/p1-desktop-design-brief/scope-and-acceptance:
+  en: cb70fafac8f91b68
+  zh: 1f7cb7641721fa56
+/p1-desktop-design-brief/dev-note:
+  en: cbdfaf04a41efed2
+  zh: 0fcca63f0dc04f9e

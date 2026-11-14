@@ -51,6 +51,8 @@
 | [全局右栏 ADR](GLOBAL_RIGHTBAR_ADR.zh.md) | 候选方案、布局契约草案与待批准决策 |
 | [Desktop Profile 可行性](DESKTOP_PROFILE_FEASIBILITY.zh.md) | Desktop 组合、隔离和验证计划 |
 | [P1 原型计划](P1_PROTOTYPE_PLAN.zh.md) | 最小原型范围与 Windows 验收计划 |
+| [P1 视觉方向](design/p1-shell/VISUAL_DIRECTION.zh.md) | 两种视觉方向与所需对比状态 |
+| [P1 材质指南](design/p1-shell/MATERIAL_GUIDELINES.zh.md) | 受控毛玻璃、不透明回退、密度与 Windows 评审 |
 
 -----
 

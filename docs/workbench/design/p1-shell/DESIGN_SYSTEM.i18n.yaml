@@ -1,0 +1,31 @@
+# Bilingual-pair consistency record for DESIGN_SYSTEM.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/design/p1-shell/DESIGN_SYSTEM.md
+/p1-workbench-design-system:
+  en: 1de8d445f89170b9
+  zh: 3fb6a4cd4d97723f
+/p1-workbench-design-system/summary:
+  en: 4d506725e77d551b
+  zh: 3e6884e43f8aed4d
+/p1-workbench-design-system/table-of-contents:
+  en: b1f82caf338be560
+  zh: 4daf7eda8cc78e73
+/p1-workbench-design-system/native-foundation:
+  en: 76b4f7e9ce7b4d1b
+  zh: fa53017fe5bdb149
+/p1-workbench-design-system/semantic-roles:
+  en: c9681ed2f3ce39b6
+  zh: 928fc060ed0d803c
+/p1-workbench-design-system/typography-and-density:
+  en: 526c790e06dd5e7a
+  zh: 12d1f8e244099d90
+/p1-workbench-design-system/controls-and-accessibility:
+  en: 5f7cb3e58642e7bc
+  zh: 8315162ecf51289b
+/p1-workbench-design-system/validation:
+  en: f62871bfbf5de1a7
+  zh: 1ee06d3076dec49f
+/p1-workbench-design-system/dev-note:
+  en: 477984c0bf488021
+  zh: 422208c8df721834

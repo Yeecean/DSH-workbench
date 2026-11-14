@@ -1,0 +1,28 @@
+# Bilingual-pair consistency record for MATERIAL_GUIDELINES.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/design/p1-shell/MATERIAL_GUIDELINES.md
+/p1-desktop-material-guidelines:
+  en: 7f6450f7d4ca913d
+  zh: 12ca00be0ff227d0
+/p1-desktop-material-guidelines/summary:
+  en: a8d8a4a71aa3d5ef
+  zh: e562a5e2af777e06
+/p1-desktop-material-guidelines/table-of-contents:
+  en: c50d3cc9f35279e1
+  zh: 2c793d999070fc5b
+/p1-desktop-material-guidelines/surface-placement:
+  en: 9e486510fda98c06
+  zh: 761bcb161cfe51da
+/p1-desktop-material-guidelines/contrast-and-fallback:
+  en: fc4fbc3fceece374
+  zh: 939594d1474ec357
+/p1-desktop-material-guidelines/spacing-and-density:
+  en: ca65b1d774f51edb
+  zh: b2aedcc9eac314b3
+/p1-desktop-material-guidelines/windows-review:
+  en: 97421b10ce3985bf
+  zh: c26a02b9ffd98b4e
+/p1-desktop-material-guidelines/dev-note:
+  en: 87f6677908fb1675
+  zh: 7c0a86d4ff3d0d8f

@@ -1,0 +1,31 @@
+# Bilingual-pair consistency record for CONTEXT_INFORMATION_ARCHITECTURE.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/design/p1-shell/CONTEXT_INFORMATION_ARCHITECTURE.md
+/p1-context-information-architecture:
+  en: 64d6f97f646e48fa
+  zh: 6d0757f8ca99a052
+/p1-context-information-architecture/summary:
+  en: d359b6e6dcd79b32
+  zh: a873315d553b1d84
+/p1-context-information-architecture/table-of-contents:
+  en: 27df90f153a342f4
+  zh: ca956dda37fce6f5
+/p1-context-information-architecture/scope-and-priority:
+  en: f842bbed7bddd42a
+  zh: 60f2a1bab6fd8833
+/p1-context-information-architecture/candidate-groups:
+  en: 743abbf92dd44dcc
+  zh: 4fc902a6a782df20
+/p1-context-information-architecture/session-states:
+  en: 83ad85788df25105
+  zh: 42b6506da0e5166e
+/p1-context-information-architecture/availability-and-admission:
+  en: 4fd22587d2900575
+  zh: dc14b48af2df8efa
+/p1-context-information-architecture/design-and-verification-limits:
+  en: 3ecc96f1aec427dd
+  zh: 97df36be49ba4b26
+/p1-context-information-architecture/dev-note:
+  en: 94bc3683556a7a55
+  zh: ebee77c6666d25d8

@@ -1,0 +1,25 @@
+# Bilingual-pair consistency record for THEME_SYSTEM_SPEC.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/design/p1-shell/THEME_SYSTEM_SPEC.md
+/theme-system-specification:
+  en: f358f5887d997f8d
+  zh: 5664f3b0b0b0887d
+/theme-system-specification/summary:
+  en: f82e379b20d801c3
+  zh: 875b76909935c72d
+/theme-system-specification/table-of-contents:
+  en: b9c8e8d454ccc96c
+  zh: 138e73aa89a3d24a
+/theme-system-specification/native-capabilities:
+  en: fd308a784eda866b
+  zh: 99e2b3aae99c4b78
+/theme-system-specification/proposed-responsibilities:
+  en: 48080aa270832b4e
+  zh: ca3fdfa28aa4905d
+/theme-system-specification/delivery-and-acceptance:
+  en: af59dab63455a6e7
+  zh: 12eb9944a823e5de
+/theme-system-specification/dev-note:
+  en: a01b0199a5e8d897
+  zh: bc305bc6e336fa5b

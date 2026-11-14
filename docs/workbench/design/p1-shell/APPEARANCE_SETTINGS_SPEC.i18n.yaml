@@ -1,0 +1,25 @@
+# Bilingual-pair consistency record for APPEARANCE_SETTINGS_SPEC.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/design/p1-shell/APPEARANCE_SETTINGS_SPEC.md
+/appearance-settings-specification:
+  en: 49b978f0226e49da
+  zh: 719f1484911e8ee5
+/appearance-settings-specification/summary:
+  en: c8b02c9034b14d7f
+  zh: b86b14eb52b9ec45
+/appearance-settings-specification/table-of-contents:
+  en: d68da73a84af8a50
+  zh: 725cd3ead4c17572
+/appearance-settings-specification/controls:
+  en: 6441f4b92d36524b
+  zh: 23a71cac80e7c9c8
+/appearance-settings-specification/preview-and-failure-states:
+  en: 86e21861a8cc02cf
+  zh: 863b98379ce30b1e
+/appearance-settings-specification/acceptance:
+  en: b9c488d553e02b20
+  zh: 7565148a061d1090
+/appearance-settings-specification/dev-note:
+  en: e26cebceb287b5e7
+  zh: a6f3f024d78ea47b

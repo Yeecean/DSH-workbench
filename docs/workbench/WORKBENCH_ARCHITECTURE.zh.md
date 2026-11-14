@@ -95,6 +95,8 @@ Workbench Host Bundle 应增加 Row，而不是把原生 Config 复制到手写 
 
 Renderer 仍是标准 DSH Web Client。Workbench 客户端 Bundle 通过客户端 Cordis 树、客户端模块、UI Slot、Theme Token 和生成 Remote API 贡献产品 UI。提案复用其页面的原生 Session、Files、Terminal、Approval、Settings 与 Plugin Client 仍保持可用。
 
+拟议的 Workbench 设计系统在适用时复用原生主题 Token 和共享组件。新增产品 Token 必须有清晰的语义和回退值；主题变化覆盖 Workbench 页面时不能破坏原生 Conversation、Terminal 或 Files。外观属于表现层状态，独立于 Agent Runtime、Session 权威状态和插件业务状态；详见[视觉方向](design/p1-shell/VISUAL_DIRECTION.zh.md)。
+
 提议 Renderer 页面包括：
 
 | 页面 | 产品职责 | 其下原生能力 |

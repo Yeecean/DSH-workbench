@@ -1,0 +1,28 @@
+# Bilingual-pair consistency record for VISUAL_DIRECTION.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/design/p1-shell/VISUAL_DIRECTION.md
+/p1-desktop-visual-direction:
+  en: d5270dbdbd532eb7
+  zh: 3a709f20f7d2ccde
+/p1-desktop-visual-direction/summary:
+  en: 50c31db2f193731b
+  zh: 2df0c8af6bd70321
+/p1-desktop-visual-direction/table-of-contents:
+  en: 7e1d9b0aa4a5cf5d
+  zh: e403bd648c9d61d0
+/p1-desktop-visual-direction/shared-principles:
+  en: 2692e9ef6e244c99
+  zh: 23c6d0362de9ca10
+/p1-desktop-visual-direction/directions-to-compare:
+  en: a7ea728d72fc60f7
+  zh: 80a93bf4655b9b69
+/p1-desktop-visual-direction/required-comparison:
+  en: 72c1685fb90423f9
+  zh: b5e670f563cbc2ac
+/p1-desktop-visual-direction/decision-and-evidence:
+  en: 4ed0122a212c1519
+  zh: 6ea470a2d0e0c3e9
+/p1-desktop-visual-direction/dev-note:
+  en: d1e1998c989b742f
+  zh: 03ac56f032169cba

@@ -1,0 +1,22 @@
+# Bilingual-pair consistency record for RESPONSIVE_SPEC.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/design/p1-shell/RESPONSIVE_SPEC.md
+/p1-responsive-layout-design:
+  en: 3479a84da7f5b24e
+  zh: 3a8d666a22e5c87b
+/p1-responsive-layout-design/summary:
+  en: 03b61eac19d05bfc
+  zh: d68f5a57accc2dd0
+/p1-responsive-layout-design/native-geometry:
+  en: f95e7cd0b8678d59
+  zh: 56954244b82d1f15
+/p1-responsive-layout-design/proposed-behavior-by-measured-frame-width:
+  en: a90ea4b786af0d0a
+  zh: 83b55a0ae6869321
+/p1-responsive-layout-design/required-review:
+  en: 830d8c202c9271f6
+  zh: 9e9ee51cfa02ca8c
+/p1-responsive-layout-design/dev-note:
+  en: 86dfcdd895d9e886
+  zh: 08ced4ce19b7c1f4

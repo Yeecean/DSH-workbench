@@ -1,0 +1,22 @@
+# Bilingual-pair consistency record for TOKEN_MAPPING.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/design/p1-shell/TOKEN_MAPPING.md
+/token-mapping:
+  en: b60ea6abf3ed7b02
+  zh: bf9086fe4e6f2319
+/token-mapping/summary:
+  en: 4b48c82e92de205a
+  zh: b6e8d80b6775995a
+/token-mapping/table-of-contents:
+  en: 4f4654e38df1a53a
+  zh: 0afe3f7d6bcf5cbc
+/token-mapping/existing-roles:
+  en: 52322a6e9132dc8f
+  zh: 7890a40918bcff19
+/token-mapping/proposed-roles-and-limits:
+  en: 6a60ca8a652094f9
+  zh: 02478dcc82ff4d93
+/token-mapping/dev-note:
+  en: 962c93b0e9f10a7e
+  zh: 56d5758b2df98e18

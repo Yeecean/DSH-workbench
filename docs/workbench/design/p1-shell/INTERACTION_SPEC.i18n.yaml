@@ -1,0 +1,22 @@
+# Bilingual-pair consistency record for INTERACTION_SPEC.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/design/p1-shell/INTERACTION_SPEC.md
+/p1-interaction-design:
+  en: d2703154181bdbdd
+  zh: 34be61ded56a1e6d
+/p1-interaction-design/summary:
+  en: 2782c4cfdf7e7280
+  zh: aae3b9da85936c36
+/p1-interaction-design/navigation-and-rightbar:
+  en: 50ed691ff3628604
+  zh: 3458647ccbddd499
+/p1-interaction-design/appearance-and-import:
+  en: 2260f4c6aee25a9f
+  zh: e14c8c662be81d87
+/p1-interaction-design/states-and-accessibility:
+  en: d51e91e6f3d28d11
+  zh: 7b8664eeb0d55dc4
+/p1-interaction-design/dev-note:
+  en: 5c1a603ac9b13ffe
+  zh: 8bd7da1e712ace47

@@ -12,6 +12,7 @@
 - [优先级顺序](#priority-order)
 - [P0：架构审核](#p0-architecture-review)
 - [P1：Workbench 壳层](#p1-workbench-shell)
+- [P1.1：主题导入](#p11-theme-import)
 - [P2：Session 与活动](#p2-session-and-activity)
 - [P3：Workspace 与 Editor](#p3-workspace-and-editor)
 - [P4：Terminal 与 Job](#p4-terminal-and-jobs)
@@ -50,6 +51,7 @@
 |---|---|---|
 | P0 | 架构审核 | 批准或修订组合、布局、平台与 Plugin Safety 决策 |
 | P1 | Workbench 壳层 | 具有品牌和导航的 Windows Desktop，带原生 Host 与有界产品 Bundle |
+| P1.1 | 主题导入 | 必须交付版本化主题导入、校验、预览、应用和恢复 |
 | P2 | Session 与活动 | 一个具有可用 Agent/Activity State 的 Workbench Session Center |
 | P3 | Workspace 与 Editor | 在连贯产品 Workspace 内使用原生 Workspace File Operation |
 | P4 | Terminal 与 Job | 通过原生 Service 提供产品 Terminal 与 Background Activity |
@@ -117,6 +119,7 @@
 - 增加 Workbench Client Package 与 `dsh.client` Entry。
 - 保留原生 `AppFrame`、侧栏和 Session 右栏；通过批准的扩展及现有子 Slot 贡献 Home 和 Context。
 - 增加 Semantics Product Token 与 Localized Shell Copy。
+- 设计两种可比较的视觉方向、明暗表面、Appearance Settings 与主题导入预览；批准并审计原生主题后再实现基础外观控制。
 - 保留 Desktop Security Setting 与 Boot Injection。
 
 ### 验收条件
@@ -126,6 +129,17 @@
 ### 风险
 
 Client Module 可能因 Host Release Change 失效。全局右栏与 Session 右栏可能争用宽度、可见性、焦点与生命周期；保留 Session 状态可能需要经批准的最小 `ui-sidebar-right` 适配及布局修改。Desktop Profile 与 User Data 隔离仍未验证。
+
+-----
+
+<a id="p11-theme-import"></a>
+## P1.1：主题导入
+
+P1 设计定义视觉语言、原生到 Workbench 的 Token 映射、主题数据模型、明暗示例和 Appearance Settings 原型。P1 实现目标是使用语义 Token，并在核实原生设置机制后提供基础模式、强调色和表面色、UI 与等宽字体及字号调整；具体支持仍以主题审计为准。
+
+主题文件导入是必须交付的产品能力，最迟安排在 P1.1。交付版本化纯数据格式、白名单校验、预览与明确应用、失败时保留当前主题，以及恢复默认或回退；只有审计确认原生基础安全且成本较低时才提前纳入 P1。主题导出、收藏和更细定制按实际需求安排在 P2 或之后，不阻塞必须交付的导入。
+
+导入格式、校验限制、平台集成和验收测试在实现并验证前均为设计提议。视觉工作不得建立平行 Theme Runtime，也不得仅为外观修改 Agent、Session、Terminal、Files 或传输内部实现。
 
 -----
 

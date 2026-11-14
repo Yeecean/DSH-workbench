@@ -12,6 +12,7 @@ The roadmap turns the audited native architecture into prioritized product work.
 - [Priority order](#priority-order)
 - [P0: Architecture review](#p0-architecture-review)
 - [P1: Workbench shell](#p1-workbench-shell)
+- [P1.1: Theme import](#p11-theme-import)
 - [P2: Session and activity](#p2-session-and-activity)
 - [P3: Workspace and editor](#p3-workspace-and-editor)
 - [P4: Terminal and jobs](#p4-terminal-and-jobs)
@@ -50,6 +51,7 @@ The sequence front-loads architecture proof and the user’s primary work loop. 
 |---|---|---|
 | P0 | Architecture review | Approval or revision of composition, layout, platform, and plugin-safety decisions |
 | P1 | Workbench shell | Branded, navigable Windows Desktop with a native Host and bounded product bundle |
+| P1.1 | Theme import | Required versioned theme import, validation, preview, apply, and recovery |
 | P2 | Session and activity | One Workbench Session center with usable Agent/activity states |
 | P3 | Workspace and editor | Native workspace file operations inside a coherent product workspace |
 | P4 | Terminal and jobs | Product terminal and background activity through native services |
@@ -117,6 +119,7 @@ Produce a Windows Desktop build with a distinctive Workbench shell, product navi
 - Add the Workbench client package and `dsh.client` entry.
 - Preserve the native `AppFrame`, sidebar, and Session rightbar; contribute Home and Context through the approved extension and existing child slots.
 - Add semantic product tokens and localized shell copy.
+- Design two comparable visual directions, light/dark surfaces, Appearance Settings, and a theme-import preview; implement basic appearance controls only after approval and native theme audit.
 - Preserve Desktop security settings and boot injection.
 
 ### Acceptance condition
@@ -126,6 +129,17 @@ On Windows Native Desktop, the approved isolated composition loads Home and Cont
 ### Risk
 
 Client modules can be invalidated by a Host release change. Global and Session rightbars can contend for width, visibility, focus, and lifecycle ownership; retaining Session state may require an approved minimal `ui-sidebar-right` adaptation as well as layout changes. Desktop profile and user-data isolation remain unverified.
+
+-----
+
+<a id="p11-theme-import"></a>
+## P1.1: Theme import
+
+P1 design defines the visual language, native-to-Workbench token mapping, theme data model, light/dark examples, and Appearance Settings prototype. P1 implementation aims to use semantic tokens and provide basic mode, accent/surface color, UI and monospace font, and font-size adjustments through the native settings mechanisms where verified; implementation details and support remain subject to the theme audit.
+
+Theme file import is a required product capability scheduled no later than P1.1. Deliver a versioned data-only format, allowlisted validation, preview and explicit apply, failure-safe retention of the current theme, and reset or rollback; it may move into P1 only if the audited native facilities make it safe and low cost. Theme export, collections, and finer customization are P2 or later based on actual need; they do not block required import.
+
+The import format, validation limits, platform integration, and acceptance tests are design proposals until implemented and verified. Visual work must not create a parallel Theme Runtime or modify Agent, Session, Terminal, Files, or transport internals solely for appearance.
 
 -----
 

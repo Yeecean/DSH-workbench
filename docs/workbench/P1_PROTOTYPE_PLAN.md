@@ -10,6 +10,7 @@ This proposed plan defines the smallest Windows Native Desktop prototype that ca
 
 - [Approval and prerequisites](#approval-and-prerequisites)
 - [Source constraints](#source-constraints)
+- [Visual design review](#visual-design-review)
 - [Implementation sequence](#implementation-sequence)
 - [Windows acceptance matrix](#windows-acceptance-matrix)
 - [Failure and recovery](#failure-and-recovery)
@@ -34,6 +35,17 @@ The plan retains the existing `root` and `rightbar` occupants and does not use `
 - The native seat collapses an expanded non-fullscreen Session rightbar when `canShow` is false, and its active-seat cleanup reports a closed presentation at [SidebarRight.tsx:385–449](../../packages/client/ui-sidebar-right/src/client/shell/SidebarRight.tsx). Its narrow viewport fullscreen behavior is derived at lines 397–405; arbitration must not accidentally treat a hidden retained seat as a user collapse or let stale cleanup close the global presentation.
 - Terminal and Files contribute Session rightbar tabs at [ui-sidebar-terminal index.ts:95](../../packages/client/ui-sidebar-terminal/src/client/index.ts) and [ui-sidebar-files index.ts:174](../../packages/client/ui-sidebar-files/src/client/index.ts). Their presence in source is not a successful prototype test.
 - Desktop resolves `profiles/desktop` at [paths.ts:17–20](../../apps/desktop/src/paths.ts) and its Host supplies the name `desktop` at [desktop-host index.ts:22–34](../../apps/desktop-host/src/index.ts). A separately named Desktop profile cannot be assumed selectable from those facts.
+
+-----
+
+<a id="visual-design-review"></a>
+## Visual design review
+
+Before production UI implementation, compare the native-continuity and light-product-identity directions in editable Open Design work. Show the same Home with global Context, Conversation with native Session rail, Conversation with global Context, and narrow-window states for both directions; keep native Session, Terminal, and Files recognizable. See [visual direction](design/p1-shell/VISUAL_DIRECTION.md).
+
+Include a glass and opaque comparison, light and dark appearance, and measurable text, icon, border, and focus contrast on representative backgrounds. Show Appearance Settings entry points for theme, accent, surface color, UI and monospace fonts, font size, import, and reset; include theme import, preview, cancellation, error, and recovery states as design flows. A visual prototype does not implement the file import or imply an existing settings API.
+
+Use semantic tokens with explicit fallback and preserve dense technical surfaces. Inspect Windows high DPI, resizing, reduced motion and transparency where available, and GPU/compositor cost. The user selects the final visual direction after review; layout and Desktop Profile decisions remain separate approval prerequisites.
 
 -----
 

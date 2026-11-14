@@ -71,6 +71,8 @@ Windows 结论包含已执行的依赖安装、Typecheck、Lint、GUI 测试、�
 
 Desktop 安全设置保持 `nodeIntegration: false`、`contextIsolation: true` 与 `sandbox: true`。Host 使用动态端口上的 Loopback，Signed Desktop Cookie 未存入常规 Electron Session。这些是 Workbench Desktop 定制应保留的原生信任边界。
 
+拟议视觉评审还覆盖 Windows 合成器和 GPU 成本、高 DPI、缩放，以及平台暴露时的减少动态和透明效果偏好。模糊不受支持或不适用时，玻璃材质必须回退到不透明语义表面；Workbench 的这些外观行为尚未验证。详见[材质指南](design/p1-shell/MATERIAL_GUIDELINES.zh.md)。
+
 -----
 
 <a id="windows-provider-inventory"></a>

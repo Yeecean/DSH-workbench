@@ -1,0 +1,22 @@
+# Bilingual-pair consistency record for COMPONENT_MAPPING.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/design/p1-shell/COMPONENT_MAPPING.md
+/p1-component-mapping:
+  en: cf4fa695fd0414f5
+  zh: 1f6bcdbaf54617d2
+/p1-component-mapping/summary:
+  en: 02505483827123a4
+  zh: f2a51be83ee1c9f7
+/p1-component-mapping/table-of-contents:
+  en: a4be36cdc5c6cd94
+  zh: f23d5257472da967
+/p1-component-mapping/existing-owners-and-proposed-use:
+  en: 2f58ca341e96e89a
+  zh: edcbdb5580ea5649
+/p1-component-mapping/reuse-rules:
+  en: 6527275a0e4c2815
+  zh: 124201734ad0a09e
+/p1-component-mapping/dev-note:
+  en: c28cb70922549f1d
+  zh: 0c37a710d22e1ed7

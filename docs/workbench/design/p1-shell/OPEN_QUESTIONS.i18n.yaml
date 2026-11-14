@@ -1,0 +1,22 @@
+# Bilingual-pair consistency record for OPEN_QUESTIONS.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/design/p1-shell/OPEN_QUESTIONS.md
+/p1-visual-design-decisions-for-review:
+  en: b89d6c6565cc9b7a
+  zh: 301cd749807c37b6
+/p1-visual-design-decisions-for-review/summary:
+  en: fd0a8106570be585
+  zh: 69a2736dee5919ff
+/p1-visual-design-decisions-for-review/table-of-contents:
+  en: 9735980a9425a556
+  zh: 8c4963a6a4861f18
+/p1-visual-design-decisions-for-review/decisions:
+  en: 29ce90fc7e9a7738
+  zh: 52fab60de32d585f
+/p1-visual-design-decisions-for-review/evidence-required:
+  en: e7554bcebd3f61bc
+  zh: e8e784b5d89c44b8
+/p1-visual-design-decisions-for-review/dev-note:
+  en: 4b7c4b2fc390709e
+  zh: 378a9714cdf3f63e

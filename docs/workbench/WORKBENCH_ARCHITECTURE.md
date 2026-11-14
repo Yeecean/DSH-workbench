@@ -95,6 +95,8 @@ Product Host plugins should expose only product-specific operations. Examples in
 
 The renderer is still a standard DSH Web Client. The Workbench client bundle contributes product UI through the client Cordis tree, client modules, UI slots, theme tokens, and generated Remote APIs. Native Session, Files, Terminal, Approval, Settings, and Plugin clients remain available where the proposal reuses their surfaces.
 
+The proposed Workbench design system reuses native theme tokens and shared primitives where suitable. Any additional product token needs a clear semantic role and fallback, and theme changes must cover Workbench surfaces without breaking native Conversation, Terminal, or Files. Appearance is presentation state, independent of Agent Runtime, Session authority, and plugin business state; see the [visual direction](design/p1-shell/VISUAL_DIRECTION.md).
+
 The proposed renderer surfaces are:
 
 | Surface | Product responsibility | Native capability beneath it |

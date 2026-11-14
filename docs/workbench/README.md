@@ -51,6 +51,8 @@ The pages have separate owners. Start with the audit and sync report, then revie
 | [Global rightbar ADR](GLOBAL_RIGHTBAR_ADR.md) | Options, proposed layout contract, and pending decisions |
 | [Desktop Profile feasibility](DESKTOP_PROFILE_FEASIBILITY.md) | Desktop composition, isolation, and verification plan |
 | [P1 prototype plan](P1_PROTOTYPE_PLAN.md) | Minimal prototype scope and Windows acceptance plan |
+| [P1 visual direction](design/p1-shell/VISUAL_DIRECTION.md) | Two visual directions and required comparison states |
+| [P1 material guidelines](design/p1-shell/MATERIAL_GUIDELINES.md) | Controlled glass, opaque fallback, density, and Windows review |
 
 -----
 

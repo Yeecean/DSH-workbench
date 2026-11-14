@@ -1,0 +1,19 @@
+# Bilingual-pair consistency record for PRECHECK_REPORT.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/design/p1-shell/PRECHECK_REPORT.md
+/p1-v2-precheck-report:
+  en: e2ce15dd07ccb9af
+  zh: a98f085fbd61845e
+/p1-v2-precheck-report/summary:
+  en: 770bc206f14239da
+  zh: e2ed61a9f2846a5e
+/p1-v2-precheck-report/git-checkpoint:
+  en: 6298989e9df8b920
+  zh: 4f1d4f59d8c7f8ee
+/p1-v2-precheck-report/source-review-and-limits:
+  en: 1f46a90f3ebb1747
+  zh: 342154ecd08c219d
+/p1-v2-precheck-report/dev-note:
+  en: b1343a6f4adf7f7a
+  zh: 53bbd323c64567cc
