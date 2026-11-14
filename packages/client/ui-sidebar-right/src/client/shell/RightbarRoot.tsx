@@ -1,6 +1,7 @@
 /** Root-scoped controller for the right Sidebar's Session content. */
 import { useLayoutEffect } from 'react'
 import type { HostObservable, InjectFace, PropsRenderSlots, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
+import type { RightbarSurface } from '@deepseek-ai/dsh-client-ui-layout/client'
 import type { SessionReference } from '@deepseek-ai/dsh-api-session-controller/client'
 import type { SidebarSessionViewSnapshot } from '../session-views.ts'
 import type {} from '../contract/slots.ts'
@@ -8,7 +9,10 @@ import css from './SidebarRight.module.css'
 
 /** Root-only retained Session targets and their committed mount lifetimes. */
 export interface RightbarRootInjected {
-  readonly hooks: { readonly views: HostObservable<readonly SidebarSessionViewSnapshot[]> }
+  readonly hooks: {
+    readonly views: HostObservable<readonly SidebarSessionViewSnapshot[]>
+    readonly rightbarOwner: HostObservable<RightbarSurface>
+  }
   readonly mountView: (reference: SessionReference) => () => void
 }
 
@@ -31,8 +35,10 @@ function SessionView({ view, visible, SessionProvider, renderSlot, mountView, wi
  * @param props - frame geometry, view targets and the authorized Session renderer.
  * @returns the foreground and retained background Sidebars.
  */
-export function RightbarRoot({ usePanelInfo, useViews, ...props }: RootProps) {
-  const visible = usePanelInfo(info => info.activePanelId === null)
+export function RightbarRoot({ usePanelInfo, useRightbarOwner, useViews, ...props }: RootProps) {
+  const onConversation = usePanelInfo(info => info.activePanelId === null)
+  const owner = useRightbarOwner(value => value)
+  const visible = onConversation && owner === 'session'
   const views = useViews(value => value)
   return <>{views.map(view => <SessionView key={view.sessionId} {...props} view={view} visible={visible} />)}</>
 }

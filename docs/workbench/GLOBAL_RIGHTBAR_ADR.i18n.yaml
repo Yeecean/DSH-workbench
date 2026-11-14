@@ -1,0 +1,40 @@
+# Bilingual-pair consistency record for GLOBAL_RIGHTBAR_ADR.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/GLOBAL_RIGHTBAR_ADR.md
+/adr-global-agent-context-rightbar:
+  en: 7c5a3f15870b4cb5
+  zh: dd132536874340c2
+/adr-global-agent-context-rightbar/summary:
+  en: f5e73dde66943cf6
+  zh: 4c0665ad29ea08a7
+/adr-global-agent-context-rightbar/table-of-contents:
+  en: 2c1790c9e660e065
+  zh: 4e6aa6171ab93671
+/adr-global-agent-context-rightbar/problem-and-constraints:
+  en: 8f145ed48f4bc10d
+  zh: 6c1132c589b3dbb0
+/adr-global-agent-context-rightbar/existing-behavior:
+  en: 0c5ddea4be11a861
+  zh: 928b66fafecdb53f
+/adr-global-agent-context-rightbar/options-and-recommendation:
+  en: 4bd76e20559705aa
+  zh: ad5c9db4f600f482
+/adr-global-agent-context-rightbar/proposed-slot-api:
+  en: 7bb4204c3396c5c0
+  zh: 6b3974f0b228935b
+/adr-global-agent-context-rightbar/arbitration-and-lifecycle:
+  en: 0a028c5e1d7a96f6
+  zh: 7a5cb1068af81809
+/adr-global-agent-context-rightbar/geometry-and-accessibility:
+  en: bccced4391186f14
+  zh: e4f3f67f50098748
+/adr-global-agent-context-rightbar/profile-isolation:
+  en: 54123d2c675e82e6
+  zh: c3afa19b0c25ffb5
+/adr-global-agent-context-rightbar/validation-and-open-decisions:
+  en: e5732517dc633fdb
+  zh: feb7794b9b3e17f2
+/adr-global-agent-context-rightbar/dev-note:
+  en: e89001360e85996c
+  zh: 067f20fd771cc6d6

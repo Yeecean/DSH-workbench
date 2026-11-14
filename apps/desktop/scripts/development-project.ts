@@ -118,6 +118,26 @@ function mirrorWorkspaceDependencies(roots: readonly string[], destinationRoot: 
 }
 
 /**
+ * Link pnpm's dependency graph and workspace packages into a target `node_modules` directory
+ * using resolved real paths so relative workspace symlinks work inside Windows junctions.
+ */
+export function linkWorkspaceNodeModules(repo: string, destinationModules: string): string[] {
+  const cliDir = join(repo, 'apps/cli')
+  const hostDir = join(repo, 'apps/desktop-host')
+  mkdirSync(destinationModules, { recursive: true })
+  const names = [
+    ...mirrorDependencyLinks(join(repo, 'node_modules/.pnpm/node_modules'), destinationModules),
+    ...mirrorWorkspaceDependencies([cliDir, hostDir], destinationModules),
+  ]
+  for (const [name, target] of [['@deepseek-ai/dsh', cliDir], ['@deepseek-ai/dsh-desktop-host', hostDir]] as const) {
+    const link = join(destinationModules, ...name.split('/'))
+    removeOwnedPath(link)
+    linkDirectory(target, link)
+  }
+  return names
+}
+
+/**
  * Replace one disposable project with links to the current built workspace.
  * @param options - Project destination, CLI package, release identity, and build target.
  * @returns the absolute project directory supplied by the caller.

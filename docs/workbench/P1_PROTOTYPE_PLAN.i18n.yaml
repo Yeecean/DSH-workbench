@@ -1,0 +1,31 @@
+# Bilingual-pair consistency record for P1_PROTOTYPE_PLAN.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/P1_PROTOTYPE_PLAN.md
+/p1-minimal-prototype-plan:
+  en: 99d335ee423b58b0
+  zh: cdd2c227f5ebf8fe
+/p1-minimal-prototype-plan/summary:
+  en: a60dd3552830af5f
+  zh: 3cb6164f353d2400
+/p1-minimal-prototype-plan/table-of-contents:
+  en: f286c9c630ac12e5
+  zh: aa3ef47799eb708b
+/p1-minimal-prototype-plan/approval-and-prerequisites:
+  en: 6fea561376bb9c4e
+  zh: 9ceaa04f13a5891f
+/p1-minimal-prototype-plan/source-constraints:
+  en: 46c2de11e3e660d8
+  zh: 94cfe4d53c06045c
+/p1-minimal-prototype-plan/implementation-sequence:
+  en: 446009fe2f5ec11e
+  zh: 50e684883899e7cc
+/p1-minimal-prototype-plan/windows-acceptance-matrix:
+  en: ff044bcc01695c0e
+  zh: 70bb28faeb48d9fb
+/p1-minimal-prototype-plan/failure-and-recovery:
+  en: 2485f4739230ef85
+  zh: e0b043d83629db22
+/p1-minimal-prototype-plan/dev-note:
+  en: bbac01e8f8a09dde
+  zh: 6a8af131b7108374

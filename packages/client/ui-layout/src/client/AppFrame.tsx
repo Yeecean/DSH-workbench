@@ -32,7 +32,7 @@ export interface AppFrameInjected {
 /** Full composed props: runtime, child slots, store, locale, and injected posture. */
 export type AppFrameProps =
   & PropsRuntime<'root'>
-  & PropsRenderSlots<'sidebar' | 'main' | 'rightbar' | 'shell.bottom' | 'shell.overlay' | 'shell.leading'>
+  & PropsRenderSlots<'sidebar' | 'main' | 'rightbar' | 'shell.rightbar.global' | 'shell.bottom' | 'shell.overlay' | 'shell.leading'>
   & PropsStore<ReturnType<typeof createLayoutStore>>
   & PropsLocale<'common'>
   & InjectFace<AppFrameInjected>
@@ -136,6 +136,8 @@ export function AppFrame({
   t,
 }: AppFrameProps) {
   const layoutInfo = useStore(state => state.layoutInfo)
+  const rightbarOwner = useStore(state => state.rightbarInfo.owner)
+  const globalRightbarActive = rightbarOwner === 'global'
   const frameRef = useRef<HTMLDivElement | null>(null)
   const viewport = layoutInfo.viewportWidth
   const foldedLandscape = useFoldedLandscape(matches => matches)
@@ -279,6 +281,17 @@ export function AppFrame({
     <MainPanel usePanelInfo={usePanelInfo} renderSlot={renderSlot} />
   ), [usePanelInfo, renderSlot])
   const overlays = useMemo(() => renderSlot('shell.overlay', {}), [renderSlot])
+  const rightbarSlot = useMemo(() => renderSlot('rightbar', {
+    width: normal.rightbar,
+    viewportWidth: viewport,
+    canShow: normal.rightbar > 0,
+  }), [renderSlot, normal.rightbar, viewport])
+  const globalRightbarSlot = useMemo(() => renderSlot('shell.rightbar.global', {
+    width: normal.rightbar,
+    viewportWidth: viewport,
+    canShow: normal.rightbar > 0,
+    active: globalRightbarActive,
+  }), [renderSlot, normal.rightbar, viewport, globalRightbarActive])
   // The leading seat serves drawers and fully hidden macOS sidebars.
   // Windows native captions keep their controls in the caption row instead.
   // AppFrame.module.css reserves clearance for the seat's rendered controls.
@@ -319,7 +332,12 @@ export function AppFrame({
       <>
         <CenterColumn inert={drawerOpen}>{main}</CenterColumn>
         <RightbarColumn inert={drawerOpen}>
-          {renderSlot('rightbar', { width: normal.rightbar, viewportWidth: viewport, canShow: normal.rightbar > 0 })}
+          <div className={css.rightbarSurface} hidden={globalRightbarActive} {...{ inert: globalRightbarActive ? '' : undefined }}>
+            {rightbarSlot}
+          </div>
+          <div className={css.rightbarSurface} hidden={!globalRightbarActive} {...{ inert: !globalRightbarActive ? '' : undefined }}>
+            {globalRightbarSlot}
+          </div>
         </RightbarColumn>
       </>
       <div className={css.bottomRow} data-shell-bottom {...{ inert: drawerOpen ? '' : undefined }}>

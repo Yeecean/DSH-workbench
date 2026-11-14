@@ -41,13 +41,18 @@ async function bench(collapsed = false, track?: TrackProductEvent) {
   runtimes.add(runtime)
   const locale = new LocaleRuntime(runtime.ctx)
   locale.setLocale('en')
+  const rightbarInfo = createSnapshotStore({ owner: 'session' as const, sessionPausedFullscreen: false, generation: 0 })
   const layout = {
     panelInfo: runtime.panelInfo,
+    rightbarInfo,
     beginNavigation: vi.fn(() => new AbortController().signal),
     toggleSidebar: vi.fn(),
     selectPanel: vi.fn((activePanelId: MainPanelId | null) => { runtime.panelInfo.set({ activePanelId }) }),
     openRightbar: vi.fn(),
     closeRightbar: vi.fn(),
+    openGlobalRightbar: vi.fn(),
+    closeGlobalRightbar: vi.fn(),
+    selectRightbarSurface: vi.fn(),
   } satisfies ILayout
   await runtime.mount({
     inject: ['slots'],
@@ -358,15 +363,23 @@ describe('sidebar launcher pins', () => {
     expect(within(navigation).getAllByRole('button').map(row => row.textContent)).toEqual(['Beta panel', 'Alpha panel'])
   })
 
-  it('shows More after the rows only while the actions list has registrations', async () => {
+  it('shows More and hides unpinned rows only while the actions list has registrations', async () => {
     const { runtime, locale, view } = await bench()
     const probe = await mountProbeActions(runtime)
     expect(view.queryByRole('navigation')).toBeNull()
     await mountPanels(runtime, locale)
     const navigation = await view.findByRole('navigation', { name: 'Global panels' })
-    expect(within(navigation).getAllByRole('button').map(row => row.getAttribute('aria-label'))).toEqual(['Beta panel', 'Alpha panel', 'More'])
+    expect(within(navigation).getAllByRole('button').map(row => row.getAttribute('aria-label')))
+      .toEqual(['Beta panel', 'Unpin Beta panel from sidebar', 'Alpha panel', 'Unpin Alpha panel from sidebar', 'More'])
+    fireEvent.click(within(navigation).getByRole('button', { name: 'Unpin Alpha panel from sidebar' }))
+    expect(within(navigation).queryByRole('button', { name: 'Alpha panel' })).toBeNull()
+    expect(document.activeElement).toBe(within(navigation).getByRole('button', { name: 'More' }))
     await probe.dispose()
     await waitFor(() => { expect(within(navigation).queryByRole('button', { name: 'More' })).toBeNull() })
+    expect(within(navigation).getAllByRole('button').map(row => row.getAttribute('aria-label'))).toEqual(['Beta panel', 'Alpha panel'])
+    await mountProbeActions(runtime)
+    await waitFor(() => { expect(within(navigation).queryByRole('button', { name: 'Alpha panel' })).toBeNull() })
+    expect(within(navigation).getByRole('button', { name: 'More' })).toBeTruthy()
   })
 
   it.each([false, true])('opens, pins, and dismisses through the More menu with collapsed=%s', async (collapsed) => {
@@ -395,6 +408,11 @@ describe('sidebar launcher pins', () => {
     fireEvent.click(menu.getByRole('menuitem', { name: 'Pin Alpha panel' }))
     const alphaRow = await within(navigation).findByRole('button', { name: 'Alpha panel' })
     expect(alphaRow.getAttribute('aria-current')).toBe('page')
+    fireEvent.click(menu.getByRole('menuitem', { name: 'Unpin Beta panel' }))
+    fireEvent.click(menu.getByRole('menuitem', { name: 'Pin Beta panel' }))
+    expect(within(navigation).getAllByRole('button').map(row => row.getAttribute('aria-label'))
+      .filter(label => !label?.startsWith('Unpin ')))
+      .toEqual(['Plugins', 'Beta panel', 'Alpha panel', 'More'])
     fireEvent.click(menu.getByRole('menuitem', { name: 'Unpin Alpha panel' }))
     await waitFor(() => { expect(within(navigation).queryByRole('button', { name: 'Alpha panel' })).toBeNull() })
     expect(view.getByRole('heading', { name: 'Alpha content' })).toBeTruthy()

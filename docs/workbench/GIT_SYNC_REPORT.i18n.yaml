@@ -1,0 +1,25 @@
+# Bilingual-pair consistency record for GIT_SYNC_REPORT.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/GIT_SYNC_REPORT.md
+/p1-git-synchronization-checkpoint:
+  en: 9cdb92a52bc82ec3
+  zh: 991e30973a0fd144
+/p1-git-synchronization-checkpoint/summary:
+  en: b7f4448de24b874c
+  zh: 458c85cf1a7efd63
+/p1-git-synchronization-checkpoint/table-of-contents:
+  en: f686aa5b85217d81
+  zh: 1f94d295b9f1e49d
+/p1-git-synchronization-checkpoint/observed-checkpoint:
+  en: fb88f900b27a189c
+  zh: c90940354841076a
+/p1-git-synchronization-checkpoint/local-documents:
+  en: ba2a7dc347833f69
+  zh: 75482d919e775b50
+/p1-git-synchronization-checkpoint/scope-after-the-checkpoint:
+  en: 034745b4083c4831
+  zh: b8cbd5945833f7fe
+/p1-git-synchronization-checkpoint/dev-note:
+  en: c11bb343867b3176
+  zh: 7edf9e2d37420046

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>状态 2 · Conversation + 原生 Session 右栏（Terminal & Files · A/B 对比）</title>
+  <link rel="stylesheet" href="../assets/tokens.css">
+  <style>
+    body { margin: 0; padding: 16px; background: #14181f; color: #e8edf4; font-family: var(--dsh-font-family-text); }
+    .head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .head h1 { font-size: 16px; margin: 0; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; height: calc(100vh - 64px); }
+    .pane { display: flex; flex-direction: column; border: 1px solid rgba(255,255,255,0.16); border-radius: 10px; overflow: hidden; background: #1c222b; }
+    .pane-bar { padding: 8px 12px; font-size: 12px; font-weight: 600; background: #232a35; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; }
+    iframe { flex: 1; width: 100%; border: 0; background: #fff; }
+  </style>
+</head>
+<body>
+  <div class="head">
+    <h1>状态 B · Conversation + 原生 Session 右栏（保留原生 Conversation、Approval、Terminal 与 Files 视觉身份）</h1>
+    <span>左：方向 A 原生延续型 ｜ 右：方向 B 轻度产品化型（阅读区均保持 100% 实色）</span>
+  </div>
+  <div class="grid">
+    <div class="pane">
+      <div class="pane-bar"><span>方向 A · 原生延续型 (Conversation + Session Rail)</span><span>Owner = Session (360px)</span></div>
+      <iframe src="../index.html?preset=conv-session&dir=native" title="方向 A Conversation + Session"></iframe>
+    </div>
+    <div class="pane">
+      <div class="pane-bar"><span>方向 B · 轻度产品化型 (Conversation + Session Rail)</span><span>Owner = Session (360px)</span></div>
+      <iframe src="../index.html?preset=conv-session&dir=product" title="方向 B Conversation + Session"></iframe>
+    </div>
+  </div>
+</body>
+</html>

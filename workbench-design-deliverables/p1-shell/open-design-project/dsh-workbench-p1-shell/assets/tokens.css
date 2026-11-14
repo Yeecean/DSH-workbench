@@ -1,0 +1,153 @@
+/*
+ * DSH Workbench P1 — Native DSH Tokens & Proposed Workbench Material/Spacing Tokens
+ * Source baseline: packages/client/ui-theme/src/styles/design-platform.css & base.css
+ * Status: Design review artifact (does not modify production ui-theme).
+ */
+
+:root {
+  color-scheme: light;
+
+  /* 1. Native DSH Static Palette (Subset from design-platform.css) */
+  --dsw-static-neutral-00: rgb(255, 255, 255);
+  --dsw-static-neutral-50: rgb(250, 250, 250);
+  --dsw-static-neutral-800: rgb(41, 41, 41);
+  --dsw-static-neutral-850: rgb(33, 33, 35);
+  --dsw-static-neutral-bluish-00: rgb(255, 255, 255);
+  --dsw-static-neutral-bluish-50: rgb(249, 250, 251);
+  --dsw-static-neutral-bluish-55: rgb(245, 247, 250);
+  --dsw-static-neutral-bluish-60: rgb(245, 246, 247);
+  --dsw-static-neutral-bluish-75: rgb(241, 243, 245);
+  --dsw-static-neutral-bluish-90: rgb(237, 240, 244);
+  --dsw-static-neutral-bluish-100: rgb(235, 238, 242);
+  --dsw-static-neutral-bluish-150: rgb(233, 236, 242);
+  --dsw-static-neutral-bluish-200: rgb(225, 229, 238);
+  --dsw-static-neutral-bluish-300: rgb(207, 211, 214);
+  --dsw-static-neutral-bluish-400: rgb(173, 178, 184);
+  --dsw-static-neutral-bluish-500: rgb(151, 157, 166);
+  --dsw-static-neutral-bluish-600: rgb(129, 133, 140);
+  --dsw-static-neutral-bluish-700: rgb(97, 102, 107);
+  --dsw-static-neutral-bluish-750: rgb(67, 69, 74);
+  --dsw-static-neutral-bluish-800: rgb(53, 54, 56);
+  --dsw-static-neutral-bluish-850: rgb(44, 44, 46);
+  --dsw-static-neutral-bluish-875: rgb(35, 35, 36);
+  --dsw-static-neutral-bluish-900: rgb(27, 27, 28);
+  --dsw-static-neutral-bluish-950: rgb(21, 21, 23);
+  --dsw-static-neutral-bluish-1000: rgb(15, 17, 21);
+
+  --dsw-static-deepseek-50: rgb(237, 243, 254);
+  --dsw-static-deepseek-100: rgb(228, 237, 253);
+  --dsw-static-deepseek-400: rgb(122, 170, 255);
+  --dsw-static-deepseek-450: rgb(86, 134, 254);
+  --dsw-static-deepseek-500: rgb(65, 118, 230);
+  --dsw-static-deepseek-600: rgb(72, 104, 178);
+
+  --dsw-static-green-500: rgb(34, 197, 94);
+  --dsw-static-amber-500: rgb(245, 158, 11);
+  --dsw-static-red-500: rgb(239, 68, 68);
+  --dsw-static-violet-400: rgb(167, 139, 250);
+
+  /* 2. Native DSH Typography & Shape Defaults (base.css & theme-settings.ts) */
+  --dsh-font-family-text-default: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
+  --dsh-font-family-code-default: "SF Mono", "JetBrains Mono", "Fira Code", Consolas,
+    "Liberation Mono", Menlo, Courier, "PingFang SC", "Microsoft YaHei UI", monospace;
+  --dsh-font-family-text: var(--dsh-font-family-text-default);
+  --dsh-font-family-code: var(--dsh-font-family-code-default);
+  --dsh-font-family-terminal: Consolas, "Cascadia Mono", "JetBrains Mono", monospace;
+
+  --dsh-content-font-size: 14px;   /* Native range: 10..22, default 14 */
+  --dsh-code-font-size: 11px;      /* Native range: 10..16, default 11 */
+  --dsh-terminal-font-size: 13px;  /* Native range: 10..20, default 13 */
+
+  --dsw-radius-xs: 4px;
+  --dsw-radius-sm: 8px;
+  --dsw-radius-md: 12px;
+  --dsw-radius-lg: 16px;
+  --dsw-radius-xl: 20px;
+  --dsw-radius-panel: 28px;
+
+  /* 3. Native Semantic Aliases — Light Mode */
+  --dsw-alias-bg-base: var(--dsw-static-neutral-bluish-00);
+  --dsw-alias-bg-layer-1: var(--dsw-static-neutral-bluish-00);
+  --dsw-alias-bg-layer-2: var(--dsw-static-neutral-bluish-50);
+  --dsw-alias-bg-layer-3: var(--dsw-static-neutral-bluish-75);
+  --dsw-alias-label-primary: rgb(21, 24, 30);
+  --dsw-alias-label-secondary: rgb(88, 95, 105);
+  --dsw-alias-label-tertiary: rgb(118, 125, 136);
+  --dsw-alias-border-l1: rgba(0, 0, 0, 0.05);
+  --dsw-alias-border-l2: rgba(0, 0, 0, 0.10);
+  --dsw-alias-border-l3: rgba(0, 0, 0, 0.14);
+  --dsw-alias-border-l4: rgba(0, 0, 0, 0.20);
+  --dsw-alias-brand-primary: rgb(55, 110, 183);
+  --dsw-alias-button-info-fill: rgb(65, 118, 230);
+  --dsw-specific-sidebar-fill: var(--dsw-static-neutral-bluish-50);
+  --dsw-specific-sidebar-nav-item-active: var(--dsw-static-neutral-bluish-100);
+  --dsw-specific-sidebar-nav-item-active-accent: var(--dsw-static-deepseek-100);
+
+  --dsw-alias-state-success-primary: rgb(22, 135, 72);
+  --dsw-alias-state-warn-primary: rgb(180, 105, 14);
+  --dsw-alias-state-error-primary: rgb(198, 46, 46);
+
+  /* 4. Proposed Workbench P1 Semantic & Material Roles (Direction B defaults) */
+  --wb-accent: #376eb7;
+  --wb-accent-soft: rgba(55, 110, 183, 0.12);
+  --wb-accent-ink: #ffffff;
+  --wb-shell-wall: #e6ebf1;
+  --wb-titlebar-glass: rgba(247, 250, 253, 0.80);
+  --wb-titlebar-solid: #f4f7fa;
+  --wb-popover-glass: rgba(252, 253, 255, 0.86);
+  --wb-popover-solid: #ffffff;
+  --wb-glass-blur: 14px;
+  --wb-glass-border: rgba(255, 255, 255, 0.55);
+  --wb-home-card-bg: #f8fafc;
+  --wb-context-group-bg: #f7f9fc;
+  --wb-space-page: 36px;
+  --wb-space-group: 20px;
+}
+
+/* Dark Mode Overrides */
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --dsw-alias-bg-base: var(--dsw-static-neutral-bluish-950);
+  --dsw-alias-bg-layer-1: var(--dsw-static-neutral-bluish-875);
+  --dsw-alias-bg-layer-2: var(--dsw-static-neutral-bluish-850);
+  --dsw-alias-bg-layer-3: var(--dsw-static-neutral-bluish-800);
+  --dsw-alias-label-primary: rgb(235, 239, 245);
+  --dsw-alias-label-secondary: rgb(172, 180, 192);
+  --dsw-alias-label-tertiary: rgb(134, 143, 156);
+  --dsw-alias-border-l1: rgba(255, 255, 255, 0.06);
+  --dsw-alias-border-l2: rgba(255, 255, 255, 0.12);
+  --dsw-alias-border-l3: rgba(255, 255, 255, 0.16);
+  --dsw-alias-border-l4: rgba(255, 255, 255, 0.22);
+  --dsw-alias-brand-primary: rgb(138, 184, 248);
+  --dsw-alias-button-info-fill: rgb(122, 170, 255);
+  --dsw-specific-sidebar-fill: rgb(27, 29, 34);
+  --dsw-specific-sidebar-nav-item-active: rgb(42, 46, 54);
+  --dsw-specific-sidebar-nav-item-active-accent: rgba(86, 134, 254, 0.20);
+
+  --dsw-alias-state-success-primary: rgb(88, 214, 138);
+  --dsw-alias-state-warn-primary: rgb(247, 182, 68);
+  --dsw-alias-state-error-primary: rgb(248, 113, 113);
+
+  --wb-accent: #7cb3ff;
+  --wb-accent-soft: rgba(124, 179, 255, 0.16);
+  --wb-accent-ink: #0f1722;
+  --wb-shell-wall: #111419;
+  --wb-titlebar-glass: rgba(30, 35, 43, 0.78);
+  --wb-titlebar-solid: #1f242d;
+  --wb-popover-glass: rgba(36, 42, 52, 0.86);
+  --wb-popover-solid: #242a34;
+  --wb-glass-border: rgba(255, 255, 255, 0.10);
+  --wb-home-card-bg: #1d222b;
+  --wb-context-group-bg: #1c2028;
+}
+
+/* Direction A: Native Continuation Overrides (Minimal differentiation from native DSH) */
+html[data-direction="native"] {
+  --wb-titlebar-glass: var(--dsw-specific-sidebar-fill);
+  --wb-titlebar-solid: var(--dsw-specific-sidebar-fill);
+  --wb-home-card-bg: var(--dsw-alias-bg-base);
+  --wb-context-group-bg: var(--dsw-alias-bg-base);
+  --wb-space-page: 28px;
+  --wb-space-group: 14px;
+}

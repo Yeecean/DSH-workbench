@@ -78,7 +78,7 @@
   position: absolute;
   inset: var(--dsh-frame-chrome-top, 0px) 0 0;
   background: var(--dsw-alias-bg-mask-1);
-  backdrop-filter: var(--dsw-mask-blur);
+  backdrop-filter: var(--wb-glass-mask-backdrop, var(--dsw-mask-blur));
 }
 
 /* Settings uses a shared 800×800 panel; longer sections scroll
@@ -104,10 +104,12 @@
   width: 800px;
   height: min(800px, calc(100vh - 2 * max(24px, var(--dsh-frame-overlay-top, 24px))));
   max-width: calc(100vw - 48px);
-  border-radius: var(--dsw-radius-panel);
+  border-radius: var(--wb-radius-modal, var(--dsw-radius-panel));
   overflow: hidden;
-  background: var(--dsw-alias-bg-layer-2);
-  box-shadow: var(--dsw-elevation-prominent);
+  background-color: var(--wb-shell-modal-bg, var(--dsw-alias-bg-layer-2));
+  background-image: var(--wb-glass-sheen, none);
+  backdrop-filter: var(--wb-glass-modal-backdrop, none);
+  box-shadow: var(--wb-glass-composer-shadow, var(--dsw-elevation-prominent));
   /* Elevated surface: the scrollbar thumb takes the l2 elevation tokens.
      Declared on the panel rather than the scrolling `.options` child so the
      elevation choice sits with the surface; the custom properties inherit

@@ -10,8 +10,9 @@ afterEach(() => { vi.unstubAllGlobals(); vi.restoreAllMocks() })
 describe('createLayoutStore', () => {
   it('starts with the default sidebar and no right panel preference', () => {
     const { store } = createLayoutStore().create()
-    expect(store.getSnapshot()).toEqual({
+    expect(store.getSnapshot()).toMatchObject({
       panelInfo: { activePanelId: null },
+      rightbarInfo: { owner: 'session', sessionPausedFullscreen: false, generation: 0 },
       layoutInfo: {
         sidebar: 280,
         viewportWidth: 1920,
@@ -306,5 +307,54 @@ describe('drawer navigation', () => {
     actions.toggleSidebar()
     actions.selectPanel(null)
     expect(store.getSnapshot().layoutInfo.narrowExpanded).toBe(true)
+  })
+})
+
+describe('single right-rail arbitration', () => {
+  it('isolates session and global widths across surface switches and closes', () => {
+    const { store, actions } = createLayoutStore().create()
+    actions.openRightbar(true, false)
+    actions.setRightbar(620)
+    expect(store.getSnapshot().layoutInfo.rightbar).toBe(620)
+
+    actions.openGlobalRightbar(true, false)
+    expect(store.getSnapshot().rightbarInfo.owner).toBe('global')
+    // Global initializes independently at 45% of viewport.
+    expect(store.getSnapshot().layoutInfo.rightbar).toBe(Math.round(1920 * 0.45))
+    actions.setRightbar(420)
+    expect(store.getSnapshot().layoutInfo.rightbar).toBe(420)
+
+    // Stale closeRightbar from unmounted session seat must not close global surface.
+    actions.closeRightbar()
+    expect(store.getSnapshot().rightbarInfo.owner).toBe('global')
+    expect(store.getSnapshot().layoutInfo.rightbarShown).toBe(true)
+    expect(store.getSnapshot().layoutInfo.rightbar).toBe(420)
+
+    // Returning ownership restores session's remembered 620px width.
+    actions.closeGlobalRightbar()
+    expect(store.getSnapshot().rightbarInfo.owner).toBe('session')
+    expect(store.getSnapshot().layoutInfo.rightbar).toBe(620)
+  })
+
+  it('tracks paused session fullscreen across global ownership and restores cleanly on resume', () => {
+    const { store, actions } = createLayoutStore().create()
+    actions.openRightbar(true, true)
+    actions.openGlobalRightbar(true, false)
+    expect(store.getSnapshot().rightbarInfo.sessionPausedFullscreen).toBe(true)
+    expect(store.getSnapshot().layoutInfo.rightbarFullscreen).toBe(false)
+    actions.closeGlobalRightbar()
+    actions.openRightbar(true, true)
+    expect(store.getSnapshot().rightbarInfo.sessionPausedFullscreen).toBe(false)
+    expect(store.getSnapshot().layoutInfo.rightbarFullscreen).toBe(true)
+  })
+
+  it('releases a stuck global track if shell.rightbar.global unmounts', () => {
+    const { store, actions } = createLayoutStore().create()
+    actions.retainGlobalRightbar(true)
+    actions.openGlobalRightbar(true, false)
+    expect(store.getSnapshot().layoutInfo.rightbarShown).toBe(true)
+    actions.retainGlobalRightbar(false)
+    expect(store.getSnapshot().rightbarInfo.owner).toBe('session')
+    expect(store.getSnapshot().layoutInfo.rightbarShown).toBe(false)
   })
 })

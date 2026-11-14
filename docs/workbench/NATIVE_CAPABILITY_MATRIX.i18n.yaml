@@ -1,0 +1,25 @@
+# Bilingual-pair consistency record for NATIVE_CAPABILITY_MATRIX.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/NATIVE_CAPABILITY_MATRIX.md
+/native-capability-matrix:
+  en: f4a28e7cf4c1202f
+  zh: 4f5a0277fb66566c
+/native-capability-matrix/summary:
+  en: 04fb5a387a558367
+  zh: e672df027976543c
+/native-capability-matrix/table-of-contents:
+  en: 298d9158b0b7e330
+  zh: ec7f6820d7dbbffd
+/native-capability-matrix/capability-matrix:
+  en: 3ef68cdff3c1c37f
+  zh: b23c6a82b964de99
+/native-capability-matrix/approval-and-activity-limits:
+  en: 7fa63ca037ac8126
+  zh: 61774d99daf6bfb0
+/native-capability-matrix/workbench-verification:
+  en: 5041ddcb8ea9aaf8
+  zh: faaa59d5645a5206
+/native-capability-matrix/dev-note:
+  en: b75c8458928b72b9
+  zh: 003ba4e17b4b5269

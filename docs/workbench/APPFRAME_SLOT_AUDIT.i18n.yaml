@@ -1,0 +1,31 @@
+# Bilingual-pair consistency record for APPFRAME_SLOT_AUDIT.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/APPFRAME_SLOT_AUDIT.md
+/appframe-and-slot-audit:
+  en: 79cc1066b99bf1d2
+  zh: c6825f14934c53a2
+/appframe-and-slot-audit/summary:
+  en: a6ca14b2b74bddcf
+  zh: d95fd52c0dfdd8d9
+/appframe-and-slot-audit/table-of-contents:
+  en: 213f97d88b952950
+  zh: c3bcfe0fde6459f4
+/appframe-and-slot-audit/frame-and-root:
+  en: d6a1cd5835f4cef2
+  zh: 5861456f6439ca6b
+/appframe-and-slot-audit/slot-inventory:
+  en: 5cbe7e09868de224
+  zh: 31a1a1362a702d7f
+/appframe-and-slot-audit/registration-ordering-and-cleanup:
+  en: adc412ac88ac40bb
+  zh: db7d88196f7e43d9
+/appframe-and-slot-audit/native-dependencies:
+  en: f111d0c17c7ea5d3
+  zh: f7263faff498d8fc
+/appframe-and-slot-audit/workbench-limitations:
+  en: 1091a9d1332cc771
+  zh: 25c8e85d33f8e85f
+/appframe-and-slot-audit/dev-note:
+  en: d1ccfdbeff42c461
+  zh: a727741f3b7d91aa

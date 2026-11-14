@@ -797,3 +797,58 @@ describe('sidebar drawer', () => {
     expect(tracks(frame)).toEqual([0, 0])
   })
 })
+
+describe('global rightbar arbitration', () => {
+  it('hosts rightbar and shell.rightbar.global in one column with mutual hidden/inert exclusion and routes DragHandle resize to the active owner', () => {
+    frameWidth = 1920
+    const { frame, instance, slotCalls, getByTestId, rightOwner } = mountFrame()
+    const globalOwner = () => slotCalls.findLast(c => c.key === 'shell.rightbar.global')?.props as {
+      width: number
+      viewportWidth: number
+      canShow: boolean
+      active: boolean
+    } | undefined
+    act(() => {
+      instance.actions.retainGlobalRightbar(true)
+      instance.actions.openGlobalRightbar(true, false)
+    })
+    const globalEl = getByTestId('shell.rightbar.global-content')
+    expect(globalOwner()).toMatchObject({ active: true, width: 864, viewportWidth: 1920 })
+    expect(globalEl.parentElement?.hasAttribute('hidden')).toBe(false)
+    expect(globalEl.parentElement?.hasAttribute('inert')).toBe(false)
+
+    // Passive report from session while global is active does not steal ownership until 'session' is requested.
+    act(() => { instance.actions.openRightbar(true, false) })
+    const sessionEl = getByTestId('rightbar-content')
+    expect(instance.getSnapshot().rightbarInfo.owner).toBe('global')
+    expect(globalEl.parentElement?.hasAttribute('hidden')).toBe(false)
+    expect(sessionEl.parentElement?.hasAttribute('hidden')).toBe(true)
+
+    // Explicit handoff switches ownership to session and hides + inerts the global surface.
+    act(() => { instance.actions.selectRightbarSurface('session') })
+    expect(instance.getSnapshot().rightbarInfo.owner).toBe('session')
+    expect(rightOwner().width).toBe(864)
+    expect(globalOwner()?.active).toBe(false)
+    expect(sessionEl.parentElement?.hasAttribute('hidden')).toBe(false)
+    expect(sessionEl.parentElement?.hasAttribute('inert')).toBe(false)
+    expect(globalEl.parentElement?.hasAttribute('hidden')).toBe(true)
+    expect(globalEl.parentElement?.hasAttribute('inert')).toBe(true)
+
+    // Dragging the shared rightbar DragHandle updates only the active session width (1920 - 1200 = 720).
+    drag(handleFor(frame, 'rightbar'), 1056, 1200)
+    expect(instance.getSnapshot().rightbarSurfaces.widths.session).toBe(720)
+    expect(instance.getSnapshot().rightbarSurfaces.widths.global).toBe(864)
+
+    // Switching back to global restores global width independently and drags global without mutating session width.
+    act(() => { instance.actions.selectRightbarSurface('global') })
+    expect(instance.getSnapshot().rightbarInfo.owner).toBe('global')
+    expect(globalOwner()).toMatchObject({ active: true, width: 864 })
+    expect(globalEl.parentElement?.hasAttribute('hidden')).toBe(false)
+    expect(sessionEl.parentElement?.hasAttribute('hidden')).toBe(true)
+    expect(sessionEl.parentElement?.hasAttribute('inert')).toBe(true)
+
+    drag(handleFor(frame, 'rightbar'), 1056, 1320)
+    expect(instance.getSnapshot().rightbarSurfaces.widths.global).toBe(600)
+    expect(instance.getSnapshot().rightbarSurfaces.widths.session).toBe(720)
+  })
+})

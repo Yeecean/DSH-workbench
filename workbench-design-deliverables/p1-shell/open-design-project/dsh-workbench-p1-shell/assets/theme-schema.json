@@ -1,0 +1,121 @@
+{
+  "$comment": "Draft schema & sample themes for DSH Workbench P1 / P1.1 Theme Import Specification. Pure versioned JSON data only; scripts, arbitrary CSS, and external URLs are rejected.",
+  "schema": {
+    "format": "dsh-workbench-theme",
+    "supportedVersions": [1],
+    "maxBytes": 65536,
+    "allowedBaseModes": ["light", "dark"],
+    "whitelistedColorTokens": [
+      "accent",
+      "bgBase",
+      "bgLayer1",
+      "bgLayer2",
+      "sidebarFill",
+      "labelPrimary",
+      "labelSecondary",
+      "borderL2"
+    ],
+    "whitelistedFontRoles": [
+      "text",
+      "code",
+      "terminal"
+    ],
+    "fontSizeBounds": {
+      "text": { "min": 10, "max": 22, "default": 14 },
+      "code": { "min": 10, "max": 16, "default": 11 },
+      "terminal": { "min": 10, "max": 20, "default": 13 }
+    },
+    "forbiddenPatterns": [
+      "<script",
+      "javascript:",
+      "url(",
+      "@import",
+      "expression("
+    ]
+  },
+  "samples": {
+    "validDark": {
+      "format": "dsh-workbench-theme",
+      "version": 1,
+      "id": "quiet-slate-dark",
+      "name": "Quiet Slate Dark",
+      "author": "Workbench Design Team (Sample)",
+      "base": "dark",
+      "colors": {
+        "accent": "#7CB3FF",
+        "bgBase": "#15181E",
+        "bgLayer1": "#1C2129",
+        "sidebarFill": "#181C23",
+        "labelPrimary": "#EBF0F7",
+        "labelSecondary": "#AAB4C3"
+      },
+      "fonts": {
+        "text": "Segoe UI, Microsoft YaHei UI",
+        "code": "JetBrains Mono, Consolas",
+        "terminal": "Cascadia Mono, Consolas"
+      },
+      "fontSizes": {
+        "text": 14,
+        "code": 12,
+        "terminal": 13
+      }
+    },
+    "validLight": {
+      "format": "dsh-workbench-theme",
+      "version": 1,
+      "id": "nordic-daylight",
+      "name": "Nordic Daylight",
+      "author": "Workbench Design Team (Sample)",
+      "base": "light",
+      "colors": {
+        "accent": "#2E6F5E",
+        "bgBase": "#FCFDFD",
+        "bgLayer1": "#F4F7F6",
+        "sidebarFill": "#F1F5F4",
+        "labelPrimary": "#1A2220",
+        "labelSecondary": "#56635F"
+      },
+      "fonts": {
+        "text": "Segoe UI, PingFang SC",
+        "code": "Consolas",
+        "terminal": "Consolas"
+      },
+      "fontSizes": {
+        "text": 14,
+        "code": 11,
+        "terminal": 13
+      }
+    },
+    "invalidVersion": {
+      "format": "dsh-workbench-theme",
+      "version": 99,
+      "id": "future-theme",
+      "name": "Unsupported Version Sample",
+      "base": "dark",
+      "colors": { "accent": "#4176E6" }
+    },
+    "invalidUnsafeCss": {
+      "format": "dsh-workbench-theme",
+      "version": 1,
+      "id": "unsafe-injection",
+      "name": "Unsafe CSS & Remote URL Sample",
+      "base": "dark",
+      "colors": {
+        "accent": "url(https://evil.example/payload.css)"
+      },
+      "customCss": "body { background: url(javascript:alert(1)); }"
+    },
+    "invalidLowContrast": {
+      "format": "dsh-workbench-theme",
+      "version": 1,
+      "id": "low-contrast-fail",
+      "name": "Low Contrast Sample",
+      "base": "light",
+      "colors": {
+        "accent": "#E8EEF5",
+        "bgBase": "#FFFFFF",
+        "labelPrimary": "#C2C8D0"
+      }
+    }
+  }
+}

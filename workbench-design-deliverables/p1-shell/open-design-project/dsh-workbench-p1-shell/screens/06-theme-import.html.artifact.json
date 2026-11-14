@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "screens/06-theme-import.html",
+  "entry": "screens/06-theme-import.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-11-12T16:02:08.770Z",
+  "updatedAt": "2026-11-12T16:02:08.773Z",
+  "metadata": {
+    "inferred": true
+  }
+}

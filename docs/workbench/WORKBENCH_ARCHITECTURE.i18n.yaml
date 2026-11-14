@@ -1,0 +1,58 @@
+# Bilingual-pair consistency record for WORKBENCH_ARCHITECTURE.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/WORKBENCH_ARCHITECTURE.md
+/workbench-architecture-proposal:
+  en: 5d4b1b542d45d380
+  zh: a0b027a9253a653f
+/workbench-architecture-proposal/summary:
+  en: e2997c08f16229b2
+  zh: cf7bc747b6d6b0ca
+/workbench-architecture-proposal/table-of-contents:
+  en: 82f9a5c54e99393b
+  zh: 6e4d242ad60c6f62
+/workbench-architecture-proposal/design-principles:
+  en: d21c28997f28c0a1
+  zh: 2820c41b0a6b34f1
+/workbench-architecture-proposal/target-composition:
+  en: 9798efecf173ef9d
+  zh: 797856ff685c2d41
+/workbench-architecture-proposal/runtime-ownership:
+  en: 317a3c6b60624893
+  zh: 157c32c32ac5268a
+/workbench-architecture-proposal/workbench-renderer-ownership:
+  en: 7158b7f0b96cd324
+  zh: 175402410528d345
+/workbench-architecture-proposal/work-and-code-modes:
+  en: f7c481860c460b39
+  zh: aa2c8679fe2f62c3
+/workbench-architecture-proposal/ui-architecture-decision:
+  en: 18c3e2c2348c55ec
+  zh: 79e9c640725cc86f
+/workbench-architecture-proposal/module-classification:
+  en: 344899c215169f46
+  zh: 602344b4da41fdee
+/workbench-architecture-proposal/repository-composition-plan:
+  en: 93226507a6202d16
+  zh: e78f57df1bd8aa7d
+/workbench-architecture-proposal/execution-environments:
+  en: 3917d0d2924c349b
+  zh: 112691e515277677
+/workbench-architecture-proposal/api-and-state-boundaries:
+  en: 6484cd34527acd57
+  zh: fd777e1774f87410
+/workbench-architecture-proposal/security-and-lifecycle:
+  en: 55a830eea6026a13
+  zh: bdc77458345a6989
+/workbench-architecture-proposal/phase-1-non-goals:
+  en: 0de8797e6a148dd9
+  zh: 5948c4310c05d7fe
+/workbench-architecture-proposal/review-decisions:
+  en: 277ca5a8d4dbffa7
+  zh: 4e5ce66d3dc410eb
+/workbench-architecture-proposal/further-exploration:
+  en: edeab8011615ea89
+  zh: 050fdfbc42737bc1
+/workbench-architecture-proposal/dev-note:
+  en: b75c8458928b72b9
+  zh: 003ba4e17b4b5269

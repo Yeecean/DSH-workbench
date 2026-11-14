@@ -15,6 +15,7 @@
  * on the other edge.
  */
 import type { ShortcutCatalogEntry } from '@deepseek-ai/dsh-client-shortcuts/client'
+import type { RightbarSurface } from '@deepseek-ai/dsh-client-ui-layout/client'
 import type { InjectFace, HostObservable } from '@deepseek-ai/dsh-client-ui-slots'
 import type { ReactNode } from 'react'
 import clsx from 'clsx'
@@ -29,25 +30,41 @@ export type ExpandButtonProps =
   & PropsRuntime<'conversation.session.header.corner'>
   & PropsStore<ReturnType<typeof createSidebarRightStore>>
   & PropsLocale<'sidebarRight'>
-  & InjectFace<{ hooks: { shortcuts: HostObservable<readonly ShortcutCatalogEntry[]> } }>
+  & InjectFace<{
+    hooks: {
+      shortcuts: HostObservable<readonly ShortcutCatalogEntry[]>
+      rightbarOwner: HostObservable<RightbarSurface>
+    }
+    requestSessionSurface: () => void
+  }>
 
-/** Opens a collapsed panel; when expanded, hides and disables on mobile devices and renders nothing on desktop devices. */
-export function ExpandButton({ sessionId, useStore, actions, t, useShortcuts }: ExpandButtonProps): ReactNode {
+/** Opens a collapsed panel; when expanded and active, hides and disables on mobile devices and renders nothing on desktop devices. */
+export function ExpandButton({
+  sessionId,
+  useStore,
+  actions,
+  t,
+  useShortcuts,
+  useRightbarOwner,
+  requestSessionSurface,
+}: ExpandButtonProps): ReactNode {
   // A session with no surface yet is collapsed: the panel seat materializes the
   // surface on its own mount, and until then there is nothing expanded.
   const shortcut = useShortcuts(entries => entries.find(entry => entry.id === 'sidebar.right.toggle'))
   const expanded = useStore(state => state.bySession[sessionId]?.layout.expanded ?? false)
-  if (expanded && !isMobileDevice()) return null
+  const owner = useRightbarOwner(value => value)
+  const shown = expanded && owner === 'session'
+  if (shown && !isMobileDevice()) return null
   return (
-    <Tooltip label={t('chrome.expand')} shortcutKeys={shortcut?.keys} side="bottom" delayMs={500} disabled={expanded}>
+    <Tooltip label={t('chrome.expand')} shortcutKeys={shortcut?.keys} side="bottom" delayMs={500} disabled={shown}>
       <Button
         size="sm"
-        className={clsx(css.button, expanded && css.expanded)}
-        disabled={expanded}
+        className={clsx(css.button, shown && css.expanded)}
+        disabled={shown}
         aria-label={t('chrome.expandAria')}
         aria-keyshortcuts={shortcut?.aria}
         data-sidebar-right-expand
-        onClick={() => { actions.setExpanded(sessionId, true) }}
+        onClick={() => { actions.setExpanded(sessionId, true); requestSessionSurface() }}
       >
         <IconPanelLeftOutlineRegular className={css.icon} />
       </Button>

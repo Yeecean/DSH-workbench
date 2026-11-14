@@ -1,0 +1,31 @@
+# Bilingual-pair consistency record for WSL2_FEASIBILITY.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/WSL2_FEASIBILITY.md
+/wsl2-feasibility:
+  en: 1e7eec23b9ecb2fa
+  zh: 0fa5f7a09984f551
+/wsl2-feasibility/summary:
+  en: 7e09312d52246b3c
+  zh: 36f5b100cbc814f7
+/wsl2-feasibility/table-of-contents:
+  en: c37fc66437f06610
+  zh: 9d44d725bc9d8f4d
+/wsl2-feasibility/observed-environment:
+  en: f71767f3b7de4048
+  zh: ebdc947ff69255ab
+/wsl2-feasibility/network-and-transport:
+  en: d831d2107fc1e87f
+  zh: f92bdedbf345dee6
+/wsl2-feasibility/paths-and-permissions:
+  en: 1793b06437c761b7
+  zh: cf0946353f1ed8e1
+/wsl2-feasibility/outstanding-checks:
+  en: 3f73b77c3d2fc99d
+  zh: da266ad620423ca6
+/wsl2-feasibility/further-exploration:
+  en: 06150d4b200e0621
+  zh: a3b9362223d2fd7d
+/wsl2-feasibility/dev-note:
+  en: b75c8458928b72b9
+  zh: 003ba4e17b4b5269

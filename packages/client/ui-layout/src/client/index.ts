@@ -13,7 +13,7 @@ import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
 import type {} from '@deepseek-ai/dsh-client-ui-session/client'
 import type {} from '@deepseek-ai/dsh-client-ui-theme/client'
 import type { HostObservable, SnapshotSelectorHook } from '@deepseek-ai/dsh-client-ui-slots'
-import type { PanelInfo } from './service.ts'
+import type { PanelInfo, RightbarInfo } from './service.ts'
 import { AppFrame } from './AppFrame.tsx'
 import type { AppFrameInjected } from './AppFrame.tsx'
 import { createLayoutStore } from './stores.ts'
@@ -28,7 +28,7 @@ import { ThemePresenter } from './theme-presenter.ts'
 // OwnerShare contracts below are the render-side halves registrants compose
 // against; the frame components and the store factory are package-internal.
 export { LayoutController } from './service.ts'
-export type { ILayout, MainPanelId, PanelInfo } from './service.ts'
+export type { ILayout, MainPanelId, PanelInfo, RightbarInfo, RightbarSurface } from './service.ts'
 
 /** Selector hook over root-scoped panel selection. */
 export type UsePanelInfo = SnapshotSelectorHook<PanelInfo>
@@ -87,6 +87,13 @@ declare module '@deepseek-ai/dsh-client-ui-slots' {
      * occupant decides when to render its Session-bound content.
      */
     'rightbar': { kind: 'single'; scope: 'root'; owner: RightbarOwnerProps }
+    /**
+     * Global right-column occupant sharing the single track with the Session
+     * `rightbar` seat (for example Workbench task inspector). Presentation
+     * arbitration ensures only one right surface owns the track and drag
+     * handle at once while keeping Session docking state mounted.
+     */
+    'shell.rightbar.global': { kind: 'single'; scope: 'root'; owner: GlobalRightbarOwnerProps }
     /**
      * Full-width bottom content below all three columns. Its rendered height
      * reduces the columns' available height; empty content reserves no space.
@@ -150,6 +157,21 @@ export interface RightbarOwnerProps {
   canShow: boolean
 }
 
+/** Global right column owner share: geometry, opening eligibility, and arbitration activity. */
+export interface GlobalRightbarOwnerProps {
+  /** Resolved normal panel width in px, not the saved preference; zero if it cannot fit. */
+  width: number
+  /** Current frame width in px. */
+  viewportWidth: number
+  /**
+   * Whether a normal right panel can retain 300px beside a 400px center.
+   * Before a narrow opening, includes the space from collapsing the left sidebar.
+   */
+  canShow: boolean
+  /** True while `'global'` holds right-column ownership. */
+  active: boolean
+}
+
 /** Required services (cordis fiber inject — the loader passes all module exports as an object plugin). */
 export const inject = ['slots', 'theme', 'locale', 'shortcuts']
 
@@ -181,12 +203,19 @@ export function apply(ctx: ClientContext): void {
       instance.actions.retainMainPanels(ctx.slots.entries('main').flatMap(entry =>
         entry.options.key === undefined ? [] : [entry.options.key]))
     }
+    const retainGlobalRightbar = (): void => {
+      instance.actions.retainGlobalRightbar(ctx.slots.entries('shell.rightbar.global').length > 0)
+    }
     const panelInfo: HostObservable<PanelInfo> = {
       getSnapshot: () => instance.getSnapshot().panelInfo,
       subscribe: listener => instance.subscribe(listener),
     }
+    const rightbarInfo: HostObservable<RightbarInfo> = {
+      getSnapshot: () => instance.getSnapshot().rightbarInfo,
+      subscribe: listener => instance.subscribe(listener),
+    }
     const layout = new LayoutController(instance.actions, id =>
-      ctx.slots.entries('main').some(entry => entry.options.key === id), panelInfo)
+      ctx.slots.entries('main').some(entry => entry.options.key === id), panelInfo, rightbarInfo)
     const disposePanelInfo = ctx.slots.provideRoot({ hooks: { panelInfo: layout.panelInfo } })
     const disposeService = ctx.reflect.provide('layout', layout)
     const disposeRegistration = ctx.slots.register({
@@ -196,6 +225,7 @@ export function apply(ctx: ClientContext): void {
         'sidebar': { kind: 'single', scope: 'root' },
         'main': { kind: 'keyed', scope: 'root' },
         'rightbar': { kind: 'single', scope: 'root' },
+        'shell.rightbar.global': { kind: 'single', scope: 'root' },
         'shell.bottom': { kind: 'single', scope: 'root' },
         'shell.overlay': { kind: 'list', scope: 'root' },
         'shell.leading': { kind: 'single', scope: 'root' },
@@ -218,10 +248,13 @@ export function apply(ctx: ClientContext): void {
         : { status: 'handled', run: () => { layout.toggleSidebar() } },
     })
     const disposePanels = ctx.slots.subscribe('main', retainMainPanels)
+    const disposeGlobalRightbar = ctx.slots.subscribe('shell.rightbar.global', retainGlobalRightbar)
     retainMainPanels()
+    retainGlobalRightbar()
     return () => {
       disposeShortcut()
       layout.dispose()
+      disposeGlobalRightbar()
       disposePanels()
       disposeRegistration()
       disposePanelInfo()

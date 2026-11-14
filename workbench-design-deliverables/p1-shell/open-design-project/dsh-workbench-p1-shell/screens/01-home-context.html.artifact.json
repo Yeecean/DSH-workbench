@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "screens/01-home-context.html",
+  "entry": "screens/01-home-context.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-11-12T16:01:58.094Z",
+  "updatedAt": "2026-11-12T16:01:58.097Z",
+  "metadata": {
+    "inferred": true
+  }
+}

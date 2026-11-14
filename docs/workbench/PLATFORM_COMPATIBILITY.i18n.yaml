@@ -1,0 +1,64 @@
+# Bilingual-pair consistency record for PLATFORM_COMPATIBILITY.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/PLATFORM_COMPATIBILITY.md
+/platform-compatibility:
+  en: 52000b0f4304ac42
+  zh: 2af23cfa0bb2b7c9
+/platform-compatibility/summary:
+  en: e91a411e8db014bb
+  zh: 825a53c10e7e4850
+/platform-compatibility/table-of-contents:
+  en: d8d5e330dd5d29c6
+  zh: 55df96468a05b1e1
+/platform-compatibility/evidence-and-platform-scope:
+  en: 60fc9b9a7563654a
+  zh: 336a33a98e6381d8
+/platform-compatibility/platform-matrix:
+  en: 43937317a51d676d
+  zh: 125a46111cf676b1
+/platform-compatibility/windows-native-baseline:
+  en: 180a01cdf2f69ecb
+  zh: a5d2bc2f784eb265
+/platform-compatibility/windows-provider-inventory:
+  en: 4efb05f8146dc49a
+  zh: bc3b0c380b81429b
+/platform-compatibility/windows-sandbox-limits:
+  en: daba0a0a5065105a
+  zh: 5f1a59af457db40c
+/platform-compatibility/posix-and-ssh-boundaries:
+  en: b529687b417546a8
+  zh: 95ad97f6852bc585
+/platform-compatibility/observed-wsl2-environment:
+  en: f2d00c66cd699f6e
+  zh: 5bf9826808257e77
+/platform-compatibility/wsl2-target-model:
+  en: 97205a75a04b68f5
+  zh: 64ba4dc860adbc7a
+/platform-compatibility/ssh-suitability:
+  en: 39786ef5ef1719c3
+  zh: 5d573d5678f10bed
+/platform-compatibility/paths-and-filesystems:
+  en: c7cf83d2dc66e38c
+  zh: a3124da1b4e9082e
+/platform-compatibility/host-lifecycle:
+  en: fdbe9ac9da3c497b
+  zh: 48de3cf173a8cb51
+/platform-compatibility/authentication-and-network:
+  en: 1cfb99bc667b33f8
+  zh: 7859de6c0171e7e9
+/platform-compatibility/file-operations-and-renderer-access:
+  en: 8518bdbb77550444
+  zh: 1fd3a5dd42ba682c
+/platform-compatibility/provider-support-matrix:
+  en: 4c9051dcec7fb547
+  zh: 21a5b4927b452230
+/platform-compatibility/unverified-gaps:
+  en: 72c1382e97a1cf26
+  zh: d56853f68aea833c
+/platform-compatibility/further-exploration:
+  en: d7ccbcf698b3cc24
+  zh: 205e007f0750a3de
+/platform-compatibility/dev-note:
+  en: b75c8458928b72b9
+  zh: 003ba4e17b4b5269

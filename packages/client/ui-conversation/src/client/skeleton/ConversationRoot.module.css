@@ -4,7 +4,14 @@
   flex-direction: column;
   height: 100%;
   min-width: 0;
-  background: var(--dsw-alias-bg-base);
+  background: var(--wb-shell-center-bg, var(--dsw-alias-bg-base));
+}
+
+/* `conversation.hero.frame` contract on the home: layer decorations at negative z-index paint above this
+   background and below all Conversation content. Other phases keep the root out of the stacking order, so
+   unportaled Conversation popovers still rise above AppFrame chrome that floats over the column. */
+.root[data-phase='hero'] {
+  isolation: isolate;
 }
 
 /* 76px with its rule: the height of the Sidebar's tab strip and header row
@@ -20,6 +27,9 @@
   box-sizing: border-box;
   min-height: 76px;
   padding: 10px 28px 0 20px;
+  background-color: var(--wb-shell-header-bg, transparent);
+  background-image: var(--wb-glass-sheen, none);
+  backdrop-filter: var(--wb-glass-backdrop, none);
   border-bottom: 0.5px solid var(--dsw-alias-border-l3);
 }
 
@@ -35,6 +45,9 @@
   min-height: 0;
   padding-bottom: 0;
   border-bottom: none;
+  background: transparent;
+  background-image: none;
+  backdrop-filter: none;
 }
 
 .headerBlank .headerCorner {
@@ -149,11 +162,6 @@
   cursor: pointer;
 }
 
-.crumbSubagent {
-  font-size: 12px;
-  line-height: 18px;
-}
-
 @media (hover: hover) {
   button.crumb:hover {
     background: var(--dsw-alias-interactive-bg-hover);
@@ -170,7 +178,13 @@
   display: flex;
   flex: none;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+}
+
+@container (max-width: 460px) {
+  .headerActions {
+    gap: 8px;
+  }
 }
 
 .headerUtilities {
@@ -183,6 +197,18 @@
 
 .headerUtilities:empty {
   display: none;
+}
+
+.headerMenuButton {
+  flex: none;
+  width: 28px;
+  padding: 0;
+  color: var(--dsw-alias-label-secondary);
+}
+
+.headerMenuButton svg {
+  width: 15px;
+  height: 15px;
 }
 
 /* The far-right corner seat reaches 16px into the header's 28px right padding,
@@ -522,10 +548,13 @@
      region and the fade band never stretches. The 0px stop is bg-base at
      zero alpha (not white, which the figma export hardcodes) so both themes
      fade from their own base. */
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--dsw-alias-bg-base) 0%, transparent) 0px,
-    var(--dsw-alias-bg-base) 36px
+  background: var(
+    --wb-shell-composer-seat-bg,
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--dsw-alias-bg-base) 0%, transparent) 0px,
+      var(--dsw-alias-bg-base) 36px
+    )
   );
 }
 

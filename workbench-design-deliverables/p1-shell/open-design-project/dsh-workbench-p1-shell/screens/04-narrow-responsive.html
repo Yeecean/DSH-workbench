@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>状态 4 · 窄窗口与响应式降级（1024px / 768px / 767px · A/B 对比）</title>
+  <link rel="stylesheet" href="../assets/tokens.css">
+  <style>
+    body { margin: 0; padding: 16px; background: #14181f; color: #e8edf4; font-family: var(--dsh-font-family-text); }
+    .head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .head h1 { font-size: 16px; margin: 0; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; height: calc(100vh - 64px); }
+    .pane { display: flex; flex-direction: column; border: 1px solid rgba(255,255,255,0.16); border-radius: 10px; overflow: hidden; background: #1c222b; }
+    .pane-bar { padding: 8px 12px; font-size: 12px; font-weight: 600; background: #232a35; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; }
+    iframe { flex: 1; width: 100%; border: 0; background: #fff; }
+  </style>
+</head>
+<body>
+  <div class="head">
+    <h1>状态 D · 窄窗口与降级布局（复用 columns.ts 求解器：保护 400px 主区，&lt;1024px 折叠侧栏，&lt;768px 抽屉与叠层）</h1>
+    <span>左：方向 A 窄窗口 (767px) ｜ 右：方向 B 窄窗口 (767px)</span>
+  </div>
+  <div class="grid">
+    <div class="pane">
+      <div class="pane-bar"><span>方向 A · 767px 窄窗口降级</span><span>抽屉导航 + 窄屏右栏可达恢复</span></div>
+      <iframe src="../index.html?preset=narrow-767&dir=native" title="方向 A 窄窗口"></iframe>
+    </div>
+    <div class="pane">
+      <div class="pane-bar"><span>方向 B · 767px 窄窗口降级</span><span>抽屉导航 + 窄屏右栏可达恢复</span></div>
+      <iframe src="../index.html?preset=narrow-767&dir=product" title="方向 B 窄窗口"></iframe>
+    </div>
+  </div>
+</body>
+</html>

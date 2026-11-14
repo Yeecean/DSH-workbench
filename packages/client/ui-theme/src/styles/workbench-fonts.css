@@ -1,0 +1,48 @@
+/* JetBrains Mono & ChillRoundM (寒蝉半圆体); SIL Open Font License 1.1 in workbench-fonts/. */
+@font-face {
+  font-family: '寒蝉半圆体';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(./workbench-fonts/ChillRoundM.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'ChillRoundM';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(./workbench-fonts/ChillRoundM.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(./workbench-fonts/JetBrainsMono-Regular.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(./workbench-fonts/JetBrainsMono-Medium.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(./workbench-fonts/JetBrainsMono-SemiBold.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(./workbench-fonts/JetBrainsMono-Bold.ttf) format('truetype');
+}

@@ -14,6 +14,7 @@ import type { SessionId } from '@deepseek-ai/dsh-session/types'
 import { allowAllAccess } from '@deepseek-ai/dsh-client-test-runtime'
 import { ExpandButton } from '../src/client/shell/ExpandButton.tsx'
 import type { ExpandButtonProps } from '../src/client/shell/ExpandButton.tsx'
+import { createSnapshotStore } from '@deepseek-ai/dsh-client-store'
 import { createSidebarRightStore } from '../src/client/stores.ts'
 
 const SESSION = 's-test' as SessionId
@@ -41,12 +42,16 @@ function hookOf<T>(inst: { subscribe: (fn: () => void) => () => void; getSnapsho
 }
 
 /** Mount the button over its real store and an empty shortcut catalog. */
-function mountButton(shortcuts: readonly ShortcutCatalogEntry[] = [], mobile = false) {
+function mountButton(shortcuts: readonly ShortcutCatalogEntry[] = [], mobile = false, initialOwner: 'session' | 'global' = 'session') {
   vi.spyOn(uiPrimitives, 'isMobileDevice').mockReturnValue(mobile)
+  const ownerStore = createSnapshotStore<'session' | 'global'>(initialOwner)
+  const requestSessionSurface = vi.fn(() => { ownerStore.set('session') })
   const instance = createSidebarRightStore(() => ({ kind: 'guide', title: 'Start' })).create()
   const props: ExpandButtonProps = {
     ...standard,
     useShortcuts: <T,>(selector: (entries: readonly ShortcutCatalogEntry[]) => T): T => selector(shortcuts),
+    useRightbarOwner: hookOf(ownerStore),
+    requestSessionSurface,
     sessionId: SESSION,
     useStore: hookOf(instance),
     actions: instance.actions,
@@ -55,7 +60,7 @@ function mountButton(shortcuts: readonly ShortcutCatalogEntry[] = [], mobile = f
   }
   const view = render(<ExpandButton {...props} />)
   const control = (): HTMLButtonElement | null => view.container.querySelector('[data-sidebar-right-expand]')
-  return { instance, view, control }
+  return { instance, view, control, ownerStore, requestSessionSurface }
 }
 
 describe('ExpandButton', () => {
@@ -107,5 +112,18 @@ describe('ExpandButton', () => {
     expect(control()).toBeNull()
     act(() => { instance.actions.setExpanded(SESSION, false) })
     expect(control()?.disabled).toBe(false)
+  })
+
+  it('keeps ExpandButton visible when global rightbar owns the rail, and requests session surface on click', () => {
+    const { instance, control, ownerStore, requestSessionSurface } = mountButton([], false, 'global')
+    act(() => { instance.actions.setExpanded(SESSION, true) })
+    const button = control()
+    expect(button).not.toBeNull()
+    expect(button?.disabled).toBe(false)
+    fireEvent.click(button!)
+    expect(requestSessionSurface).toHaveBeenCalledTimes(1)
+    expect(ownerStore.getSnapshot()).toBe('session')
+    expect(instance.getSnapshot().bySession[SESSION]?.layout.expanded).toBe(true)
+    expect(control()).toBeNull()
   })
 })

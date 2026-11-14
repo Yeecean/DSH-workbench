@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%230a66e6'/%3E%3Cpath d='M7 8h10M7 12h6M7 16h8' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+  <title>DSH Workbench · Work Empty (W1)</title>
+  <script>
+    (() => {
+      try {
+        const theme = new URLSearchParams(location.search).get("theme");
+        if (theme === "light" || theme === "dark") {
+          document.querySelector('meta[name="color-scheme"]').content = theme;
+        }
+      } catch {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/tokens.css">
+  <link rel="stylesheet" href="../assets/typography.css">
+  <link rel="stylesheet" href="../assets/workbench.css">
+</head>
+<body data-standalone="true">
+  <p id="a11y-live-status" role="status" class="visually-hidden"></p>
+
+  <div class="desktop-stage">
+    <div id="desktop-frame" class="desktop-frame">
+      <div
+        id="workbench-window"
+        class="workbench-window"
+        data-workspace="work"
+        data-right-open="false"
+      >
+        <div class="canvas-ambient" aria-hidden="true"></div>
+        <div id="drawer-scrim" class="drawer-scrim" hidden></div>
+
+        <!-- Collapsed / Mobile floating chrome pill -->
+        <div class="top-left-floating-chrome glass-surface pill-round">
+          <div class="traffic-lights" aria-hidden="true">
+            <span class="traffic-dot close"></span>
+            <span class="traffic-dot minimize"></span>
+            <span class="traffic-dot zoom"></span>
+          </div>
+          <button
+            type="button"
+            class="icon-btn"
+            data-sidebar-toggle
+            aria-expanded="true"
+            aria-label="展开或收起侧边栏"
+            title="切换侧边栏 (Ctrl+\)"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="16" rx="3"/>
+              <line x1="9" y1="4" x2="9" y2="20"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Floating Liquid Glass Sidebar (280px -> 56px -> Drawer <768px) -->
+        <aside id="primary-sidebar" class="floating-sidebar glass-surface" aria-label="任务导航侧边栏">
+          <div class="sidebar-chrome-header">
+            <div class="traffic-lights" aria-hidden="true">
+              <span class="traffic-dot close"></span>
+              <span class="traffic-dot minimize"></span>
+              <span class="traffic-dot zoom"></span>
+            </div>
+            <button
+              type="button"
+              class="icon-btn"
+              data-sidebar-toggle
+              aria-expanded="true"
+              aria-label="收起侧边栏"
+              title="收起侧边栏 (Ctrl+\)"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="16" rx="3"/>
+                <line x1="9" y1="4" x2="9" y2="20"/>
+              </svg>
+            </button>
+          </div>
+
+          <button type="button" class="sidebar-primary-cta" aria-label="新建任务">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            <span class="sidebar-cta-label">新建任务</span>
+          </button>
+
+          <nav class="sidebar-scroll" aria-label="Work 任务列表">
+            <section class="nav-section" aria-label="当前与最近任务">
+              <div class="nav-section-header">
+                <span>最近任务</span>
+              </div>
+
+              <button type="button" class="nav-row" aria-current="page" data-active="true" title="新任务 · 待输入">
+                <span class="nav-row-main">
+                  <span class="status-dot active" aria-hidden="true"></span>
+                  <span class="nav-row-title">新任务 · 待输入</span>
+                </span>
+                <span class="nav-row-meta">W1</span>
+              </button>
+
+              <button type="button" class="nav-row" title="重构 Workbench 玻璃层级与字体系统">
+                <span class="nav-row-main">
+                  <span class="status-dot done" aria-hidden="true"></span>
+                  <span class="nav-row-title">重构 Workbench 玻璃层级与字体系统</span>
+                </span>
+                <span class="nav-row-meta">14 分钟前</span>
+              </button>
+
+              <button type="button" class="nav-row" title="审计 DSH 原生 Terminal 与 Files 挂载点">
+                <span class="nav-row-main">
+                  <span class="status-dot done" aria-hidden="true"></span>
+                  <span class="nav-row-title">审计 DSH 原生 Terminal 与 Files 挂载点</span>
+                </span>
+                <span class="nav-row-meta">昨天</span>
+              </button>
+
+              <button type="button" class="nav-row" title="核对 Stage Gate 1 视觉验收边界">
+                <span class="nav-row-main">
+                  <span class="status-dot" aria-hidden="true"></span>
+                  <span class="nav-row-title">核对 Stage Gate 1 视觉验收边界</span>
+                </span>
+                <span class="nav-row-meta">11/09</span>
+              </button>
+            </section>
+
+            <details class="sidebar-disclosure">
+              <summary>
+                <span class="disclosure-lead">
+                  <svg class="disclosure-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="6 9 12 15 18 9"/>
+                  </svg>
+                  <span>已归档</span>
+                </span>
+                <span>2</span>
+              </summary>
+              <button type="button" class="nav-row" title="清理遗留 p1-shell 样式依赖">
+                <span class="nav-row-main">
+                  <span class="status-dot done" aria-hidden="true"></span>
+                  <span class="nav-row-title">清理遗留 p1-shell 样式依赖</span>
+                </span>
+                <span class="nav-row-meta">11/04</span>
+              </button>
+              <button type="button" class="nav-row" title="验证 ChillRoundM 字重配对">
+                <span class="nav-row-main">
+                  <span class="status-dot done" aria-hidden="true"></span>
+                  <span class="nav-row-title">验证 ChillRoundM 字重配对</span>
+                </span>
+                <span class="nav-row-meta">10/29</span>
+              </button>
+            </details>
+          </nav>
+
+          <div class="sidebar-footer-note">
+            DSH Workbench · Work (W1)
+          </div>
+        </aside>
+
+        <!-- Window Floating Liquid Glass Toolbar -->
+        <header id="window-toolbar" class="window-toolbar" aria-label="窗口工具栏">
+          <div class="toolbar-group">
+            <div class="context-breadcrumb glass-surface pill-round">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="8"/>
+                <path d="M12 8v4l2.5 2.5"/>
+              </svg>
+              <span id="toolbar-breadcrumb-label" class="context-breadcrumb-label">临时任务 · 未绑定项目</span>
+            </div>
+          </div>
+
+          <div class="toolbar-group">
+            <nav class="workspace-switcher glass-surface pill-round" focusgroup="tablist nomemory" role="tablist" aria-label="工作空间切换">
+              <button type="button" role="tab" class="workspace-tab" aria-selected="true" focusgroupstart>Work</button>
+              <a role="tab" class="workspace-tab" aria-selected="false" href="./code-focus.html">Code</a>
+            </nav>
+          </div>
+
+          <div class="toolbar-group">
+            <div class="toolbar-capsule glass-surface pill-round">
+              <button
+                id="appearance-trigger"
+                type="button"
+                class="toolbar-pill-btn"
+                aria-expanded="false"
+                aria-haspopup="dialog"
+                commandfor="appearance-popover"
+                command="toggle-popover"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="4"/>
+                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+                </svg>
+                <span>外观与字体</span>
+              </button>
+              <div id="appearance-popover" popover="auto" class="glass-popover anchored-popover appearance-popover" role="dialog" aria-label="外观与字体设置">
+                <div class="popover-section">
+                  <div class="popover-label">
+                    <span>外观主题</span>
+                    <span id="system-theme-hint">当前系统：浅色</span>
+                  </div>
+                  <div class="segmented-control" role="group" aria-label="主题模式">
+                    <button type="button" class="segmented-option" data-theme-choice="system" aria-pressed="true">跟随系统</button>
+                    <button type="button" class="segmented-option" data-theme-choice="light" aria-pressed="false">浅色</button>
+                    <button type="button" class="segmented-option" data-theme-choice="dark" aria-pressed="false">深色</button>
+                  </div>
+                </div>
+
+                <div class="popover-section">
+                  <div class="popover-label">
+                    <span>玻璃材质模式</span>
+                  </div>
+                  <div class="segmented-control" role="group" aria-label="玻璃材质模式">
+                    <button type="button" class="segmented-option" data-transparency-choice="glass" aria-pressed="true">Liquid Glass</button>
+                    <button type="button" class="segmented-option" data-transparency-choice="reduce" aria-pressed="false">降低透明度</button>
+                  </div>
+                </div>
+
+                <div class="popover-section">
+                  <div class="popover-label">
+                    <span>系统强调色</span>
+                  </div>
+                  <div class="accent-row" role="group" aria-label="强调色预设">
+                    <button type="button" class="accent-swatch" data-accent="blue" data-accent-choice="blue" aria-pressed="true" aria-label="Apple Blue" title="Apple Blue"></button>
+                    <button type="button" class="accent-swatch" data-accent="indigo" data-accent-choice="indigo" aria-pressed="false" aria-label="Indigo" title="Indigo"></button>
+                    <button type="button" class="accent-swatch" data-accent="teal" data-accent-choice="teal" aria-pressed="false" aria-label="Teal" title="Teal"></button>
+                    <button type="button" class="accent-swatch" data-accent="graphite" data-accent-choice="graphite" aria-pressed="false" aria-label="Graphite" title="Graphite"></button>
+                  </div>
+                </div>
+
+                <div class="popover-section">
+                  <div class="popover-label">
+                    <span>字体与字号切换</span>
+                    <button type="button" class="reset-link-btn" data-reset-appearance>恢复默认</button>
+                  </div>
+
+                  <div class="font-role-row">
+                    <span class="popover-label">正文 / UI 混排（text）</span>
+                    <div class="font-control-line">
+                      <select class="font-select" data-font-role-select="text" aria-label="正文字体">
+                        <option value='"JetBrains Mono", "寒蝉半圆体", sans-serif'>JetBrains Mono + 寒蝉半圆体</option>
+                        <option value='"寒蝉半圆体", "JetBrains Mono", sans-serif'>寒蝉半圆体优先</option>
+                        <option value='system-ui, -apple-system, "PingFang SC", sans-serif'>系统无衬线对照</option>
+                      </select>
+                      <div class="size-stepper" role="group" aria-label="正文字号调节">
+                        <button type="button" class="size-step-btn" data-size-role="text" data-size-step="-1" aria-label="减小正文字号">-</button>
+                        <span class="size-readout" data-size-readout="text">14px</span>
+                        <button type="button" class="size-step-btn" data-size-role="text" data-size-step="1" aria-label="增大正文字号">+</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="font-role-row">
+                    <span class="popover-label">代码片段（code）</span>
+                    <div class="font-control-line">
+                      <select class="font-select" data-font-role-select="code" aria-label="代码字体">
+                        <option value='"JetBrains Mono", "寒蝉半圆体", monospace'>JetBrains Mono（默认）</option>
+                        <option value='"SF Mono", "JetBrains Mono", monospace'>SF Mono / 系统等宽</option>
+                      </select>
+                      <div class="size-stepper" role="group" aria-label="代码字号调节">
+                        <button type="button" class="size-step-btn" data-size-role="code" data-size-step="-1" aria-label="减小代码字号">-</button>
+                        <span class="size-readout" data-size-readout="code">13px</span>
+                        <button type="button" class="size-step-btn" data-size-role="code" data-size-step="1" aria-label="增大代码字号">+</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="font-role-row">
+                    <span class="popover-label">终端输出（terminal）</span>
+                    <div class="font-control-line">
+                      <select class="font-select" data-font-role-select="terminal" aria-label="终端字体">
+                        <option value='"JetBrains Mono", "寒蝉半圆体", monospace'>JetBrains Mono（默认）</option>
+                        <option value='"SF Mono", "JetBrains Mono", monospace'>SF Mono / 系统等宽</option>
+                      </select>
+                      <div class="size-stepper" role="group" aria-label="终端字号调节">
+                        <button type="button" class="size-step-btn" data-size-role="terminal" data-size-step="-1" aria-label="减小终端字号">-</button>
+                        <span class="size-readout" data-size-readout="terminal">13px</span>
+                        <button type="button" class="size-step-btn" data-size-role="terminal" data-size-step="1" aria-label="增大终端字号">+</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Main Workspace -->
+        <main id="main-workspace" class="main-workspace">
+          <section class="center-column" aria-label="Work Empty 主画布">
+            <div id="center-scroll" class="center-scroll">
+              <div class="work-empty-stage">
+                <div class="work-hero">
+                  <h1 class="work-hero-title">今天要推进什么工作？</h1>
+                  <p class="work-hero-subtitle">从明确任务目标开始，按需绑定本地项目上下文或拖入参考文档</p>
+                </div>
+
+                <form class="composer-card" aria-label="Work 任务输入框">
+                  <div class="composer-attachments" data-attachment-row hidden></div>
+
+                  <textarea
+                    id="work-composer-input"
+                    class="composer-input"
+                    rows="3"
+                    placeholder="描述你想让 DSH 执行的任务、交付物或验收约束…（Enter 发送，Shift+Enter 换行）"
+                    aria-label="任务目标输入"
+                  ></textarea>
+
+                  <div class="composer-footer">
+                    <div class="composer-slot-group">
+                      <button
+                        id="work-context-trigger"
+                        type="button"
+                        class="composer-slot-btn"
+                        aria-expanded="false"
+                        aria-haspopup="menu"
+                        commandfor="work-context-popover"
+                        command="toggle-popover"
+                      >
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        </svg>
+                        <span id="work-context-label">未绑定项目 · 默认权限</span>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                      </button>
+                      <div id="work-context-popover" popover="auto" class="glass-popover anchored-above" role="menu" aria-label="任务上下文与权限">
+                        <div class="menu-list" focusgroup="menu nomemory">
+                          <button type="button" class="menu-item" role="menuitemradio" aria-checked="true" data-composer-context-option="未绑定项目 · 默认权限" data-target-label="work-context-label">
+                            <span>未绑定项目 · 默认权限</span>
+                            <span class="menu-badge">默认</span>
+                          </button>
+                          <button type="button" class="menu-item" role="menuitemradio" aria-checked="false" data-composer-context-option="DSH workbench · 修改前询问" data-target-label="work-context-label">
+                            <span>DSH workbench · 修改前询问</span>
+                            <span class="menu-badge">项目</span>
+                          </button>
+                          <button type="button" class="menu-item" role="menuitemradio" aria-checked="false" data-composer-context-option="只读分析 · 不写入工作区" data-target-label="work-context-label">
+                            <span>只读分析 · 不写入工作区</span>
+                            <span class="menu-badge">只读</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      <button type="button" class="composer-slot-btn" data-demo-attach>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                        </svg>
+                        <span>附加文档</span>
+                      </button>
+                    </div>
+
+                    <button type="submit" class="composer-send-btn" aria-label="提交任务">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="12" y1="19" x2="12" y2="5"/>
+                        <polyline points="5 12 12 5 19 12"/>
+                      </svg>
+                    </button>
+                  </div>
+                </form>
+
+                <div class="prompt-suggestions" role="group" aria-label="轻量示例指令">
+                  <button type="button" class="prompt-chip" data-suggestion-prompt="请核对 p1-work-code-ux 原型中 JetBrains Mono 与 寒蝉半圆体 的混排基线，并标记低于 13px 的元素">
+                    <span>核对中英混排基线与 13px 下限</span>
+                  </button>
+                  <button type="button" class="prompt-chip" data-suggestion-prompt="列出 Work W1 到 Code C2 切换时需要透传的 session 与 project context">
+                    <span>梳理 Work 到 Code 上下文映射</span>
+                  </button>
+                  <button type="button" class="prompt-chip" data-suggestion-prompt="审计当前单轨右栏 Files / Terminal / Inspector 对应的 DSH 原生组件路径">
+                    <span>审计原生右栏组件复用范围</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <div id="workbench-toast" class="workbench-toast glass-surface" role="status" hidden></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/workbench.js" defer></script>
+</body>
+</html>

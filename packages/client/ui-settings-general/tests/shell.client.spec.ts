@@ -9,6 +9,7 @@ import { describe, expect, onTestFinished, vi } from 'vitest'
 import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
 import { createClientTest, type TestClient, webApp } from '@deepseek-ai/dsh-client-test-runtime/src/assembly/index.ts'
 import { inject } from '../src/client/index.ts'
+import type { createSettingsShellStore } from '../src/client/shell-store.ts'
 import type { SettingsRootInjected } from '../src/client/shell-contract.ts'
 import { SettingsRoot } from '../src/client/SettingsRoot.tsx'
 import type { DesktopUpdatePresentation } from '../src/types.ts'
@@ -121,13 +122,13 @@ describe('ui-settings-general shell', () => {
     const { sections } = injectedOf(c).hooks
     await c.mock.streams.opened('account/watch', 1)
     expect(sections.getSnapshot().map(row => row.id)).toEqual(PRODUCT_SECTIONS)
-    c.mock.streams.push('account/watch', { status: 'credential-stored', attempt: null })
+    c.mock.streams.push('account/watch', { type: 'snapshot', state: { status: 'credential-stored', attempt: null } })
     await vi.waitFor(() => {
       expect(sections.getSnapshot().map(row => row.id)).toEqual(['account', ...PRODUCT_SECTIONS])
     })
-    c.mock.streams.push('account/watch', { status: 'credential-stored', attempt: null })
+    c.mock.streams.push('account/watch', { type: 'snapshot', state: { status: 'credential-stored', attempt: null } })
     await vi.waitFor(() => { expect(sections.getSnapshot().filter(row => row.id === 'account')).toHaveLength(1) })
-    c.mock.streams.push('account/watch', { status: 'signed-out', attempt: null })
+    c.mock.streams.push('account/watch', { type: 'snapshot', state: { status: 'signed-out', attempt: null } })
     await vi.waitFor(() => { expect(sections.getSnapshot().map(row => row.id)).toEqual(PRODUCT_SECTIONS) })
   })
 
@@ -161,6 +162,19 @@ describe('ui-settings-general shell', () => {
     await Promise.resolve()
     expect(listener).toHaveBeenCalledOnce()
     off()
+  })
+
+  it('opens settings and targets the requested section when ui-settings/open fires', async ({ start }) => {
+    const c = await start()
+    const decl = c.ctx.slots.entries('sidebar.settings')[0]?.store
+    if (!decl || typeof decl === 'function') throw new Error('Expected StoreHandle on sidebar.settings')
+    const shell = (decl as ReturnType<typeof createSettingsShellStore>).create()
+    expect(shell.getSnapshot()).toEqual({ open: false, activeId: undefined })
+    c.ctx.emit('ui-settings/open')
+    expect(shell.getSnapshot()).toEqual({ open: true, activeId: undefined })
+    shell.actions.close()
+    c.ctx.emit('ui-settings/open', 'general')
+    expect(shell.getSnapshot()).toEqual({ open: true, activeId: 'general' })
   })
 
   it('re-registers after the declarer reloads: the cascade removes the shell, the rebuilt declaration takes it back', async ({ start }) => {

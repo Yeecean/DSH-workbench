@@ -1,0 +1,37 @@
+# Bilingual-pair consistency record for README.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/README.md
+/dsh-workbench-phase-1-baseline:
+  en: af1288cb8dd3cb54
+  zh: ae844b26cf0de72a
+/dsh-workbench-phase-1-baseline/summary:
+  en: ac417edb728789df
+  zh: 4063a7419d707c0b
+/dsh-workbench-phase-1-baseline/table-of-contents:
+  en: 34f8f534ac473ccb
+  zh: 8a932973d8bcd0b2
+/dsh-workbench-phase-1-baseline/phase-boundaries:
+  en: 9b8f6d51b8fe7574
+  zh: 3e90c4b5413ef28a
+/dsh-workbench-phase-1-baseline/document-map:
+  en: 2aafeb6f623486cb
+  zh: 705574664e549fb2
+/dsh-workbench-phase-1-baseline/baseline-at-a-glance:
+  en: 2bebf92c3c45e896
+  zh: 8239a87a7fffa832
+/dsh-workbench-phase-1-baseline/decision-labels:
+  en: 275badbadb10d2e8
+  zh: 85963025949f14c2
+/dsh-workbench-phase-1-baseline/evidence-status:
+  en: c16f3d4de6a071ef
+  zh: 4e33ce8b18c27077
+/dsh-workbench-phase-1-baseline/architecture-review-point:
+  en: 83aa71ab535721d3
+  zh: f6db191e24e4f194
+/dsh-workbench-phase-1-baseline/further-exploration:
+  en: b4d3175152125c9c
+  zh: 45f30de2fea67163
+/dsh-workbench-phase-1-baseline/dev-note:
+  en: b75c8458928b72b9
+  zh: 003ba4e17b4b5269

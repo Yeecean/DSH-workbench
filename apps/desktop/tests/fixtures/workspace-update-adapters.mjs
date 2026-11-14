@@ -1,7 +1,7 @@
 /** Replace only update delivery/installation and inspector allocation for the compiled main-entry scenario. */
 import { DesktopUpdateCoordinator as Coordinator } from '../../lib/types/update-coordinator.js'
 import { DesktopHostProcess as Host } from '../../lib/types/host-process.js'
-export { DesktopHostUncleanExitError } from '../../lib/types/host-process.js'
+export { DesktopHostFatalError, DesktopHostUncleanExitError } from '../../lib/types/host-process.js'
 export { DesktopUpdatePreparationError } from '../../lib/types/update-error.js'
 
 export const fixture = { updater: undefined, coordinator: undefined, host: undefined, ready: Promise.withResolvers(), readyHosts: new WeakSet(), states: [], installations: [], taskQueries: [] }

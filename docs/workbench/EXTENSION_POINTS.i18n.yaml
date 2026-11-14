@@ -1,0 +1,61 @@
+# Bilingual-pair consistency record for EXTENSION_POINTS.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/EXTENSION_POINTS.md
+/workbench-extension-points:
+  en: 4ca7ce6cf38bc635
+  zh: 8d69e69ebd247cb2
+/workbench-extension-points/summary:
+  en: 9d3a023a112562cd
+  zh: 63c4d3169838f006
+/workbench-extension-points/table-of-contents:
+  en: e35ecb5bf5bf9432
+  zh: b5059bf0deb7b76f
+/workbench-extension-points/selection-order:
+  en: 37c08e4e121bf5da
+  zh: 6eaa943f708fa8db
+/workbench-extension-points/custom-tools:
+  en: 3761bcc7d4ed3c74
+  zh: 2a6c0277b3de178f
+/workbench-extension-points/custom-model-routes:
+  en: 57851403a716a6d0
+  zh: 37843eb997f29cc7
+/workbench-extension-points/custom-agent-behavior:
+  en: 25e71cc485566093
+  zh: 9488a1c02a871376
+/workbench-extension-points/session-projections-and-activity:
+  en: 738a3533ef8e8e1e
+  zh: 937fc39bf44dbc12
+/workbench-extension-points/approval-and-question-policy:
+  en: c5ef249af25b0924
+  zh: 79f9289f463c8379
+/workbench-extension-points/host-and-client-plugin-package:
+  en: e64f8bd916f3fa9b
+  zh: add9107340861451
+/workbench-extension-points/bundle-and-profile-composition:
+  en: 7f1b06d63661b6c7
+  zh: 67ff368b74927ed8
+/workbench-extension-points/typert-remote-apis:
+  en: ec07f7e4877c9d8e
+  zh: 3a2254dcb49b0f0e
+/workbench-extension-points/workspace-terminal-files-and-jobs:
+  en: 13fa7613ecfa7f6f
+  zh: 7c76e697d92711ab
+/workbench-extension-points/client-ui-slots-and-theme:
+  en: cfc3d0ec29b67ac7
+  zh: 6cb6cf02b33a2853
+/workbench-extension-points/plugin-inventory-and-mutation:
+  en: 0588780833000637
+  zh: 01e733f332ea31fa
+/workbench-extension-points/compatibility-and-recovery:
+  en: 25011944fcc3020c
+  zh: 3855afa5ae79faae
+/workbench-extension-points/validation-requirements:
+  en: a62ad1748219b5b2
+  zh: 0215c0fe3bdee09d
+/workbench-extension-points/further-exploration:
+  en: f0e94df97fcada02
+  zh: 96ba5cc4a676a441
+/workbench-extension-points/dev-note:
+  en: b75c8458928b72b9
+  zh: 003ba4e17b4b5269

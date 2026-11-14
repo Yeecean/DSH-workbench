@@ -1,0 +1,89 @@
+/* Apple Liquid Glass & Typography Token Refinement Layer for DSH Workbench.
+ * Preserves custom user font overrides (`--dsh-font-family-text`, `--dsh-font-family-code`)
+ * while upgrading the built-in stacks to ChillRoundM (寒蝉半圆体) + JetBrains Mono.
+ */
+
+:root[data-dsh-workbench='1'] {
+  --dsh-font-family-text-default:
+    'ChillRoundM', '寒蝉半圆体', -apple-system, BlinkMacSystemFont, 'SF Pro Text',
+    'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  --dsh-font-family-code-default:
+    'JetBrains Mono', ui-monospace, 'SF Mono', 'Fira Code', Menlo, Consolas, monospace;
+
+  --wb-accent: var(--dsw-alias-state-business-primary);
+  --wb-accent-ink: var(--dsw-alias-label-on-color);
+  --wb-accent-tint: color-mix(in srgb, var(--wb-accent) 14%, transparent);
+  --wb-radius-pill: 999px;
+  --wb-radius-panel: var(--dsw-radius-lg);
+  --wb-radius-card: var(--dsw-radius-md);
+  --wb-radius-composer: var(--dsw-radius-panel);
+  --wb-radius-modal: var(--dsw-radius-panel);
+  --wb-blur: 28px;
+  --wb-glass-backdrop: blur(var(--wb-blur)) saturate(185%) contrast(103%);
+  --wb-glass-modal-backdrop: blur(36px) saturate(195%) contrast(104%);
+  --wb-glass-mask-backdrop: blur(14px) saturate(140%);
+
+  --wb-glass-surface: color-mix(in srgb, var(--dsw-alias-bg-layer-1) 62%, transparent);
+  --wb-glass-elevated: color-mix(in srgb, var(--dsw-alias-bg-layer-2) 78%, transparent);
+  --wb-glass-chrome: color-mix(in srgb, var(--dsw-alias-bg-layer-2) 64%, transparent);
+  --wb-glass-sheen: linear-gradient(
+    155deg,
+    color-mix(in srgb, var(--dsw-alias-bg-layer-2) 32%, transparent) 0%,
+    transparent 46%,
+    color-mix(in srgb, var(--dsw-alias-bg-layer-2) 14%, transparent) 100%
+  );
+  --wb-glass-rim: inset 0 1px 0 var(--dsw-alias-border-l1);
+  --wb-glass-border: var(--dsw-alias-border-l2);
+  --wb-glass-shadow: none;
+  --wb-glass-panel-shadow: none;
+  --wb-glass-composer-shadow: var(--dsw-elevation-soft);
+  --wb-ambient-bg:
+    radial-gradient(1120px 680px at 84% -8%, color-mix(in srgb, var(--wb-accent) 16%, transparent), transparent 62%),
+    radial-gradient(880px 580px at 10% 106%, color-mix(in srgb, var(--dsw-alias-state-done-primary) 12%, transparent), transparent 60%);
+}
+
+:root[data-dsh-workbench='1'][data-workbench-reduced-transparency='true'] {
+  --wb-blur: 0px;
+  --wb-glass-backdrop: none;
+  --wb-glass-modal-backdrop: none;
+  --wb-glass-mask-backdrop: var(--dsw-mask-blur);
+  --wb-glass-surface: var(--dsw-alias-bg-layer-1);
+  --wb-glass-elevated: var(--dsw-alias-bg-layer-2);
+  --wb-glass-chrome: var(--dsw-alias-bg-layer-2);
+  --wb-glass-sheen: none;
+  --wb-glass-rim: none;
+  --wb-ambient-bg: none;
+}
+
+:root[data-dsh-workbench='1'][data-workbench-reduced-motion='true'] *,
+:root[data-dsh-workbench='1'][data-workbench-reduced-motion='true'] *::before,
+:root[data-dsh-workbench='1'][data-workbench-reduced-motion='true'] *::after {
+  transition-duration: 0.01ms !important;
+  animation-duration: 0.01ms !important;
+}
+
+:root[data-dsh-workbench='1'] body {
+  --dsw-font-mono: var(--ds-font-family-code);
+  background-image: var(--wb-ambient-bg);
+  background-attachment: fixed;
+}
+
+:root[data-dsh-workbench='1']:not([data-workbench-reduced-transparency='true']) [data-composer-card] {
+  transition: box-shadow 160ms ease, background-color 160ms ease;
+}
+
+:root[data-dsh-workbench='1']:not([data-workbench-reduced-transparency='true']) [data-shortcut-modal='settings'] {
+  border: 0.5px solid var(--wb-glass-border);
+}
+
+/* Liquid Glass Typography & Monospace Token Binding */
+:root[data-dsh-workbench='1'] code,
+:root[data-dsh-workbench='1'] pre,
+:root[data-dsh-workbench='1'] kbd {
+  font-family: var(--ds-font-family-code);
+}
+
+/* Mode accent cue across Conversation top header */
+:root[data-dsh-workbench='1'][data-workbench-mode='code'] [data-conversation-header-leading] {
+  color: var(--dsw-alias-label-primary);
+}
