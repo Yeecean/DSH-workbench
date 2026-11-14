@@ -60,7 +60,7 @@ export async function qualifyUpdateDialogs(root, fixture) {
         title: document.getElementById('title').textContent,
         detail: document.getElementById('detail').textContent,
         buttons: [...document.querySelectorAll('#actions button')].map(button => button.textContent),
-        width: document.querySelector('main').getBoundingClientRect().width,
+        width: Math.round(document.querySelector('main').getBoundingClientRect().width),
         radius: getComputedStyle(document.querySelector('main')).borderRadius,
         primary: getComputedStyle(document.querySelector('.primary')).backgroundColor,
         focused: document.activeElement.id, isolated: typeof window.require === 'undefined',

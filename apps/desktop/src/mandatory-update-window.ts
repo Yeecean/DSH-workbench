@@ -34,7 +34,7 @@ export interface MandatoryUpdateApi {
 export interface MandatoryUpdateWindowOptions {
   readonly preload: string
   readonly overlays: Pick<DesktopUpdateOverlays, 'create'>
-  readonly locale: DesktopLocale
+  readonly locale: DesktopLocale | (() => DesktopLocale)
   readonly allowedPageOrigins: readonly string[]
   readonly parent: () => BrowserWindow | undefined
   readonly policy: () => DesktopPolicyState
@@ -105,7 +105,7 @@ export class DesktopMandatoryUpdateWindow {
           case 'install': await this.options.install(version as string); break
         }
       }).catch(() => {
-        this.error = this.options.locale.messages.mandatoryActionFailed
+        this.error = this.resolveLocale().messages.mandatoryActionFailed
       }).finally(() => { this.action = undefined; this.sync() })
       return this.action
     })
@@ -271,7 +271,7 @@ export class DesktopMandatoryUpdateWindow {
       if (!valid() || !failed || prompt !== undefined || !parent.isVisible() || !parent.isFocused()) return
       const controller = new AbortController()
       prompt = controller
-      const messages = this.options.locale.messages
+      const messages = this.resolveLocale().messages
       const policy = this.options.policy()
       const update = this.options.update()
       const destination = desktopPolicyPage(policy.page, this.options.allowedPageOrigins)
@@ -341,11 +341,16 @@ export class DesktopMandatoryUpdateWindow {
     return { load, dismiss, dispose }
   }
 
+  private resolveLocale(): DesktopLocale {
+    return typeof this.options.locale === 'function' ? this.options.locale() : this.options.locale
+  }
+
   private view(): MandatoryUpdateView {
+    const currentLocale = this.resolveLocale()
     const locale = process.platform === 'win32'
-      ? { ...this.options.locale, messages: { ...this.options.locale.messages,
-        mandatoryReadyDetail: this.options.locale.messages.updateDownloadedDetailWindows } }
-      : this.options.locale
+      ? { ...currentLocale, messages: { ...currentLocale.messages,
+        mandatoryReadyDetail: currentLocale.messages.updateDownloadedDetailWindows } }
+      : currentLocale
     return { locale, policy: this.options.policy(), update: this.options.update(),
       deferred: this.deferred,
       ...(this.confirmation === undefined ? {}

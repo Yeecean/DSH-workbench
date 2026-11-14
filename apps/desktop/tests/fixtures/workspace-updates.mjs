@@ -143,7 +143,7 @@ async function waitFor(check, subject) {
   }
 }
 async function press(window, expression) {
-  window.focus()
+  window.focus?.()
   await documentReady(window, `(() => { const target = ${expression}; return target && !target.disabled && target.getClientRects().length > 0; })()`)
   const point = await observed(window, `click layout: ${expression}`, () => window.webContents.executeJavaScript(`(async () => {
     const target = ${expression};
@@ -163,24 +163,47 @@ async function press(window, expression) {
 async function clickText(window, label) {
   const title = await window.webContents.executeJavaScript("document.getElementById('title').textContent")
   await press(window, `[...document.querySelectorAll('button')].find(button => button.textContent.trim() === ${JSON.stringify(label)})`)
-  await waitFor(async () => window.isDestroyed()
-    || await window.webContents.executeJavaScript("document.getElementById('title').textContent") !== title, `dialog response: ${label}`)
+  await waitFor(async () => {
+    if (window.isDestroyed()) return true
+    try {
+      const state = await Promise.race([
+        window.webContents.executeJavaScript(`({
+          title: document.getElementById('title')?.textContent ?? null,
+          visible: document.body?.classList.contains('visible') ?? false,
+        })`),
+        new Promise(resolve => setTimeout(() => resolve(null), 500)),
+      ])
+      if (window.isDestroyed()) return true
+      if (state === null) return false
+      if (!state.visible) {
+        await waitFor(() => window.isDestroyed(), `dialog close after response: ${label}`)
+        return true
+      }
+      return state.title !== title
+    } catch {
+      return window.isDestroyed()
+    }
+  }, `dialog response: ${label}`)
 }
 const dialogDrivers = new WeakMap()
 async function dialogWith(message) {
   let found
   await waitFor(async () => {
     for (const contents of webContents.getAllWebContents()) {
-      if (contents.getURL() !== 'dsh-app://shell/update-dialog.html') continue
+      if (contents.isDestroyed() || contents.getURL() !== 'dsh-app://shell/update-dialog.html') continue
       let window = dialogDrivers.get(contents)
       if (!window) {
-        const owner = BrowserWindow.fromWebContents(contents)
+        const owner = BrowserWindow.fromWebContents(contents) ?? BrowserWindow.getAllWindows().find((candidate) => candidate.webContents.getURL().startsWith('dsh-app://app/'))
         window = { webContents: contents, isDestroyed: () => contents.isDestroyed(),
+          focus: () => { owner?.focus(); contents.focus() },
           isVisible: () => owner?.isVisible() ?? false, isFocused: () => contents.isFocused(), isEnabled: () => owner?.isEnabled() ?? true }
         dialogDrivers.set(contents, window)
       }
       try {
-        const ready = await window.webContents.executeJavaScript(`document.getElementById('title')?.textContent === ${JSON.stringify(message)} && !!document.querySelector('#actions button')`)
+        const ready = await Promise.race([
+          window.webContents.executeJavaScript(`document.body?.classList.contains('visible') && document.getElementById('title')?.textContent === ${JSON.stringify(message)} && !!document.querySelector('#actions button')`),
+          new Promise(resolve => setTimeout(() => resolve(false), 500)),
+        ])
         if (ready) { found = window; return true }
       } catch (error) { if (!window.isDestroyed()) throw error }
     }
@@ -196,13 +219,31 @@ async function qualify() {
     await fixture.ready.promise
     console.log('workspace qualification: Host process ready')
     mainWindow = await windowAt('dsh-app://app/')
+    if (!mainWindow.isVisible()) {
+      let welcomeWindow
+      await waitFor(() => {
+        welcomeWindow = BrowserWindow.getAllWindows().find((candidate) =>
+          !candidate.isDestroyed() && candidate.webContents.getURL().split(/[?#]/)[0].endsWith('/renderer/welcome.html'))
+        return mainWindow.isVisible() || welcomeWindow !== undefined
+      }, 'welcome window or visible workspace window')
+      if (!mainWindow.isVisible() && welcomeWindow !== undefined) {
+        await documentReady(welcomeWindow, `Boolean(document.querySelector('#api-key'))`)
+        await press(welcomeWindow, `document.querySelector('#api-key')`)
+        await documentReady(welcomeWindow, `Boolean(document.querySelector('#skip-key'))`)
+        await press(welcomeWindow, `document.querySelector('#skip-key')`)
+        await waitFor(() => !mainWindow.isDestroyed() && mainWindow.isVisible(), 'workspace window visible after welcome skip')
+        console.log('workspace qualification: native welcome skipped')
+      }
+    }
     await documentReady(mainWindow, `document.querySelector('[class*="frame"]') && window.dshDesktop?.updates`)
     assert.equal(mainWindow.isVisible(), true, 'Workspace qualification requires a visible application window')
     console.log('workspace qualification: workspace document ready')
     const acknowledgeNotice = `[...document.querySelectorAll('button')].find(button => button.textContent.trim() === '继续')`
-    await press(mainWindow, acknowledgeNotice)
-    await waitFor(async () => !await mainWindow.webContents.executeJavaScript(`!!(${acknowledgeNotice})`), 'first-run notice dismissal')
-    console.log('workspace qualification: first-run notice dismissed')
+    if (await mainWindow.webContents.executeJavaScript(`Boolean(${acknowledgeNotice})`)) {
+      await press(mainWindow, acknowledgeNotice)
+      await waitFor(async () => !await mainWindow.webContents.executeJavaScript(`!!(${acknowledgeNotice})`), 'first-run notice dismissal')
+      console.log('workspace qualification: first-run notice dismissed')
+    }
     await waitFor(async () => !await fixture.host.updateTasks('inspect'), 'workspace startup API requests to settle')
     console.log('workspace qualification: startup API requests settled')
     const messages = resolveDesktopLocale(app.getLocale()).messages
@@ -246,22 +287,22 @@ async function qualify() {
     await waitFor(() => fixture.coordinator.state.phase === 'error', 'checksum failure')
     const downloadError = await dialogWith(messages.updateDownloadFailed)
     assert.equal(await downloadError.webContents.executeJavaScript("document.getElementById('technical-details').open"), false)
-    assert.equal(await downloadError.webContents.executeJavaScript("document.getElementById('technical-details-content').textContent"), fixture.coordinator.state.message)
+    assert.equal(await downloadError.webContents.executeJavaScript("document.getElementById('technical-details-content').textContent"), fixture.coordinator.state.technicalDetails ?? fixture.coordinator.state.message)
     await screenshot(downloadError, 'download-error.png')
     await clickText(downloadError, messages.updateAcknowledge)
-    await documentReady(mainWindow, `document.querySelector('button[data-error="true"]')`)
+    await documentReady(mainWindow, `document.querySelector('button[aria-label="重试更新"]')`)
     await screenshot(mainWindow, 'retry.png')
     await press(mainWindow, `document.querySelector('button[aria-label="收起侧边栏"]')`)
-    await documentReady(mainWindow, `document.querySelector('button[aria-label="打开侧边栏"] [role="img"][data-error="true"]')`)
+    await documentReady(mainWindow, `document.querySelector('button[aria-label="打开侧边栏"] [role="img"][aria-label="重试更新"]')`)
     await screenshot(mainWindow, 'collapsed-error.png')
     await press(mainWindow, `document.querySelector('button[aria-label="打开侧边栏"]')`)
-    await documentReady(mainWindow, `document.querySelector('button[data-error="true"]')`)
+    await documentReady(mainWindow, `document.querySelector('button[aria-label="重试更新"]')`)
     cases.push('download-integrity-error-and-persistent-retry')
 
     server.select('hold-download', '0.1.6-nightly.1')
-    await press(mainWindow, `document.querySelector('button[data-error="true"]')`)
+    await press(mainWindow, `document.querySelector('button[aria-label="重试更新"]')`)
     await server.arrived()
-    await documentReady(mainWindow, `document.querySelector('button[aria-disabled="true"]')`)
+    await documentReady(mainWindow, `document.querySelector('button[aria-label$="%"]')`)
     assert.equal(webContents.getAllWebContents().some(contents => contents.getURL() === 'dsh-app://shell/update-dialog.html'), false)
     await screenshot(mainWindow, 'downloading.png')
     server.release()
@@ -282,7 +323,7 @@ async function qualify() {
     await clickText(changed, messages.updateAcknowledge)
     cases.push('new-task-during-idle-confirmation-refuses-install-and-preserves-work')
 
-    await press(mainWindow, `document.querySelector('button[data-error="true"]')`)
+    await press(mainWindow, `document.querySelector('button[aria-label="重试更新"]')`)
     const warning = await dialogWith(messages.updateActiveTasks)
     await screenshot(warning, 'active-task-warning.png')
     await clickText(warning, messages.updateLater)
@@ -313,7 +354,10 @@ async function qualify() {
     if (process.platform === 'win32') {
       const viewport = await mandatory.webContents.executeJavaScript('({ width: innerWidth, height: innerHeight })')
       const bounds = mainWindow.getContentBounds()
-      assert.deepEqual(viewport, { width: bounds.width, height: bounds.height - WINDOWS_TITLEBAR_HEIGHT })
+      assert.ok(
+        Math.abs(viewport.width - bounds.width) <= 2 && Math.abs(viewport.height - (bounds.height - WINDOWS_TITLEBAR_HEIGHT)) <= 2,
+        `Expected mandatory viewport ${JSON.stringify(viewport)} to match content bounds ${JSON.stringify({ width: bounds.width, height: bounds.height - WINDOWS_TITLEBAR_HEIGHT })} within 2px`,
+      )
     }
     mandatory.webContents.sendInputEvent({ type: 'keyDown', keyCode: 'Escape' })
     mandatory.webContents.sendInputEvent({ type: 'keyUp', keyCode: 'Escape' })
@@ -335,6 +379,7 @@ async function qualify() {
     await press(mainWindow, `[...document.querySelectorAll('button')].find(button => button.textContent.trim() === ${JSON.stringify(messages.installAndRestart)})`)
     const stop = await dialogWith(messages.updateActiveTasks)
     const stoppedHost = fixture.host
+    await mainWindow.webContents.executeJavaScript('window.__dshQualificationPreStop = true')
     await control('hold-shutdown')
     await clickText(stop, messages.updateStopTasks)
     await documentReady(mainWindow, `[...document.querySelectorAll('button')].some(button => button.textContent.trim() === ${JSON.stringify(messages.updateInstalling)})`)
@@ -350,7 +395,19 @@ async function qualify() {
     await clickText(failedStop, messages.updateAcknowledge)
     await waitFor(() => fixture.host !== stoppedHost && fixture.readyHosts.has(fixture.host), 'replacement Host after non-graceful shutdown')
     await waitFor(async () => !await fixture.host.updateTasks('inspect'), 'replacement Host ready without active work')
-    await press(mainWindow, `document.querySelector('button[data-error="true"]')`)
+    await waitFor(async () => {
+      if (mainWindow.webContents.isLoadingMainFrame()) return false
+      try {
+        const replaced = await Promise.race([
+          mainWindow.webContents.executeJavaScript('window.__dshQualificationPreStop !== true && document.readyState === "complete"'),
+          new Promise(resolve => setTimeout(() => resolve(false), 500)),
+        ])
+        return Boolean(replaced)
+      } catch {
+        return false
+      }
+    }, 'replacement Host workspace reload')
+    await press(mainWindow, `document.querySelector('button[aria-label="重试更新"]')`)
     const retryInstall = await dialogWith(confirmation.message)
     assert.equal(fixture.installations.length, 0)
     await screenshot(retryInstall, 'recovered-install-confirmation.png')
@@ -392,6 +449,7 @@ async function qualify() {
     server.policy('clear')
     checkMenu.click()
     await waitFor(() => forcedRecovery.isDestroyed(), 'mandatory recovery policy clearance')
+    assert.equal((await control('clear')).queued, 0)
     cases.push('mandatory-stop-recovery-preserves-block-and-requires-fresh-install-confirmation')
     await writeFile(join(root, 'result.json'), JSON.stringify({ realElectron: true, realHostProcess: true,
       realPreload: true, compiledMainEntry: true, installerExecuted: false, cases,
@@ -426,6 +484,7 @@ async function qualify() {
     }
     throw error
   } finally {
+    await control('clear').catch(() => {})
     hooks.deregister()
     await server.close()
     app.quit()

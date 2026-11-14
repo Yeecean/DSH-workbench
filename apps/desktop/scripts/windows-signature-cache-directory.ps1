@@ -2,7 +2,6 @@
 param([Parameter(Mandatory=$true)][string]$CachePath, [switch]$ExistingSource)
 $ErrorActionPreference = 'Stop'
 [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
-Import-Module "$PSHOME/Modules/Microsoft.PowerShell.Security/Microsoft.PowerShell.Security.psd1" -ErrorAction Stop
 $currentSid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User
 $fullPath = [System.IO.Path]::GetFullPath($CachePath)
 if ($fullPath -notmatch '^[A-Za-z]:\\' -or $CachePath -notmatch '^[A-Za-z]:[\\/]') { throw 'Signature cache requires an absolute local drive path' }
@@ -18,16 +17,18 @@ if (-not [System.IO.Directory]::Exists($fullPath)) {
     if ($ExistingSource) { throw 'Signature cache migration source does not exist' }
     $null = [System.IO.Directory]::CreateDirectory($fullPath)
     $acl = [System.Security.AccessControl.DirectorySecurity]::new()
-    $acl.SetOwner($currentSid)
+    if ([System.IO.Directory]::GetAccessControl($fullPath).GetOwner([System.Security.Principal.SecurityIdentifier]).Value -ne $currentSid.Value) {
+        $acl.SetOwner($currentSid)
+    }
     $acl.SetAccessRuleProtection($true, $false)
     foreach ($sid in @($currentSid.Value, 'S-1-5-18', 'S-1-5-32-544')) {
         $identity = [System.Security.Principal.SecurityIdentifier]::new($sid)
         $rule = [System.Security.AccessControl.FileSystemAccessRule]::new($identity, 'FullControl', 'ContainerInherit,ObjectInherit', 'None', 'Allow')
         $acl.AddAccessRule($rule)
     }
-    Set-Acl -LiteralPath $fullPath -AclObject $acl
+    [System.IO.Directory]::SetAccessControl($fullPath, $acl)
 }
-$acl = Get-Acl -LiteralPath $fullPath
+$acl = [System.IO.Directory]::GetAccessControl($fullPath)
 if ($acl.GetOwner([System.Security.Principal.SecurityIdentifier]).Value -ne $currentSid.Value) {
     throw 'Signature cache directory must belong to the current Windows account'
 }

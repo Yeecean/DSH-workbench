@@ -1,6 +1,9 @@
+import { readFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   CUSTOM_THEME_MAX_BYTES,
+  DEFAULT_GLASS_BLUR,
   DEFAULT_WORKBENCH_PREFERENCES,
   SAMPLE_CUSTOM_THEME_JSON,
   buildWorkbenchTokenOverrides,
@@ -98,11 +101,18 @@ describe('parseCustomThemeJson', () => {
       })
     }
 
-    for (const badLength of ['20rem', '-5px', '1000px', '24px; color: red']) {
+    for (const badLength of ['20rem', '-5px', '00px', '01px', '0.5', '1000px', '24px; color: red']) {
       expect(parseCustomThemeJson(JSON.stringify({ tokens: { glassBlur: badLength } }))).toEqual({
         ok: false,
         code: 'invalid-token-value',
         token: 'glassBlur',
+      })
+    }
+
+    for (const goodLength of ['0', '0px', '0.5px', '4px', '28px', '64px']) {
+      expect(parseCustomThemeJson(JSON.stringify({ tokens: { glassBlur: goodLength } }))).toMatchObject({
+        ok: true,
+        theme: { tokens: { glassBlur: goodLength } },
       })
     }
 
@@ -153,12 +163,103 @@ describe('normalizeWorkbenchPreferences & buildWorkbenchTokenOverrides', () => {
   it('restores solid caption and glass token overrides when reducedTransparency is enabled', () => {
     const overrides = buildWorkbenchTokenOverrides({
       ...DEFAULT_WORKBENCH_PREFERENCES,
+      accentPreset: 'custom',
+      customThemeJson: JSON.stringify({ tokens: { glassBlur: '44px' } }),
       reducedTransparency: true,
     })
+    expect(overrides['--wb-blur']).toEqual({ light: '0px', dark: '0px' })
     expect(overrides['--wb-glass-backdrop']).toEqual({ light: 'none', dark: 'none' })
     expect(overrides['--wb-windows-caption-bg']).toEqual({
       light: 'var(--dsw-specific-sidebar-fill)',
       dark: 'var(--dsw-specific-sidebar-fill)',
     })
+  })
+
+  it('derives --wb-glass-backdrop from --wb-blur for default, low, mid, and high glassBlur without changing unrelated tokens', () => {
+    const defaults = buildWorkbenchTokenOverrides(DEFAULT_WORKBENCH_PREFERENCES)
+    expect(DEFAULT_GLASS_BLUR).toBe('28px')
+    expect(defaults['--wb-blur']).toEqual({ light: '28px', dark: '28px' })
+    expect(defaults['--wb-glass-backdrop']).toEqual({
+      light: 'blur(var(--wb-blur)) saturate(185%) contrast(103%)',
+      dark: 'blur(var(--wb-blur)) saturate(185%) contrast(103%)',
+    })
+    expect(defaults['--wb-glass-backdrop']?.light).not.toContain('28px')
+
+    for (const blur of ['0px', '4px', '20px', '64px']) {
+      const overrides = buildWorkbenchTokenOverrides({
+        ...DEFAULT_WORKBENCH_PREFERENCES,
+        accentPreset: 'custom',
+        customThemeJson: JSON.stringify({
+          name: `Blur ${blur}`,
+          appearance: 'both',
+          tokens: { glassBlur: blur },
+        }),
+      })
+      expect(overrides['--wb-blur']).toEqual({ light: blur, dark: blur })
+      expect(overrides['--wb-glass-backdrop']).toEqual(defaults['--wb-glass-backdrop'])
+      expect(overrides['--wb-glass-backdrop']?.light).toContain('var(--wb-blur)')
+      expect(overrides['--wb-glass-backdrop']?.dark).toContain('var(--wb-blur)')
+
+      for (const [token, value] of Object.entries(defaults)) {
+        if (token === '--wb-blur') continue
+        expect(overrides[token], `unrelated token ${token} changed for glassBlur=${blur}`).toEqual(value)
+      }
+    }
+  })
+
+  it('falls back safely when glassBlur is missing, invalid, out of range, or scoped to one appearance', () => {
+    const missingBlur = buildWorkbenchTokenOverrides({
+      ...DEFAULT_WORKBENCH_PREFERENCES,
+      accentPreset: 'custom',
+      customThemeJson: JSON.stringify({ tokens: { accent: '#0A84FF' } }),
+    })
+    expect(missingBlur['--wb-blur']).toEqual({ light: '28px', dark: '28px' })
+
+    const invalidBlurNormalized = normalizeWorkbenchPreferences({
+      accentPreset: 'custom',
+      customThemeJson: JSON.stringify({ tokens: { glassBlur: '1500px' } }),
+    })
+    expect(invalidBlurNormalized).toEqual(DEFAULT_WORKBENCH_PREFERENCES)
+    expect(buildWorkbenchTokenOverrides(invalidBlurNormalized)['--wb-blur']).toEqual({ light: '28px', dark: '28px' })
+
+    const unnormalizedBadBlur = buildWorkbenchTokenOverrides({
+      ...DEFAULT_WORKBENCH_PREFERENCES,
+      accentPreset: 'custom',
+      customThemeJson: JSON.stringify({ tokens: { glassBlur: '-10px' } }),
+    })
+    expect(unnormalizedBadBlur['--wb-blur']).toEqual({ light: '28px', dark: '28px' })
+
+    const darkOnly = buildWorkbenchTokenOverrides({
+      ...DEFAULT_WORKBENCH_PREFERENCES,
+      accentPreset: 'custom',
+      customThemeJson: JSON.stringify({
+        appearance: 'dark',
+        tokens: { glassBlur: '12px' },
+      }),
+    })
+    expect(darkOnly['--wb-blur']).toEqual({ light: '28px', dark: '12px' })
+    expect(darkOnly['--wb-glass-backdrop']).toEqual({
+      light: 'blur(var(--wb-blur)) saturate(185%) contrast(103%)',
+      dark: 'blur(var(--wb-blur)) saturate(185%) contrast(103%)',
+    })
+  })
+
+  it('keeps workbench-glass.css and glass component stylesheets wired to var(--wb-glass-backdrop) without hardcoded blur(28px)', () => {
+    const glassCssText = readFileSync(fileURLToPath(new URL('../src/client/styles/workbench-glass.css', import.meta.url)), 'utf8')
+    expect(glassCssText).toContain('--wb-blur: 28px;')
+    expect(glassCssText).toContain('--wb-glass-backdrop: blur(var(--wb-blur)) saturate(185%) contrast(103%);')
+    expect(glassCssText).not.toContain('--wb-glass-backdrop: blur(28px)')
+
+    for (const relativeCss of [
+      '../src/client/components/ModeSwitcher.module.css',
+      '../src/client/components/PromptStarters.module.css',
+      '../src/client/components/WorkTaskInspector.module.css',
+      '../../ui-layout/src/client/AppFrame.module.css',
+      '../../ui-sidebar/src/client/SidebarRoot.module.css',
+    ]) {
+      const cssText = readFileSync(fileURLToPath(new URL(relativeCss, import.meta.url)), 'utf8')
+      expect(cssText, `${relativeCss} should consume --wb-glass-backdrop`).toContain('var(--wb-glass-backdrop')
+      expect(cssText, `${relativeCss} should not hardcode blur(28px)`).not.toContain('blur(28px)')
+    }
   })
 })

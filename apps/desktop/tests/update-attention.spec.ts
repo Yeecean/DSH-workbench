@@ -79,3 +79,21 @@ it('keeps icon attention when the system rejects a notification', () => {
   expect(native.dock.cancelBounce).toHaveBeenCalledWith(17)
   expect(f.modal.listenerCount('focus')).toBe(0)
 })
+
+it('resolves a dynamic locale getter for notifications after runtime locale switches', () => {
+  let currentLocale = resolveDesktopLocale('zh')
+  const window = Object.assign(new EventEmitter(), { focused: false, isFocused() { return this.focused },
+    isDestroyed: () => false, flashFrame: vi.fn() })
+  const modal = Object.assign(new EventEmitter(), { isFocused: () => false })
+  attention = new DesktopUpdateAttention(() => currentLocale, 'win32')
+  attention.ready('1.0.1-nightly.1', window as unknown as BrowserWindow, modal as unknown as BrowserWindow, vi.fn())
+  expect(native.notices[0]!.options).toEqual({ title: '更新已准备就绪', body: '返回应用确认安装并重启。', silent: true })
+  attention.reset()
+  currentLocale = resolveDesktopLocale('en')
+  attention.ready('1.0.1-nightly.2', window as unknown as BrowserWindow, modal as unknown as BrowserWindow, vi.fn())
+  expect(native.notices[1]!.options).toEqual({
+    title: currentLocale.messages.mandatoryReady,
+    body: currentLocale.messages.mandatoryNotification,
+    silent: true,
+  })
+})

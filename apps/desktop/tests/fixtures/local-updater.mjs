@@ -210,7 +210,7 @@ async function main() {
       assert.ok(!cache.some(file => file.endsWith('.exe') || file.endsWith('update-info.json')), 'Partial bytes must not remain installable')
       const presentation = presentDesktopUpdate(f.coordinator.state)
       assert.equal(presentation.phase, 'error')
-      assert.equal(presentation.failure, 'download')
+      assert.equal(presentation.failure, 'download-space')
       assert.equal((await f.coordinator.download(available.version)).phase, 'ready')
       assert.deepEqual(await readFile(f.updater.installerPath), server.payload)
       assert.equal(f.installations.length, 0)
@@ -297,11 +297,11 @@ async function main() {
         assert.equal(window.isDestroyed(), false)
         assert.equal(f.installations.length, 0)
         await contents.executeJavaScript("document.getElementById('page').click()")
-        await until("document.getElementById('browser-message').textContent.includes('无法打开浏览器')")
+        await until("document.getElementById('browser-message').textContent.includes('无法打开官网下载页面')")
         assert.deepEqual(opened, ['https://downloads.example.com/desktop'])
         await contents.executeJavaScript("document.getElementById('copy').click()")
         await copyComplete.promise
-        await until("document.getElementById('copy').textContent === '已复制链接'")
+        await until("document.getElementById('copy').textContent === '链接已复制'")
         assert.deepEqual(copied, opened)
         await f.coordinator.check()
         modal.sync()
@@ -325,10 +325,11 @@ async function main() {
         })`)
         assert.deepEqual(snapshot, JSON.parse(await readFile(new URL('../expected/mandatory-update-zh.json', import.meta.url), 'utf8')))
         await contents.executeJavaScript("document.getElementById('later').click()")
-        await until("document.getElementById('update').textContent === '继续安装更新' && !document.getElementById('update').disabled")
+        await until("document.getElementById('update').textContent === '继续更新' && !document.getElementById('update').disabled")
         assert.equal(f.installations.length, 0)
+        const captureSource = typeof contents.capturePage === 'function' ? contents : parent.webContents
         let capture
-        try { capture = await contents.capturePage() }
+        try { capture = await captureSource.capturePage() }
         catch (error) { screenshot = { captured: false, reason: String(error) } }
         if (capture !== undefined) {
           await writeFile(join(root, 'mandatory-update.png'), capture.toPNG())
@@ -351,7 +352,7 @@ async function main() {
             assert.equal(await contents.executeJavaScript("document.getElementById('technical-details-label').click(); document.getElementById('technical-details').open"), true)
           }
           const name = expanded ? 'mandatory-error-expanded.png' : 'mandatory-error-collapsed.png'
-          await writeFile(join(root, name), (await contents.capturePage()).toPNG())
+          await writeFile(join(root, name), (await captureSource.capturePage()).toPNG())
           dialogScreenshots.push(name)
         }
         assert.equal(policy.state.blocking, true)

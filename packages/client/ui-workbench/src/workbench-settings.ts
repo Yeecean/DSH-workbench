@@ -28,6 +28,9 @@ export const DEFAULT_WORKBENCH_MODE: WorkbenchMode = 'work'
 export const DEFAULT_CODE_PRESET: CodePresetId = 'focus'
 /** Default Workbench accent preset. */
 export const DEFAULT_ACCENT_PRESET: AccentPresetId = 'blue'
+/** Default Liquid Glass backdrop blur radius when transparency is enabled. */
+export const DEFAULT_GLASS_BLUR = '28px'
+const DEFAULT_GLASS_BACKDROP = 'blur(var(--wb-blur)) saturate(185%) contrast(103%)'
 
 /** Maximum byte length accepted for imported Custom Theme JSON documents. */
 export const CUSTOM_THEME_MAX_BYTES = 32_768
@@ -101,7 +104,7 @@ export type CustomThemeParseResult =
 
 const HEX_COLOR = /^#(?:[0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i
 const FUNC_COLOR = /^(?:rgb|rgba|hsl|hsla|oklch|oklab|color-mix)\([^;{}<>]{1,160}\)$/i
-const SAFE_LENGTH = /^(?:0|[1-9]\d{0,2}(?:\.\d{1,2})?px)$/
+const SAFE_LENGTH = /^(?:0(?:px)?|0\.\d{1,2}px|[1-9]\d{0,2}(?:\.\d{1,2})?px)$/
 const UNSAFE_CSS = /[;{}<>]|url\s*\(|expression\s*\(|var\s*\(|@import|[\u0000-\u001F\u007F]/i
 
 /**
@@ -121,7 +124,7 @@ export function isValidCssColor(value: unknown): value is string {
 }
 
 /**
- * Strict validator for px length values (`0` or `Npx`, capped at 999px).
+ * Strict validator for px length values (`0`, `0px`, or `Npx`, capped at 999.99px).
  * @param value Candidate value to validate as a safe CSS length in pixels.
  * @returns `true` when `value` matches an allowed pixel length literal.
  */
@@ -351,10 +354,11 @@ function applySurfaceTransparencyMode(
     return
   }
 
-  overrides['--wb-blur'] = { light: '28px', dark: '28px' }
+  overrides['--wb-blur'] = { light: DEFAULT_GLASS_BLUR, dark: DEFAULT_GLASS_BLUR }
+  // Derive backdrop from `--wb-blur` on `body` so ThemePresenter resolves custom blur instead of `:root` defaults.
   overrides['--wb-glass-backdrop'] = {
-    light: 'blur(28px) saturate(185%) contrast(103%)',
-    dark: 'blur(28px) saturate(185%) contrast(103%)',
+    light: DEFAULT_GLASS_BACKDROP,
+    dark: DEFAULT_GLASS_BACKDROP,
   }
   overrides['--wb-glass-modal-backdrop'] = {
     light: 'blur(36px) saturate(195%) contrast(104%)',

@@ -64,13 +64,14 @@ int wmain(int argc, wchar_t** argv) {
     ShowWindow(stock, SW_SHOW);
     const bool failurePreservesStock = !failed && IsWindowVisible(stock);
     if (failed) DestroyWindow(failed);
-    // Warm retained font and window-animation resources before checking page-owned GDI objects.
+    // Warm retained font, Win32 message-pump, and window-animation resources before checking page-owned GDI objects.
+    const DWORD gdiInit = GetGuiResources(GetCurrentProcess(), GR_GDIOBJECTS);
     HWND warmup = createProgress();
     if (!warmup) { DestroyWindow(window); return 5; }
     UpdateWindow(warmup);
     ShowWindow(window, SW_MINIMIZE);
     ShowWindow(window, SW_RESTORE);
-    UpdateWindow(warmup);
+    if (!InstallerFinishProgress(warmup)) { DestroyWindow(warmup); DestroyWindow(window); return 5; }
     DestroyWindow(warmup);
     const DWORD initialGdi = GetGuiResources(GetCurrentProcess(), GR_GDIOBJECTS);
     HWND progress = createProgress();
@@ -85,6 +86,7 @@ int wmain(int argc, wchar_t** argv) {
         }
         return result == 0 ? 0 : 7;
     }
+    const DWORD gdiCreated = GetGuiResources(GetCurrentProcess(), GR_GDIOBJECTS);
     RECT originalBounds, restoredBounds;
     GetWindowRect(window, &originalBounds);
     const auto captionPixel = [&](int x) -> COLORREF {
@@ -144,6 +146,7 @@ int wmain(int argc, wchar_t** argv) {
         SendMessageW(progress, WM_MOUSELEAVE, 0, 0);
         captionStates = expectPixel(x, normalColor) && captionStates;
     }
+    const DWORD gdiCaption = GetGuiResources(GetCurrentProcess(), GR_GDIOBJECTS);
     ShowWindow(progress, SW_SHOW);
     const LPARAM minimizePoint = MAKELPARAM(MulDiv(524, dpi, 96), MulDiv(24, dpi, 96));
     SendMessageW(progress, WM_LBUTTONDOWN, MK_LBUTTON, minimizePoint);
@@ -173,6 +176,7 @@ int wmain(int argc, wchar_t** argv) {
     SendMessageW(progress, WM_LBUTTONDOWN, MK_LBUTTON, closePoint);
     SendMessageW(progress, WM_LBUTTONUP, 0, closePoint);
     closeRelease = closeRelease && PeekMessageW(&closeMessage, window, WM_CLOSE, WM_CLOSE, PM_REMOVE);
+    const DWORD gdiRestored = GetGuiResources(GetCurrentProcess(), GR_GDIOBJECTS);
     LARGE_INTEGER frequency, started, finished;
     QueryPerformanceFrequency(&frequency);
     std::vector<double> samples;
@@ -185,6 +189,7 @@ int wmain(int argc, wchar_t** argv) {
         QueryPerformanceCounter(&finished);
         samples.push_back(1000.0 * (finished.QuadPart - started.QuadPart) / frequency.QuadPart);
     }
+    const DWORD gdiFrames = GetGuiResources(GetCurrentProcess(), GR_GDIOBJECTS);
     double total = 0;
     for (double sample : samples) total += sample;
     std::printf("samples_ms=[");
@@ -201,10 +206,12 @@ int wmain(int argc, wchar_t** argv) {
     WCHAR caption[160] = {};
     GetWindowTextW(progress, caption, ARRAYSIZE(caption));
     const bool finalCaption = wcscmp(caption, L"Extracting 100%") == 0;
+    const DWORD gdiFinished = GetGuiResources(GetCurrentProcess(), GR_GDIOBJECTS);
     DestroyWindow(progress);
     const DWORD finalGdi = GetGuiResources(GetCurrentProcess(), GR_GDIOBJECTS);
     DestroyWindow(window);
-    std::printf("client_frame=%d stock_preserved=%d completed=%d final_caption=%d caption_states=%d button_release=%d close_release=%d minimized=%d restored=%d gdi_before=%lu gdi_after=%lu\n",
-        clientFrame, failurePreservesStock, completed, finalCaption, captionStates, buttonRelease, closeRelease, minimized, restored, initialGdi, finalGdi);
+    std::printf("client_frame=%d stock_preserved=%d completed=%d final_caption=%d caption_states=%d button_release=%d close_release=%d minimized=%d restored=%d gdi_init=%lu gdi_before=%lu gdi_created=%lu gdi_caption=%lu gdi_restored=%lu gdi_frames=%lu gdi_finished=%lu gdi_after=%lu\n",
+        clientFrame, failurePreservesStock, completed, finalCaption, captionStates, buttonRelease, closeRelease, minimized, restored,
+        gdiInit, initialGdi, gdiCreated, gdiCaption, gdiRestored, gdiFrames, gdiFinished, finalGdi);
     return clientFrame && failurePreservesStock && completed && finalCaption && captionStates && buttonRelease && closeRelease && minimized && restored && finalGdi <= initialGdi ? 0 : 6;
 }
