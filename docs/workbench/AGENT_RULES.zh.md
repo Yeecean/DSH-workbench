@@ -11,32 +11,43 @@
 1. 仓库根目录 `AGENTS.md` 和 `docs/AGENTS.md`。
 2. 项目入口 `WORKBENCH.zh.md` 和 `docs/workbench/DOCUMENTATION_GUIDE.zh.md`。
 3. [Workbench 架构](WORKBENCH_ARCHITECTURE.zh.md)、[开发路线图](DEVELOPMENT_ROADMAP.zh.md)以及任务涉及的架构设计、ADR 和专项规格。
-4. `docs/workbench/instructions/README.md`、`docs/workbench/instructions/TEMPLATE.md` 及当前任务的实际执行指令。
-5. `workbench-reports/README.md`、`workbench-reports/TEMPLATE.md` 及相关历史工作报告。
+4. `docs/workbench/instructions/README.zh.md`、`docs/workbench/instructions/TEMPLATE.zh.md` 及当前任务的实际执行指令。
+5. `workbench-reports/README.zh.md`、`workbench-reports/TEMPLATE.md` 及相关历史工作报告。
 
-先理解产品边界、任务所处阶段、决策状态和历史结果，再开始修改。独立开发或文档治理轮次尚无指令文件时，先依据用户实际授权归档指令，再进行其他修改；报告须记录实际读过的文件。
+先理解产品边界、任务所处阶段、决策状态和历史结果，再开始修改。历史工作的追溯方式见下文“开工追溯”；独立开发或文档治理轮次尚无指令文件时，先依据用户实际授权归档指令，再进行其他修改；报告须记录实际读过的文件。
+
+## 开工追溯（必做）
+
+要了解项目当前情况和历史决策，必须从 **git 提交信息** 出发，再顺着提交信息里的报告路径读工作报告；不得凭目录名、文件名或提交编号猜测历史。
+
+1. 先浏览最近的提交信息：`git log --oneline -n 30`；需要正文时用 `git log -n 30 --format="%h%n%B"`。
+2. 每个功能性提交的正文都写明 `Report: workbench-reports/YYYY-MM-DD-<slug>/WORK_REPORT.md` 和本轮工作摘要，据此定位所属轮次。
+3. 再读该 `WORK_REPORT.md`，确认当时的目标、授权范围、变更文件、命令与验收结论，然后才决定本轮动手范围。
+4. 提交信息缺报告路径、报告文件缺失或索引查不到该轮次，都属于**追溯缺口**：在报告中如实记录缺口，不补造内容、不猜测历史。
 
 ## 设计、计划与事实
 
-已批准的架构和 ADR 是设计依据；路线图和专项规格记录阶段目标；执行指令界定本轮授权；Git 源码与提交记录实际实现；工作报告和测试证据记录验证与验收。提案、待决 ADR 和规划不能当成已批准决策或已实现事实。
+已批准的架构和 ADR 是设计依据；路线图和专项规格记录阶段目标；执行指令界定本轮授权；Git 源码与提交信息记录实际实现及轮次归属；工作报告和测试证据记录验证与验收。提案、待决 ADR 和规划不能当成已批准决策或已实现事实。
 
 实现与已批准设计不一致时，记录偏差并按项目决策流程处理；不得因实现方便擅改架构。外部项目、竞品和上游实现仅供参考，不得覆盖项目原创研究和已批准决策。
 
 ## 指令与报告
 
-每轮独立开发或文档治理必须从 `docs/workbench/instructions/TEMPLATE.md` 建立 `docs/workbench/instructions/YYYY-MM-DD-<slug>/INSTRUCTION.md`，保存实际交付给 agent 的完整最终指令，写明目标、授权范围、禁止事项、验收标准，并追加记录后续修改。不得只在对话中保存指令。
+每轮独立开发或文档治理必须从 `docs/workbench/instructions/TEMPLATE.zh.md` 建立 `docs/workbench/instructions/YYYY-MM-DD-<slug>/INSTRUCTION.md`，保存实际交付给 agent 的完整最终指令，写明目标、授权范围、禁止事项、验收标准，并追加记录后续修改。不得只在对话中保存指令。
 
-每轮必须以[报告模板](../../workbench-reports/TEMPLATE.md)为基础建立 `workbench-reports/YYYY-MM-DD-<slug>/WORK_REPORT.md`，记录实际阅读依据、目标与授权范围、基线分支及完整 SHA、实际分支、指令、每个提交的完整 SHA、变更文件与内容、验证环境、命令、结果、证据位置、设计偏差、未完成事项、风险和最终验收结论。
+每轮必须以[报告模板](../../workbench-reports/TEMPLATE.md)为基础建立 `workbench-reports/YYYY-MM-DD-<slug>/WORK_REPORT.md`，记录实际阅读依据、目标与授权范围、基线分支与起点说明、实际分支、指令路径、本轮变更文件的项目相对路径清单、验证环境、命令、结果、证据位置、设计偏差、未完成事项、风险和最终验收结论。
 
-每个功能性提交必须映射到具体工作内容和验证证据。记录实际命令、结果与测试数量；检查工具不提供计数时明确写出“未提供计数”。未运行项写 `NOT_RUN`，失败、超时和跳过如实记录；区分仅本机保存与仓库已归档的证据。不得编造 SHA、测试结果、PR 链接或截图路径，报告不能代替实际测试和安全验收。
+报告以**轮次目录**和**变更文件的项目相对路径**作为追溯单位。指令、报告和设计交付物中不得写入 commit SHA、短哈希或 GitHub 提交链接；历史轮次已经写入的编号一律改为对应的轮次报告路径，提交本身的证据由 Git 历史承担。
 
-提交内容无法包含自身完整 SHA 时标记 `PENDING`，在后续提交中核实并回填；用于最终回填的提交自身仍可标记 `PENDING`，并在交付中提供其实际 SHA。不得猜测 SHA 或为回填重写历史。
+记录实际命令、结果与测试数量；检查工具不提供计数时明确写出“未提供计数”。未运行项写 `NOT_RUN`，失败、超时和跳过如实记录；区分仅本机保存与仓库已归档的证据。不得编造提交、测试结果、PR 链接或截图路径，报告不能代替实际测试和安全验收。
 
 ## 索引与提交
 
-完成每轮时同步更新 `docs/workbench/instructions/README.md` 和 `workbench-reports/README.md`，使指令与报告互相链接，且每个新轮次均可从两个索引找到；不得链接不存在的报告。已有历史记录缺少原始指令时，标明缺口，不补造内容。
+完成每轮时同步更新 `docs/workbench/instructions/README.zh.md` 和 `workbench-reports/README.zh.md`，使指令与报告互相链接，且每个新轮次均可从两个索引找到；不得链接不存在的报告。已有历史记录缺少原始指令时，标明缺口，不补造内容。
 
-每个提交尽可能只承担一个明确职责，不混入无关功能、文档或修复；不得覆盖历史工作报告、伪造提交或擅自重写 Git 历史。
+每个提交尽可能只承担一个明确职责，不混入无关功能、文档或修复。提交信息必须写明本轮报告路径和工作摘要：标题行用 `<type>(workbench): <一句话职责>`，正文含 `Report: workbench-reports/YYYY-MM-DD-<slug>/WORK_REPORT.md`，随后用 1–3 条说明改了什么、验证了什么。
+
+不得覆盖历史工作报告、伪造提交或擅自重写 Git 历史。
 
 ## 产品与上游隔离
 

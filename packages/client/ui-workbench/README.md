@@ -35,7 +35,7 @@ This package pairs a thin Host configuration plugin (`src/index.ts`) with a brow
       name: "@deepseek-ai/dsh-client-ui-workbench"
 ```
 
-All Host options (`defaultMode`, `accentPreset`, `reducedTransparency`, `reducedMotion`, and `customThemeJson`) are volatile `ui-workbench` user-settings fields stored in durable user preferences and described in the [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-client-ui-workbench). No separate fallback form page is generated (`settings.configure({ auto: false }, ctx.fiber)`).
+All Host options (`defaultMode`, `accentPreset`, `reducedTransparency`, `reducedMotion`, and `customThemeJson`) are volatile `ui-workbench` user-settings fields stored in durable user preferences and described in the [configuration catalog](../../../docs/config-catalog.md). No separate fallback form page is generated (`settings.configure({ auto: false }, ctx.fiber)`).
 
 ### Top mode switcher and Code presets
 

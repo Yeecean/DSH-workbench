@@ -43,7 +43,7 @@ async function fixture(target: 'mac-arm64' | 'mac-x64' | 'win-x64' = 'mac-arm64'
         productVersion: version, version, testReleaseId: preset === 'test' ? 'a'.repeat(32) : null, qualification: target === 'win-x64' ? 'signed' : 'notarized',
       },
       files: [{ name: filename, ...digest(contents), sha256: sha256(contents) }, { name: payload, ...digest('installer'), sha256: sha256('installer') }],
-      provenance: {
+      buildIdentity: {
         builderRunner: 'runner',
         builderRunId: '42',
         builderAttempt: '1',

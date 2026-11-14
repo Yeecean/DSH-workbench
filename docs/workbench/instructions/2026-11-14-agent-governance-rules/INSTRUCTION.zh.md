@@ -5,7 +5,7 @@
 - Status: 已由用户授权；后续修改见文末记录。
 - Requested by: 本次对话中的用户。
 - Agent / environment: Windows 上的 Codex。
-- Baseline branch and commit: `feature/p8-s1-windows-release-security`；完整 SHA 见[工作报告](../../../../workbench-reports/2026-11-14-agent-governance-rules/WORK_REPORT.md)。
+- Baseline branch and starting point: `feature/p8-s1-windows-release-security`；[工作报告](../../../../workbench-reports/2026-11-14-agent-governance-rules/WORK_REPORT.md)按项目相对路径列出变更文件，不记录 commit 编号。
 - Related architecture / ADR: [Workbench 架构提议](../../WORKBENCH_ARCHITECTURE.zh.md)；本轮未授权架构变更。
 - Related roadmap milestone: [Workbench 开发路线图](../../DEVELOPMENT_ROADMAP.zh.md)；本轮是跨阶段治理任务，不实施 P8-S1。
 - Corresponding report: [WORK_REPORT.md](../../../../workbench-reports/2026-11-14-agent-governance-rules/WORK_REPORT.md)。

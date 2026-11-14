@@ -53,7 +53,7 @@ const fileSchemaV2 = z.strictObject({
   sha512: sha512Base64,
 })
 
-export const signerProvenanceSchema = z.strictObject({
+export const signerIdentitySchema = z.strictObject({
   runnerName: z.string().min(1),
   runId: positiveId,
   attempt: positiveId,
@@ -62,13 +62,13 @@ export const signerProvenanceSchema = z.strictObject({
   signedAt: z.iso.datetime(),
 })
 
-export const provenanceSchema = z.strictObject({
+export const buildIdentitySchema = z.strictObject({
   builderRunner: z.string().min(1),
   builderRunId: positiveId,
   builderAttempt: positiveId,
   workflowSha: z.string().regex(/^[a-f0-9]{40}$/u),
   unsignedFiles: z.array(fileSchemaV2).min(1).optional(),
-  signer: signerProvenanceSchema.optional(),
+  signer: signerIdentitySchema.optional(),
 })
 
 const manifestSchemaV1 = z.strictObject({
@@ -81,22 +81,22 @@ const manifestSchemaV2 = z.strictObject({
   schemaVersion: z.literal(2),
   source: sourceSchema,
   files: z.array(fileSchemaV2).min(1),
-  provenance: provenanceSchema,
+  buildIdentity: buildIdentitySchema,
 })
-  .refine(manifest => manifest.source.qualification !== 'signed' || manifest.provenance.signer !== undefined,
-    'Signed manifest requires signer provenance')
+  .refine(manifest => manifest.source.qualification !== 'signed' || manifest.buildIdentity.signer !== undefined,
+    'Signed manifest requires signer identity')
   .refine(manifest => (manifest.source.qualification !== 'unsigned' && manifest.source.qualification !== 'unnotarized')
-    || manifest.provenance.signer === undefined,
-  'Debugging manifest cannot carry signer provenance')
+    || manifest.buildIdentity.signer === undefined,
+  'Debugging manifest cannot carry signer identity')
 
 const manifestSchema = z.union([manifestSchemaV2, manifestSchemaV1])
 
 /** Public, credential-free identity of one packaging attempt. */
 export type DesktopRetainedSource = z.infer<typeof sourceSchema>
-/** Signer provenance attached only by an isolated signing job. */
-export type DesktopSignerProvenance = z.infer<typeof signerProvenanceSchema>
-/** Build and optional signing provenance for schemaVersion 2 manifests. */
-export type DesktopRetainedProvenance = z.infer<typeof provenanceSchema>
+/** Signer identity attached only by an isolated signing job. */
+export type DesktopSignerIdentity = z.infer<typeof signerIdentitySchema>
+/** Build and optional signing identity for schemaVersion 2 manifests. */
+export type DesktopRetainedBuildIdentity = z.infer<typeof buildIdentitySchema>
 /** Dual-hash file inventory entry in schemaVersion 2 manifests. */
 export type DesktopRetainedFileV2 = z.infer<typeof fileSchemaV2>
 /** File inventory bound to a schemaVersion 2 packaging attempt. */
@@ -149,23 +149,23 @@ export function retainedDesktopPath(root: string, runId: string, attempt: string
  * @param root Persistent releases root owned by this runner.
  * @param source Packaging identity and selected public settings.
  * @param paths Complete artifact and completion-record paths; directory trees are not accepted.
- * @param provenance Optional build/signing provenance; defaults builder fields from source.
+ * @param buildIdentity Packaging and signing identity; defaults the builder fields from source.
  * @returns Published attempt directory. An existing attempt is never replaced.
  */
 export async function retainDesktopRelease(
   root: string,
   source: DesktopRetainedSource,
   paths: readonly string[],
-  provenance?: DesktopRetainedProvenance,
+  buildIdentity?: DesktopRetainedBuildIdentity,
 ): Promise<string> {
   sourceSchema.parse(source)
-  const resolvedProvenance: DesktopRetainedProvenance = provenance ?? {
+  const resolvedBuildIdentity: DesktopRetainedBuildIdentity = buildIdentity ?? {
     builderRunner: source.runnerName,
     builderRunId: source.runId,
     builderAttempt: source.attempt,
     workflowSha: source.workflowCommit,
   }
-  provenanceSchema.parse(resolvedProvenance)
+  buildIdentitySchema.parse(resolvedBuildIdentity)
   const destination = retainedDesktopPath(root, source.runId, source.attempt)
   const names = paths.map(path => filename.parse(basename(path)))
   if (names.length === 0 || new Set(names).size !== names.length) throw new Error('desktop release store: empty or duplicate file inventory')
@@ -202,7 +202,7 @@ export async function retainDesktopRelease(
       schemaVersion: 2,
       source,
       files,
-      provenance: resolvedProvenance,
+      buildIdentity: resolvedBuildIdentity,
     }
     manifestSchemaV2.parse(manifest)
     await writeFile(join(staging, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`, { flag: 'wx', mode: 0o600, flush: true })
@@ -256,7 +256,7 @@ export async function verifyRetainedDesktopRelease(root: string, runId: string, 
 }
 
 /**
- * Enforce that a retained manifest is v2, signed/notarized, and carries valid provenance for publication.
+ * Enforce that a retained manifest is v2, signed/notarized, and carries a valid build identity for publication.
  * Legacy v1 manifests are readable for audit only and are never eligible for publication.
  * @param manifest Verified retained manifest.
  * @returns Narrowed v2 manifest.
@@ -271,8 +271,8 @@ export function assertPublishableDesktopManifest(manifest: DesktopRetainedManife
   if (manifest.source.qualification !== expectedQualification) {
     throw new Error('desktop publish: package qualification does not match its platform')
   }
-  if (manifest.source.target === 'win-x64' && !manifest.provenance.signer) {
-    throw new Error('desktop release store: signed Windows manifest requires signer provenance')
+  if (manifest.source.target === 'win-x64' && !manifest.buildIdentity.signer) {
+    throw new Error('desktop release store: signed Windows manifest requires signer identity')
   }
   return manifest
 }

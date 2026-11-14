@@ -5,7 +5,7 @@ English | [中文](INSTRUCTION.zh.md)
 - Status: Approved by the user; see the revisions below.
 - Requested by: The user in this conversation.
 - Agent / environment: Codex on Windows.
-- Baseline branch and commit: `feature/p8-s1-windows-release-security`; see the [work report](../../../../workbench-reports/2026-11-14-agent-governance-rules/WORK_REPORT.md) for the full SHA.
+- Baseline branch and starting point: `feature/p8-s1-windows-release-security`; the [work report](../../../../workbench-reports/2026-11-14-agent-governance-rules/WORK_REPORT.md) lists changed files by project-relative path instead of commit identifiers.
 - Related architecture / ADR: [Workbench architecture proposal](../../WORKBENCH_ARCHITECTURE.md); no architecture change is authorized.
 - Related roadmap milestone: [Workbench roadmap](../../DEVELOPMENT_ROADMAP.md); this is a cross-phase governance task, not P8-S1 implementation.
 - Corresponding report: [WORK_REPORT.md](../../../../workbench-reports/2026-11-14-agent-governance-rules/WORK_REPORT.md).

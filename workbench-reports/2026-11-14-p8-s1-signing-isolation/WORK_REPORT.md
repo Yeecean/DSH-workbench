@@ -1,7 +1,7 @@
 # 工作报告｜2026-11-14-p8-s1-signing-isolation
 
 - Status: CONDITIONAL（S1 代码整改与离线/单测验证 **PASS**；真实 Runner 隔离部署、GitHub 管理端配置与 S2 硬件签名联调 **NOT_RUN / BLOCKED**）
-- Baseline ref / full SHA: `main` (`8abfaf82493ac2192c416d795381fd58724e9eda`，基于 `origin/main` `80b558774271c9d96d7733cda8da1b9f67039a8a`)
+- Baseline ref / starting point: `main`（起点为 `origin/main` 当时的提交；按 2026-11-15 报告路径追溯规则，本报告不保留 commit 编号）
 - Actual branch: `feature/p8-s1-windows-release-security`
 - Related instruction: [INSTRUCTION.md](../../docs/workbench/instructions/2026-11-14-p8-s1-signing-isolation/INSTRUCTION.md)
 - Related architecture / ADR / milestone: [WORKBENCH_ARCHITECTURE.zh.md](../../docs/workbench/WORKBENCH_ARCHITECTURE.zh.md) · [DEVELOPMENT_ROADMAP.zh.md](../../docs/workbench/DEVELOPMENT_ROADMAP.zh.md)（P8）
@@ -15,16 +15,17 @@
 - **允许范围**：`windows-package.yml` 策略与多 Job 隔离改造、`windows-package-policy.mjs`、`prepare-windows-ci.mjs`、`retain-desktop-ci.ts`、`desktop-release-store.ts`（v2 schema）、`desktop-upload-plan.ts`、`desktop-website-installer.ts`、`desktop-publish-route.ts`、`publish-desktop-ci.ts`、`publish-desktop-rollout-ci.ts`、`resolve-retained-desktop-publish-ci.ts` 及对应测试与文档。
 - **严格禁止且未触碰**：未调用硬件 EV Token / PIN；未修改/运行 `windows-sign.cmd` 进行真实签名；未写入生产或测试 COS；未创建仓内 `apps/desktop/.env.windows`；未安装或卸载宿主机客户端；未修改 Agent Loop、Session、Host/Client RPC 或 Renderer 安全边界；未合并至 `main` / `master`。
 
-## 实际提交映射
+## 提交与变更映射
 
-| 完整 commit SHA | 变更目的 | 主要文件 | 验证 |
+| 提交主题 | 变更目的 | 主要文件（项目相对路径） | 验证 |
 | --- | --- | --- | --- |
-| `4362b42b26d4434d8059ddf8af63dbc7828dbbd8` | `test/security`：抽离共享来源授权矩阵与 S1 `signed` fail-closed 策略并接入 `prepare-windows-ci.mjs` | `apps/desktop/scripts/windows-package-policy.mjs`、`.d.mts`、`prepare-windows-ci.mjs`、`windows-package-policy.spec.ts` | `vitest` 19/19 PASS |
-| `c562a35a31486a50179355a6a0fe41baf3054229` | `ci`：将 `windows-package.yml` 拆分为 `preflight-policy`、无密钥 `build`、隔离 `sign` 骨架与 `upload-artifact` | `.github/workflows/windows-package.yml` | `windows-package-workflow.spec.ts` PASS |
-| `7c021c2a5e1a04470cb4a6ab60a085c9a82a3e85` | `security/release`：Manifest 升级至 `schemaVersion: 2`（SHA-256 + SHA-512 + `provenance`），v1 仅可读不可发布，发布端校验指纹与双哈希 | `desktop-release-store.ts`、`desktop-upload-plan.ts`、`desktop-website-installer.ts`、`desktop-publish-route.ts`、`retain-desktop-ci.ts`、`publish-desktop-ci.ts`、`publish-desktop-rollout-ci.ts`、`resolve-retained-desktop-publish-ci.ts` | `vitest` + `typecheck` + `build` PASS |
-| `2b92be47aadfd02603d5ec1e3dac472c93a7afba` | `test`：更新多 Job 工作流单测并修复 `pwsh` 9x 冷启动超时；补齐 v2/双哈希/v1 拒绝/S1 禁用签名测试 | `scripts/windows-package-workflow.spec.ts`、`desktop-publish-workflow.spec.ts`、`desktop-archive-workflow-test.ts`、`apps/desktop/tests/*.spec.ts` | `vitest` 12 files 180/180 + `typecheck` 5/5 + `oxlint` PASS |
-| `438f58a77ee711c59a45a32f4809fe382a97cc32` | `docs`：调用链、信任边界图、运维前置条件、工作报告及索引 | `workbench-reports/2026-11-14-p8-s1-signing-isolation/WORK_REPORT.md`、`docs/workbench/instructions/README.md`、`workbench-reports/README.md` | `git diff --check` PASS |
-| `PENDING` | `docs`：回填工作报告 SHA 与分支推送状态 | `workbench-reports/2026-11-14-p8-s1-signing-isolation/WORK_REPORT.md` | `git diff --check` PASS |
+| `test/security(desktop): add fail-closed Windows packaging authorization policy` | 抽离共享来源授权矩阵与 S1 `signed` fail-closed 策略并接入 `prepare-windows-ci.mjs` | `apps/desktop/scripts/windows-package-policy.mjs`、`apps/desktop/scripts/windows-package-policy.d.mts`、`apps/desktop/scripts/prepare-windows-ci.mjs`、`apps/desktop/scripts/windows-package-policy.spec.ts` | `vitest` 19/19 PASS |
+| `ci(desktop): split windows-package workflow into preflight, keyless builder, and fail-closed signer` | 将 `windows-package.yml` 拆分为 `preflight-policy`、无密钥 `build`、隔离 `sign` 骨架与 `upload-artifact` | `.github/workflows/windows-package.yml` | `windows-package-workflow.spec.ts` PASS |
+| `security/release(desktop): enforce manifest v2 dual-hash, build identity, and S1 fail-closed retention` | Manifest 升级至 `schemaVersion: 2`（SHA-256 + SHA-512 + `buildIdentity`），v1 仅可读不可发布，发布端校验指纹与双哈希 | `desktop-release-store.ts`、`desktop-upload-plan.ts`、`desktop-website-installer.ts`、`desktop-publish-route.ts`、`retain-desktop-ci.ts`、`publish-desktop-ci.ts`、`publish-desktop-rollout-ci.ts`、`resolve-retained-desktop-publish-ci.ts` | `vitest` + `typecheck` + `build` PASS |
+| `test(desktop): update workflow, v2 release store, upload plan, and S1 fail-closed tests` | 更新多 Job 工作流单测并修复 `pwsh` 9x 冷启动超时；补齐 v2/双哈希/v1 拒绝/S1 禁用签名测试 | `scripts/windows-package-workflow.spec.ts`、`desktop-publish-workflow.spec.ts`、`desktop-archive-workflow-test.ts`、`apps/desktop/tests/*.spec.ts` | `vitest` 12 files 180/180 + `typecheck` 5/5 + `oxlint` PASS |
+| `docs(workbench): add P8-S1 trust boundary, call chain, and work report` | 调用链、信任边界图、运维前置条件、工作报告及索引 | `workbench-reports/2026-11-14-p8-s1-signing-isolation/WORK_REPORT.md`、`docs/workbench/instructions/README.zh.md`、`workbench-reports/README.zh.md` | `git diff --check` PASS |
+
+**说明**：提交主题用于识别变更目的，改动范围以「主要文件（项目相对路径）」为准；提交与本报告的对应关系由提交信息的 `Report:` 行与 `git log -- workbench-reports/2026-11-14-p8-s1-signing-isolation/` 双向确定，不记录 commit 编号。主题按当前术语归一（`buildIdentity`）。
 
 ## 实际调用链与信任边界
 
@@ -50,7 +51,7 @@ flowchart LR
     Builder -->|"unsigned .exe + v2 manifest\n(sha256 + sha512, 无 signer)"| Archive["Job 3: upload-artifact\n仅保留调试 ZIP (14 天)\n禁止进入 desktop-publish.yml"]
     Preflight -.->|"S2 启用后且来源为 master/dsh-v*"| EnvGate["GitHub Environment 审批 [待管理员配置]\nwindows-sign-test / windows-sign-production"]
     EnvGate -.-> Signer["Job 2: sign [S1 骨架/fail-closed]\nruns-on: dsh-win-signer-isolated\n禁 source_ref checkout · 禁 pnpm install\n独立 SID ACL 签名缓存 [设计/待部署]"]
-    Signer -.->|"v2 signed manifest\n(sha256+sha512+provenance.signer)"| Publish["desktop-publish.yml\n拒绝 v1 / unsigned / 篡改 / 指纹不匹配"]
+    Signer -.->|"v2 signed manifest\n(sha256+sha512+buildIdentity.signer)"| Publish["desktop-publish.yml\n拒绝 v1 / unsigned / 篡改 / 指纹不匹配"]
 ```
 
 ## 安全风险前后状态与 S2 待办清单
@@ -60,7 +61,7 @@ flowchart LR
 | `windows-package.yml` 默认 `signed` 且对开发分支开放 | `default: signed`；`test` 允许任意分支在 `dsh-win-package-trial` 触发 EV Token 签名 | `default: unsigned`；`preflight-policy` 在 `ubuntu-latest` 拦截所有 `signed` 请求、`production+unsigned` 及非法来源 | S2 需先完成以下管理员前置项后再评估放开 `master`/`dsh-v*` 的 `signed` 门禁 |
 | 构建与签名共用单台 Runner | `dsh-win-package-trial` 同机执行 `inputs.source_ref` `pnpm install` 与硬件签名 | `build`（`dsh-win-builder`）与 `sign`（`dsh-win-signer-isolated`）在工作流层拆分；`sign` 禁 `source_ref` 与 `pnpm install` 且 S1 fail-closed | **BLOCKED / NOT_VERIFIED**：需管理员在 GitHub/宿主机配置独立 OS 账户、`dsh-win-builder` 与 `dsh-win-signer-isolated` Runner 标签、隔离 `.pnpm-store` 与签名缓存 SID ACL |
 | `windows-sign.cmd` 命令行 `/kc` 明文 PIN | `/kc "[{{%tokenPin%}}]=%keyContainer%"` 暴露于进程创建审计 | **遗留风险，S1 未修改该脚本**；S1 可达路径完全禁止触发 `windows-sign.cmd`，单测如实保留遗留断言 | **S2 专项整改**：须取得硬件 Token 实机测试授权后改造为无 CLI PIN 方案并验证 Event ID 4688 零明文 PIN |
-| Manifest v1 仅 SHA-512 且无溯源 | `schemaVersion: 1` 仅记录 `sha512`，无 `sha256` 及构建/签名溯源 | 新写入强制 `schemaVersion: 2`（`sha256` + `sha512` + `provenance`）；v1 仅可读审计，所有发布入口拒绝 v1/`unsigned`/缺 `signer`/证书指纹不匹配 | S2 实机联调时验证真实 Authenticode 与证书指纹一致性 |
+| Manifest v1 仅 SHA-512 且无构建身份记录 | `schemaVersion: 1` 仅记录 `sha512`，无 `sha256` 及构建/签名身份记录 | 新写入强制 `schemaVersion: 2`（`sha256` + `sha512` + `buildIdentity`）；v1 仅可读审计，所有发布入口拒绝 v1/`unsigned`/缺 `signer`/证书指纹不匹配 | S2 实机联调时验证真实 Authenticode 与证书指纹一致性 |
 | GitHub 分支保护与 Environment 审批 | 仓内无法验证 `master` 保护与 Environment reviewers 是否已配置 | 代码侧已写入 `environment: windows-sign-test / windows-sign-production` | **BLOCKED / NOT_VERIFIED**：需仓库管理员核实并开启 `master` 分支保护规则、`windows-sign-*` 与 `desktop-*` Environment 必需审批人 |
 
 ## 验证证据

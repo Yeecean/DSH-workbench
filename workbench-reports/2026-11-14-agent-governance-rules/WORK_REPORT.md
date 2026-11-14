@@ -1,7 +1,7 @@
 # 工作报告｜2026-11-14-agent-governance-rules
 
 - Status: CONDITIONAL（本轮定向验证通过；仓库级文档检查存在下列失败项）
-- Baseline ref / full SHA: `feature/p8-s1-windows-release-security` / `99fcaf1dedf136f059fed3d1d6200e3c050b5f43`
+- Baseline branch / starting point: `feature/p8-s1-windows-release-security`（起点为当轮开工时的分支状态；按 2026-11-15 报告路径追溯规则，本报告不保留 commit 编号）
 - Actual branch: `feature/p8-s1-windows-release-security`
 - Related instruction: [INSTRUCTION.md](../../docs/workbench/instructions/2026-11-14-agent-governance-rules/INSTRUCTION.md)
 - Related architecture / ADR / milestone: [Workbench 架构提议](../../docs/workbench/WORKBENCH_ARCHITECTURE.zh.md) · [全局右栏 ADR（提议中）](../../docs/workbench/GLOBAL_RIGHTBAR_ADR.zh.md) · [开发路线图](../../docs/workbench/DEVELOPMENT_ROADMAP.zh.md)；本轮为跨阶段文档治理。
@@ -19,14 +19,14 @@
 - 指令与报告：`docs/workbench/instructions/README.md`、`TEMPLATE.md`、本轮 `INSTRUCTION.md`，以及 `workbench-reports/README.md`、`TEMPLATE.md`、文档治理和 P8-S1 两轮 `WORK_REPORT.md`。
 - 文档与 agent 指令设计：`dsh-doc-writing`、`dsh-prose-standard`、`agent-experience` 及其工具设计参考；本轮不涉及功能实现，未将具体功能 ADR 的提议视为授权。
 
-## 实际提交映射
+## 提交与变更映射
 
-| 完整 commit SHA（提交后填写） | 变更目的和工作内容 | 修改文件 | 验证证据编号及验收状态 |
+| 提交主题 | 变更目的和工作内容 | 变更文件（项目相对路径） | 验证证据编号及验收状态 |
 | --- | --- | --- | --- |
-| `b59dc099aa299ffb2ceb47fec2cead475d9ae049` | 建立本轮治理规则、入口、模板、指令、报告及索引 | 详见下方本轮文件清单 | V4、V5、V8、V10、V11 为 PASS；V6、V7 为 FAIL，见验收结论 |
-| PENDING | 回填上一提交的完整 SHA、提交前检查结果和本条记录 | `workbench-reports/2026-11-14-agent-governance-rules/WORK_REPORT.md` | 本提交的暂存差异检查和 hook 结果在交付时报告 |
+| `docs(workbench): establish agent governance rules` | 建立本轮治理规则、入口、模板、指令、报告及索引 | 见下方「本轮文件清单」 | V4、V5、V8、V10、V11 为 PASS；V6、V7 为 FAIL，见验收结论 |
+| `docs(workbench): record governance commit evidence` | 回填提交前检查结果、hook 结果与本条记录 | `workbench-reports/2026-11-14-agent-governance-rules/WORK_REPORT.md` | 该提交的暂存差异检查与 hook 结果记录在提交信息中 |
 
-**说明**：提交无法在自身内容中包含自身 SHA；完成提交后通过后续提交回填。最终回填提交自身保留 `PENDING`，实际 SHA 在交付时提供。
+**说明**：提交与轮次报告的对应关系由提交信息的 `Report:` 行和 `git log -- workbench-reports/2026-11-14-agent-governance-rules/` 双向确定，不再在文档中记录 commit 编号。
 
 ## 实现与设计偏差
 
@@ -68,7 +68,7 @@ V6 的失败项为仓库级链接、双语配对、历史 P8-S1 指令换行、�
 
 ## 风险与遗留问题
 
-既有文档双语配对、链接、换行、术语和 Cordis 目录问题需在相关范围另行修复；历史报告及 P8-S1 指令未被改写。仓库引用检查禁止提交标识，而本轮用户要求完整 SHA；本报告新增完整 SHA 会增加该检查的诊断，不能将仓库引用检查称为通过。原始命令日志未归档，需复跑命令获取；本报告记录观测结果。规则是 agent 指令，不会以机械方式保证每个外部 agent 实际遵守。
+既有文档双语配对、链接、换行、术语和 Cordis 目录问题需在相关范围另行修复；历史报告及 P8-S1 指令未被改写。仓库引用检查禁止提交标识，本报告曾按当时的要求写入完整 commit SHA，因此该检查当轮不能称为通过；2026-11-15 的报告路径追溯规则把追溯单位改为轮次目录与项目相对路径，本报告的 commit 编号随之移除。原始命令日志未归档，需复跑命令获取；本报告记录观测结果。规则是 agent 指令，不会以机械方式保证每个外部 agent 实际遵守。
 
 ## 验收结论
 

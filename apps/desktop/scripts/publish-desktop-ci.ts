@@ -48,7 +48,7 @@ export async function prepareDesktopPublication(env: NodeJS.ProcessEnv, verifySi
   if (source.qualification !== (source.target === 'win-x64' ? 'signed' : 'notarized')) throw new Error('desktop publish: package qualification does not match its platform')
   const config = await readDesktopPublishConfig(env.DSH_PACKAGING_CONFIG_DIR!, source.preset)
   if (source.target === 'win-x64' && config.windows) {
-    if (manifest.provenance.signer?.certificateThumbprint.toLowerCase() !== config.windows.certificateThumbprint.toLowerCase()) {
+    if (manifest.buildIdentity.signer?.certificateThumbprint.toLowerCase() !== config.windows.certificateThumbprint.toLowerCase()) {
       throw new Error('desktop publish: signer certificate thumbprint does not match expected publication certificate')
     }
   }

@@ -1,0 +1,31 @@
+# Bilingual-pair consistency record for TEMPLATE.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/instructions/TEMPLATE.md
+/execution-instruction:
+  en: bc500cd9c6ee1d5a
+  zh: db741da3380db81d
+/execution-instruction/task-objective:
+  en: 40c798698a97d08b
+  zh: 2e29cf9f3b613010
+/execution-instruction/required-reading-confirmed-before-starting:
+  en: f971f244ccc428b8
+  zh: 6afffbc15d0b5315
+/execution-instruction/authorized-changes:
+  en: e68dd455c63c3aa0
+  zh: 3bf80e0fb8b65f1d
+/execution-instruction/constraints-that-must-not-be-broken:
+  en: b83bc5f111b9a40d
+  zh: a08351d5ba4c2630
+/execution-instruction/execution-steps:
+  en: 6e5d4a6d14fd0f32
+  zh: 57c5535665338a99
+/execution-instruction/acceptance-criteria:
+  en: 9376c5a27ce9e06c
+  zh: dc34bd3fc9844cac
+/execution-instruction/delivery-requirements:
+  en: 03945e1ae181072d
+  zh: 758dda754d7cd790
+/execution-instruction/instruction-revision-history:
+  en: 1c2d0d85cc47520a
+  zh: ed83119c805a57ef

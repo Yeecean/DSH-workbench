@@ -1,5 +1,7 @@
 # DSH Workbench P1 — Isolated Design Deliverables Archive
 
+English | [中文](README.zh.md)
+
 This directory stores a self-contained, non-polluting copy of the DSH Workbench P1 Open Design deliverables so they are preserved in Git without modifying or mixing with product packages (`packages/*`, `apps/*`), build/test scripts (`scripts/*`), or pending workspace drafts (`docs/workbench/*`).
 
 ## Contents

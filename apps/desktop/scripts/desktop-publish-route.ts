@@ -2,7 +2,7 @@
 import { z } from 'zod'
 import { desktopPublishRunnersSchema, desktopPackageWorkflows } from './desktop-publish-targets.ts'
 import { desktopPublishQualificationError } from './desktop-publish-qualification.mjs'
-import { provenanceSchema } from './desktop-release-store.ts'
+import { buildIdentitySchema } from './desktop-release-store.ts'
 
 const positive = z.number().int().positive()
 const runSchema = z.object({
@@ -22,9 +22,9 @@ const requestSchema = z.object({
     'Production source must be master or dsh-v*')
     .refine(source => source.qualification !== 'signed' || /^(?:master|dsh-v[0-9][0-9A-Za-z.-]*)$/u.test(source.sourceRef),
       'Signed source must be master or dsh-v*'),
-  provenance: provenanceSchema,
-}).refine(manifest => manifest.source.qualification !== 'signed' || manifest.provenance.signer !== undefined,
-  'Signed manifest requires signer provenance')
+  buildIdentity: buildIdentitySchema,
+}).refine(manifest => manifest.source.qualification !== 'signed' || manifest.buildIdentity.signer !== undefined,
+  'Signed manifest requires signer identity')
 const jobsSchema = z.array(z.object({ name: z.string(), runner_name: z.string().nullable(), conclusion: z.string().nullable() }))
 
 /** Validated values handed to the privileged publisher; no caller-selected shell fragments. */

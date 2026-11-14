@@ -2,11 +2,11 @@
 
 - Status: CONDITIONAL（文档结构与链接可静态核查，未执行本地构建/测试）
 - Baseline branch: `workbench-p1-work-code-ux-spec`
-- Baseline commit: `f1dfebed4d6d1a4dfc8fc7085cb36b73a1d8b7f4`
+- Baseline commit: 开工时所在分支的当前提交（按 2026-11-15 报告路径追溯规则，本报告不保留 commit 编号）
 - Execution branch: `docs/workbench-documentation-governance-20261114`
 - Related instruction: 本轮由用户对话直接授权，未预先生成独立指令文件；不补造历史记录。
 - Related architecture: [WORKBENCH_ARCHITECTURE.zh.md](../../docs/workbench/WORKBENCH_ARCHITECTURE.zh.md)
-- Commit SHA: PENDING（本文件与实现同提交；提交后在下一提交或 PR 记录中关联）
+- 提交识别: 本文件与实现同提交；对应关系由提交信息的 `Report:` 行与 `git log -- workbench-reports/2026-11-14-docs-governance/` 确定，不记录 commit 编号
 
 ## 修改内容
 

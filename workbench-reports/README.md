@@ -1,14 +1,17 @@
-# DSH Workbench 工作报告索引
+# DSH Workbench work report index
 
-[文档治理规范](../docs/workbench/DOCUMENTATION_GUIDE.zh.md) · [指令索引](../docs/workbench/instructions/README.md) · [报告模板](TEMPLATE.md)
+English | [中文](README.zh.md)
 
-**归档单位是执行轮次，不是提交 SHA 目录。** 每个功能性 commit 都必须在所属轮次报告中被唯一识别，并有指令、差异和验证关联。提交后的完整 SHA 允许在下一提交补齐。
+[Documentation policy](../docs/workbench/DOCUMENTATION_GUIDE.md) · [Instruction index](../docs/workbench/instructions/README.md) · [Report template](TEMPLATE.md)
 
-| 轮次 | 报告 | 关联指令 | 说明 |
+**The archive unit is the execution round, not a commit id.** Every functional commit is registered in its round's report by “project-relative paths of the changed files + the work + the verification evidence”, and its commit body states the round's report path; going from a commit to its report is the only entry point for understanding past work.
+
+| Round | Report | Related instruction | Notes |
 | --- | --- | --- | --- |
-| 2026-11-14 文档治理 | [WORK_REPORT](2026-11-14-docs-governance/WORK_REPORT.md) | [指令索引（本轮对话授权）](../docs/workbench/instructions/README.md) | 项目入口、文档管理与模板 |
-| 2026-11-14 第二轮安装器/更新器 | [WORK_REPORT](2026-11-14-round2-signing-installer-updater/WORK_REPORT.md) | 历史指令尚未仓内归档 | 保留原始实施与验收记录 |
-| 2026-11-14 P8-S1 发布链路安全整改 | [WORK_REPORT](2026-11-14-p8-s1-signing-isolation/WORK_REPORT.md) | [INSTRUCTION](../docs/workbench/instructions/2026-11-14-p8-s1-signing-isolation/INSTRUCTION.md) | S1 策略门禁、工作流隔离与 Manifest v2（S2 未启用） |
-| 2026-11-14 Agent 治理规则 | [WORK_REPORT](2026-11-14-agent-governance-rules/WORK_REPORT.md) | [INSTRUCTION](../docs/workbench/instructions/2026-11-14-agent-governance-rules/INSTRUCTION.md) | 项目级 Agent 执行规范、模板与追溯索引 |
+| 2026-11-14 documentation governance | [WORK_REPORT](2026-11-14-docs-governance/WORK_REPORT.md) | [Instruction index (authorized by the conversation)](../docs/workbench/instructions/README.md) | Project entry, documentation management, and templates |
+| 2026-11-14 round 2 installer/updater | [WORK_REPORT](2026-11-14-round2-signing-installer-updater/WORK_REPORT.md) | Historical instruction not archived in the repository | Original implementation and acceptance record retained |
+| 2026-11-14 P8-S1 release-chain security hardening | [WORK_REPORT](2026-11-14-p8-s1-signing-isolation/WORK_REPORT.md) | [INSTRUCTION](../docs/workbench/instructions/2026-11-14-p8-s1-signing-isolation/INSTRUCTION.md) | S1 policy gates, workflow isolation, and Manifest v2 (S2 disabled) |
+| 2026-11-14 agent governance rules | [WORK_REPORT](2026-11-14-agent-governance-rules/WORK_REPORT.md) | [INSTRUCTION](../docs/workbench/instructions/2026-11-14-agent-governance-rules/INSTRUCTION.md) | Project-level agent execution rules, templates, and traceability indexes |
+| 2026-11-15 report-path traceability | [WORK_REPORT](2026-11-15-report-path-traceability/WORK_REPORT.md) | [INSTRUCTION](../docs/workbench/instructions/2026-11-15-report-path-traceability/INSTRUCTION.md) | Tracing inverted to “commit message → report path → report”; historical commit ids and documentation gates cleaned up |
 
-早期报告未列出并不等于不存在；补录时必须核实实际文件、SHA 与命令结果。严禁推测或伪造历史证据。
+A round missing from this index is not proof it never existed; when backfilling, verify the actual files and command results, and never speculate or fabricate historical evidence.

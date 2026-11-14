@@ -1,0 +1,22 @@
+# Bilingual-pair consistency record for DOCUMENTATION_GUIDE.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/DOCUMENTATION_GUIDE.md
+/workbench-documentation-system-and-traceability-policy:
+  en: 4107ad170112911d
+  zh: d361663646037881
+/workbench-documentation-system-and-traceability-policy/1-information-layers-and-authority:
+  en: 50d8c2874620d561
+  zh: c3dee12c74adf9cd
+/workbench-documentation-system-and-traceability-policy/2-fixed-directories-and-naming:
+  en: a2388803659f5d49
+  zh: 82c2109694223ee2
+/workbench-documentation-system-and-traceability-policy/3-change-loop-required:
+  en: 728eff50a1cff81b
+  zh: 09f508ce2a714dbe
+/workbench-documentation-system-and-traceability-policy/4-evidence-and-security-constraints:
+  en: 3fd32410e9f74250
+  zh: 212377851ca1b86e
+/workbench-documentation-system-and-traceability-policy/5-document-status-and-maintenance:
+  en: 80270b9738ad03eb
+  zh: aa05bf7c6ded5a7a

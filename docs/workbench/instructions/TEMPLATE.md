@@ -1,49 +1,51 @@
-# 执行指令｜<YYYY-MM-DD-slug>
+# Execution instruction | <YYYY-MM-DD-slug>
+
+English | [中文](TEMPLATE.zh.md)
 
 - Status: Proposed / Approved / Executed
 - Requested by:
 - Agent / environment:
-- Baseline branch and commit:
+- Baseline branch and starting point:
 - Related architecture / ADR:
 - Related roadmap milestone:
 - Corresponding report: `workbench-reports/YYYY-MM-DD-slug/WORK_REPORT.md`
 
-## 任务目标
+## Task objective
 
-描述可观察的交付目标与非目标。
+Describe the observable deliverables and the non-goals.
 
-## 执行前必读确认
+## Required reading confirmed before starting
 
-按照 `docs/workbench/AGENT_RULES.zh.md` 列出基础文档和本任务相关的架构、ADR、规格、指令及历史报告；执行前逐项阅读，并在同轮报告记录实际阅读情况。
+Following `docs/workbench/AGENT_RULES.md`, list the base documents plus the task's architecture, ADR, specification, instruction, and historical reports; read each one before starting, and record the actual reading in the round's report.
 
-## 允许修改范围
+## Authorized changes
 
-列出文件、模块与依赖边界。
+List the files, modules, and dependency boundaries.
 
-## 不可突破的约束
+## Constraints that must not be broken
 
-- 原生 DSH Agent/Session/Host/Client 契约优先；不得未经批准创建平行 Runtime。
-- 不得未经授权更改签名、发布、真实机器、凭据和敏感权限配置。
-- 外部研究只供参考，不得覆盖本项目已批准原创架构。
-- 明确需要审批的重大变更和必须停止的条件。
+- Native DSH Agent/Session/Host/Client contracts come first; do not create a parallel Runtime without approval.
+- Do not change signing, release, real-machine, credential, or sensitive-permission configuration without authorization.
+- External research is reference only; it must not override the project's approved original architecture.
+- Name the significant changes that need approval and the conditions that must stop the work.
 
-## 执行步骤
+## Execution steps
 
-逐步列出操作、输出物以及必要的失败回滚逻辑。
+List the operations, outputs, and the rollback logic needed on failure, step by step.
 
-## 验收标准
+## Acceptance criteria
 
-列出代码、测试、Windows 实机/模拟、数据保护、CI 等明确检查项。未运行项须如实说明。
+List explicit checks for code, tests, Windows real-machine/simulated runs, data protection, CI, and so on. State any check that was not run.
 
-## 交付要求
+## Delivery requirements
 
-- 提交 commit（主题清晰、逻辑独立）。
-- 填写同轮 `WORK_REPORT.md`，列出所有实际 SHA、差异和证据。
-- 标注失败/跳过测试、残余风险、未获授权的操作。
-- 更新指令与报告索引。
+- Commit the work with a clear, logically independent subject; the commit body records the round's report path `Report: workbench-reports/YYYY-MM-DD-slug/WORK_REPORT.md` and a work summary.
+- Fill in the round's `WORK_REPORT.md` with the changed files by project-relative path, the differences, and the evidence; the report must not embed commit SHAs.
+- Mark failing or skipped tests, residual risks, and operations that were not authorized.
+- Update the instruction and report indexes.
 
-## 指令修订记录
+## Instruction revision history
 
-| 日期 | 变更 | 原因/批准人 |
+| Date | Change | Reason / approver |
 | --- | --- | --- |
 | | | |

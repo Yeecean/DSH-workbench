@@ -1,14 +1,17 @@
-# Workbench 执行指令索引
+# Workbench execution instruction index
 
-[文档治理规范](../DOCUMENTATION_GUIDE.zh.md) · [项目入口](../../../WORKBENCH.zh.md)
+English | [中文](README.zh.md)
 
-每次独立开发轮次建立 `YYYY-MM-DD-<slug>/INSTRUCTION.md`，从 [模板](TEMPLATE.md) 创建。保存**实际交付执行 Agent 的最终指令**，包括追加修订，不将工作报告倒填为指令。
+[Documentation policy](../DOCUMENTATION_GUIDE.md) · [Project entry](../../../WORKBENCH.md)
 
-| 轮次 | 指令 | 对应报告 | 状态 |
+Each independent development round creates `YYYY-MM-DD-<slug>/INSTRUCTION.md` from the [template](TEMPLATE.md). It preserves the **final instruction actually delivered to the executing agent**, including later revisions; never backfill a work report into an instruction.
+
+| Round | Instruction | Report | Status |
 | --- | --- | --- | --- |
-| 2026-11-14 文档治理 | 本次变更由对话授权；历史指令文件未补造 | [工作报告](../../../workbench-reports/2026-11-14-docs-governance/WORK_REPORT.md) | 文档建设；指令归档规则自本轮起适用 |
-| 2026-11-14 第二轮安装器/更新器 | 历史指令未在仓内归档 | [工作报告](../../../workbench-reports/2026-11-14-round2-signing-installer-updater/WORK_REPORT.md) | 保留历史记录；不补造指令 |
-| 2026-11-14 · P8-S1 发布链路安全整改 | [详细执行指令](2026-11-14-p8-s1-signing-isolation/INSTRUCTION.md) | [工作报告](../../../workbench-reports/2026-11-14-p8-s1-signing-isolation/WORK_REPORT.md) | S1 代码与单测已完成（待 PR 审阅）；S2 硬件签名与真实发布仍禁用 |
-| 2026-11-14 · Agent 治理规则 | [执行指令](2026-11-14-agent-governance-rules/INSTRUCTION.md) | [工作报告](../../../workbench-reports/2026-11-14-agent-governance-rules/WORK_REPORT.md) | 项目级 Agent 规则和文档追溯 |
+| 2026-11-14 documentation governance | Authorized by the conversation; no historical instruction file was invented | [Work report](../../../workbench-reports/2026-11-14-docs-governance/WORK_REPORT.md) | Documentation build-out; the instruction-archiving rule applies from this round |
+| 2026-11-14 round 2 installer/updater | Historical instruction is not archived in the repository | [Work report](../../../workbench-reports/2026-11-14-round2-signing-installer-updater/WORK_REPORT.md) | Historical record retained; no instruction invented |
+| 2026-11-14 · P8-S1 release-chain security hardening | [Detailed instruction](2026-11-14-p8-s1-signing-isolation/INSTRUCTION.md) | [Work report](../../../workbench-reports/2026-11-14-p8-s1-signing-isolation/WORK_REPORT.md) | S1 code and unit tests done (awaiting PR review); S2 hardware signing and real release remain disabled |
+| 2026-11-14 · Agent governance rules | [Instruction](2026-11-14-agent-governance-rules/INSTRUCTION.md) | [Work report](../../../workbench-reports/2026-11-14-agent-governance-rules/WORK_REPORT.md) | Project-level agent rules and documentation traceability |
+| 2026-11-15 · Report-path traceability | [Instruction](2026-11-15-report-path-traceability/INSTRUCTION.md) | [Work report](../../../workbench-reports/2026-11-15-report-path-traceability/WORK_REPORT.md) | Tracing becomes “commit message → report path → report”, with historical commit ids and documentation gates cleaned up |
 
-早期轮次的指令若仍在外部对话或本地，不假定已经存档；核实后再逐轮迁入。
+Instructions from earlier rounds may still live in external conversations or locally; do not assume they are archived, and migrate them round by round after verification.

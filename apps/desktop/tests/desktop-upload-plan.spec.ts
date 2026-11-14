@@ -379,7 +379,7 @@ describe('desktop upload plan', () => {
       schemaVersion: 2 as const,
       source: baseSource,
       files: [fileEntry(exeName, exeBytes), fileEntry(blockmapName, blockmapBytes)],
-      provenance: {
+      buildIdentity: {
         builderRunner: 'dsh-win-builder', builderRunId: '10', builderAttempt: '1', workflowSha: 'a'.repeat(40),
         signer: {
           runnerName: 'dsh-win-signer-isolated', runId: '10', attempt: '1',
@@ -405,7 +405,7 @@ describe('desktop upload plan', () => {
       retainedManifest: {
         ...v2Manifest,
         source: { ...baseSource, qualification: 'unsigned' },
-        provenance: { builderRunner: 'dsh-win-builder', builderRunId: '10', builderAttempt: '1', workflowSha: 'a'.repeat(40) },
+        buildIdentity: { builderRunner: 'dsh-win-builder', builderRunId: '10', builderAttempt: '1', workflowSha: 'a'.repeat(40) },
       },
     })).rejects.toThrow(/unsigned/u)
 

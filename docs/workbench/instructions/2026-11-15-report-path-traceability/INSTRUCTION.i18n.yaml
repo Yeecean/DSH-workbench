@@ -1,0 +1,22 @@
+# Bilingual-pair consistency record for INSTRUCTION.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/instructions/2026-11-15-report-path-traceability/INSTRUCTION.md
+/workbench-execution-instruction-2026-11-15-report-path-traceability:
+  en: 309626f40e245e47
+  zh: c01db1e5f7b63f79
+/workbench-execution-instruction-2026-11-15-report-path-traceability/task-objective:
+  en: d4ba40e5194067a2
+  zh: 49d4d67909ecb136
+/workbench-execution-instruction-2026-11-15-report-path-traceability/work-boundaries-and-authorization:
+  en: 65a21d8f6b5ca5b4
+  zh: 1b9b3073a9a0a2d9
+/workbench-execution-instruction-2026-11-15-report-path-traceability/required-changes:
+  en: 49bc3d5a184f3dc6
+  zh: 93a0f43e3908761d
+/workbench-execution-instruction-2026-11-15-report-path-traceability/evidence-and-acceptance:
+  en: 497a7e403032a867
+  zh: e1eb3d99ef5833ce
+/workbench-execution-instruction-2026-11-15-report-path-traceability/out-of-scope:
+  en: cd89362c1cbe61d3
+  zh: a735d3b5ec688a3b

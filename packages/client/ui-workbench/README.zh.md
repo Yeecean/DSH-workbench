@@ -35,7 +35,7 @@ kind: "package-reference"
       name: "@deepseek-ai/dsh-client-ui-workbench"
 ```
 
-所有 Host 选项（`defaultMode`、`accentPreset`、`reducedTransparency`、`reducedMotion` 与 `customThemeJson`）均为 `ui-workbench` 命名空间下的 volatile 用户偏好字段，持久化于用户配置并在[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-client-ui-workbench)中记录；插件通过 `settings.configure({ auto: false }, ctx.fiber)` 禁用自动表单生成。
+所有 Host 选项（`defaultMode`、`accentPreset`、`reducedTransparency`、`reducedMotion` 与 `customThemeJson`）均为 `ui-workbench` 命名空间下的 volatile 用户偏好字段，持久化于用户配置并在[配置目录](../../../docs/config-catalog.zh.md)中记录；插件通过 `settings.configure({ auto: false }, ctx.fiber)` 禁用自动表单生成。
 
 ### 顶部模式切换与 Code 预设
 

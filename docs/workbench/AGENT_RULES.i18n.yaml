@@ -3,20 +3,23 @@
 # After editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write docs/workbench/AGENT_RULES.md
 /dsh-workbench-agent-execution-rules:
-  en: 1c0bad8fef09eb12
+  en: 924a1040394caca6
   zh: 566c51a483822305
 /dsh-workbench-agent-execution-rules/required-reading:
-  en: 765b1d9ee9c0d03b
-  zh: 0d3798c38b907822
+  en: 05be00d0ed9395f4
+  zh: b29f3d2e73a2fee4
+/dsh-workbench-agent-execution-rules/tracing-prior-work-required:
+  en: 14fcdf83cd0dfbfa
+  zh: a22c5dd6136fa21f
 /dsh-workbench-agent-execution-rules/design-plans-and-facts:
-  en: 43708e57493edbeb
-  zh: c2a46b8a24411a55
+  en: 9a6053eb6a711396
+  zh: 43e089b0b263a6ad
 /dsh-workbench-agent-execution-rules/instructions-and-reports:
-  en: 3868468f1cb63489
-  zh: 97597e82bc66c17b
+  en: 39c9dedfb9ab8223
+  zh: 34845d69d9ac6df6
 /dsh-workbench-agent-execution-rules/indexes-and-commits:
-  en: 462d9e922bb2228e
-  zh: 3bd942e9a089576d
+  en: 7e6b9fce106841a6
+  zh: aba2dd2aa9ff46c1
 /dsh-workbench-agent-execution-rules/product-and-upstream-isolation:
   en: f66e2f14f08de4f1
   zh: f107ece891836015

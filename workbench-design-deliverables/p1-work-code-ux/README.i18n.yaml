@@ -1,0 +1,19 @@
+# Bilingual-pair consistency record for README.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write workbench-design-deliverables/p1-work-code-ux/README.md
+/dsh-workbench-work-code-ux-specification:
+  en: 831bf1dfb7e5c458
+  zh: ab51bbdec2c16782
+/dsh-workbench-work-code-ux-specification/approved-decisions:
+  en: 44aa24dcca4ceef5
+  zh: aa779eacf14d318c
+/dsh-workbench-work-code-ux-specification/document-map:
+  en: 30548281df8a8436
+  zh: 514a83afc7fd040e
+/dsh-workbench-work-code-ux-specification/architecture-boundaries:
+  en: 1dace934a43b038a
+  zh: 5bd2d44165a57947
+/dsh-workbench-work-code-ux-specification/prototype-order:
+  en: 906c634b33bde0f2
+  zh: a6cf6a4f372843d0

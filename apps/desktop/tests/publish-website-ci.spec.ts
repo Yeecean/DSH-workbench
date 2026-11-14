@@ -40,7 +40,7 @@ it.each(['accepted', 'unconfirmed', 'incomplete', 'wrong-journal', 'upload', 'pu
         sha256: createHash('sha256').update('x').digest('hex'),
         sha512: createHash('sha512').update('x').digest('base64'),
       }],
-      provenance: {
+      buildIdentity: {
         builderRunner: 'mini',
         builderRunId: '12',
         builderAttempt: '1',

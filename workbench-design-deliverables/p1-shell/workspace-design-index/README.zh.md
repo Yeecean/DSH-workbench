@@ -10,15 +10,15 @@
 
 | 文档 | 用途 |
 |---|---|
-| [设计审计](DESIGN_AUDIT.zh.md)与[简报](DESIGN_BRIEF.zh.md) | 证据、限制、范围和比较标准 |
-| [视觉方向](VISUAL_DIRECTION.zh.md)与[材质规范](MATERIAL_GUIDELINES.zh.md) | 两套方向与克制的半透明材质 |
-| [设计系统](DESIGN_SYSTEM.zh.md)与[组件映射](COMPONENT_MAPPING.zh.md) | 设计规则与原生组件复用 |
-| [主题系统](THEME_SYSTEM_SPEC.zh.md)与 [Token 映射](TOKEN_MAPPING.zh.md) | 现有主题归属与拟议 Token 职责 |
-| [主题导入](THEME_IMPORT_SPEC.zh.md)与[外观设置](APPEARANCE_SETTINGS_SPEC.zh.md) | 拟议自定义、校验、预览和恢复 |
-| [交互](INTERACTION_SPEC.zh.md)与[响应式布局](RESPONSIVE_SPEC.zh.md) | 拟议导航、状态和宽度行为 |
-| [Context 信息架构](CONTEXT_INFORMATION_ARCHITECTURE.zh.md) | 全局和 Session 局部信息及未确认的数据来源 |
-| [V2 预检](PRECHECK_REPORT.zh.md)与 [Open Design Agent 任务书](OPEN_DESIGN_AGENT_BRIEF.zh.md) | 当前源码检查点和交给用户设计 Agent 的指令 |
-| [待决问题](OPEN_QUESTIONS.zh.md) | 仍需决定的事项和证据 |
+| [设计审计](DESIGN_AUDIT.md)与[简报](DESIGN_BRIEF.md) | 证据、限制、范围和比较标准 |
+| [视觉方向](VISUAL_DIRECTION.md)与[材质规范](MATERIAL_GUIDELINES.md) | 两套方向与克制的半透明材质 |
+| [设计系统](DESIGN_SYSTEM.md)与[组件映射](COMPONENT_MAPPING.md) | 设计规则与原生组件复用 |
+| [主题系统](THEME_SYSTEM_SPEC.md)与 [Token 映射](TOKEN_MAPPING.md) | 现有主题归属与拟议 Token 职责 |
+| [主题导入](THEME_IMPORT_SPEC.md)与[外观设置](APPEARANCE_SETTINGS_SPEC.md) | 拟议自定义、校验、预览和恢复 |
+| [交互](INTERACTION_SPEC.md)与[响应式布局](RESPONSIVE_SPEC.md) | 拟议导航、状态和宽度行为 |
+| [Context 信息架构](CONTEXT_INFORMATION_ARCHITECTURE.md) | 全局和 Session 局部信息及未确认的数据来源 |
+| [V2 预检](PRECHECK_REPORT.md)与 [Open Design Agent 任务书](OPEN_DESIGN_AGENT_BRIEF.md) | 当前源码检查点和交给用户设计 Agent 的指令 |
+| [待决问题](OPEN_QUESTIONS.md) | 仍需决定的事项和证据 |
 | [可编辑视觉原型](source/index.html) | 保留的本地 HTML 探索稿与初始基线 |
 
 ## Open Design 项目与导出
@@ -40,7 +40,7 @@ Open Design 原生项目 `DSH Workbench P1 — Desktop Shell 与右栏仲裁`（
 
 两套视觉方向需要展示相同的页面和状态，包括实色与玻璃效果对比。主题导入是最迟 P1.1 交付的明确能力，包含安全数据校验和恢复；视觉原型不实现真实导入。
 
-原生 Session 右栏和拟议全局 Context 以仍待批准的[右栏 ADR](../../GLOBAL_RIGHTBAR_ADR.zh.md)为准。保留的本地 HTML 探索稿与可继续编辑的 Open Design 原生项目（`dsh-workbench-p1-shell`）均为设计评审产物；P1 设计评审不改变原生 Runtime，也不授权产品界面实现。
+原生 Session 右栏和拟议全局 Context 以仍待批准的[右栏 ADR](../../GLOBAL_RIGHTBAR_ADR.md)为准。保留的本地 HTML 探索稿与可继续编辑的 Open Design 原生项目（`dsh-workbench-p1-shell`）均为设计评审产物；P1 设计评审不改变原生 Runtime，也不授权产品界面实现。
 
 ## 开发备注
 

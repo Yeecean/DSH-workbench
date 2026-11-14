@@ -83,7 +83,7 @@ flowchart LR
 **防篡改与发布授权闭环**：
 
 - **构建 -> 签名交接校验（`unsigned-manifest.json`）**：`build-windows` 产出待签二进制集合并随附记录逐文件 `fileName`、`size`、`sha256`（64 位小写十六进制）、`sha512`、`sourceRef`、`commitSha`、`workflowRunId`、`preset` 的 `unsigned-manifest.json`。`sign-windows` 下载后先逐字节重算 `sha256` 与 `size` 验证一致性，仅签名白名单可执行文件/安装器，并通过 `normalizeWindowsSignature()` 与 [windows-runtime-signature.mjs](../../apps/desktop/scripts/windows-runtime-signature.mjs#L16-L30) 的 `inspectWindowsRuntimeSignature()` 验证签名证书状态与指纹。
-- **Release Store 升级至 `schemaVersion: 2`**：每个存档制品条目强制同时携带 **`sha256`**（`/^[a-f0-9]{64}$/u`）与 `sha512`、`size`，新增 **`provenance`** 来源记录块（含 `builderRunner`、`builderRunId`、`unsignedSha256`、`signerRunner`、`signerRunId`、`workflowSha`、`certificateThumbprint`、`signedAt`）。
+- **Release Store 升级至 `schemaVersion: 2`**：每个存档制品条目强制同时携带 **`sha256`**（`/^[a-f0-9]{64}$/u`）与 `sha512`、`size`，新增 **`buildIdentity`** 构建身份记录块（含 `builderRunner`、`builderRunId`、`unsignedSha256`、`signerRunner`、`signerRunId`、`workflowSha`、`certificateThumbprint`、`signedAt`）。
 - **发布前双重核验与 `unsigned` 硬阻断**：`desktop-upload-plan.ts` 生成上传计划时同步核对本地磁盘 `sha256`、`sha512` 与 `size`，Windows 正式发布通道校验主安装器 Authenticode `Status === Valid` 与预期发布证书指纹；同时延续 [desktop-publish.yml](../../.github/workflows/desktop-publish.yml) 在 `prepare`（第 108 行 `--check`）与 `environment` 审批后的 `publish`（第 145/168 行 `--check`/`--publish`）对 `unsigned` 制品的硬阻断。
 
 ### 2.5 分步推进与待授权门禁

@@ -1,6 +1,6 @@
 # DeepSeek Harness
 
-> **DSH Workbench 分支项目入口：**请阅读 [Workbench 项目说明](WORKBENCH.zh.md)（[English](WORKBENCH.md)），了解桌面产品、架构、规划和实施记录。下文保留 DeepSeek Harness 上游说明。
+> **DSH Workbench 分支项目入口：**请阅读 [Workbench 项目说明](WORKBENCH.md)（[中文版](WORKBENCH.zh.md)），了解桌面产品、架构、规划和实施记录。下文保留 DeepSeek Harness 上游说明。
 
 [English](README.md) | 中文
 

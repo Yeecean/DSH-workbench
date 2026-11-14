@@ -1,6 +1,8 @@
 # DSH Workbench Work / Code UX 设计规范
 
-状态：设计基线；Design-only，不代表生产功能已实现。基于分支 `workbench-p1-shell-prototype` 的提交 `1f877b7f15550ad60a327f59a942d60beeb9b990`。
+[English](README.md) | 中文
+
+状态：设计基线；Design-only，不代表生产功能已实现。基于分支 `workbench-p1-shell-prototype` 的开发提交。
 
 ## 已批准决策
 - 一级工作空间只有 **Work** 与 **Code**，不再设置 Home。

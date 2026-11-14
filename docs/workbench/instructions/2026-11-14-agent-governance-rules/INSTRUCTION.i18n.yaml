@@ -3,8 +3,8 @@
 # After editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write docs/workbench/instructions/2026-11-14-agent-governance-rules/INSTRUCTION.md
 /workbench-execution-instruction-2026-11-14-agent-governance-rules:
-  en: cbaeb66b0a0a281f
-  zh: c1cd3c13f1cff419
+  en: a176d3dbf3826dc2
+  zh: a1ecd403090155df
 /workbench-execution-instruction-2026-11-14-agent-governance-rules/task-objective:
   en: 406a283e636aa500
   zh: 54a238d323220e07

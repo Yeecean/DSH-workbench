@@ -17,10 +17,10 @@ DSH Workbench is a desktop agent workbench built on [DeepSeek Harness](https://g
 | `docs/workbench/instructions/` | Versioned execution-agent instructions |
 | `workbench-reports/` | Implementation, commit, verification and acceptance evidence |
 
-Read the [agent execution rules](docs/workbench/AGENT_RULES.md), [documentation policy and index](docs/workbench/DOCUMENTATION_GUIDE.zh.md), [architecture](docs/workbench/WORKBENCH_ARCHITECTURE.md), [roadmap](docs/workbench/DEVELOPMENT_ROADMAP.md), [instruction index](docs/workbench/instructions/README.md), and [report index](workbench-reports/README.md).
+Read the [agent execution rules](docs/workbench/AGENT_RULES.md), [documentation policy and index](docs/workbench/DOCUMENTATION_GUIDE.md), [architecture](docs/workbench/WORKBENCH_ARCHITECTURE.md), [roadmap](docs/workbench/DEVELOPMENT_ROADMAP.md), [instruction index](docs/workbench/instructions/README.md), and [report index](workbench-reports/README.md).
 
 **Source of truth:** A roadmap or old phase-baseline document does not establish current implementation status. Verify the active branch, commits, source, tests, and acceptance evidence.
 
-Keep native contracts authoritative; avoid a duplicate Agent Loop, Session Store, or RPC stack. Third-party UX/architecture research must not supersede the project's original architecture and recorded decisions. Follow the [documentation policy](docs/workbench/DOCUMENTATION_GUIDE.zh.md) for every substantive change.
+Keep native contracts authoritative; avoid a duplicate Agent Loop, Session Store, or RPC stack. Third-party UX/architecture research must not supersede the project's original architecture and recorded decisions. Follow the [documentation policy](docs/workbench/DOCUMENTATION_GUIDE.md) for every substantive change.
 
 For upstream setup and developer instructions, see [README.md](README.md) and [docs/development.md](docs/development.md).

@@ -1,112 +1,120 @@
-# P8-S1 · Windows 发布链路安全整改执行指令
+# P8-S1 · Windows release-chain security remediation instruction
 
-> Status: **Ready for implementation / 未执行**  
-> Date: 2026-11-14  
-> Scope: P8 发布安全整改 S1（代码、静态检查、模拟验收）；**不包含 S2 硬件签名联调或真实发布**。  
-> Target repo: Yeecean/DSH-workbench  
-> Baseline: `workbench-p1-work-code-ux-spec`（编写时 HEAD `f1dfebed4d6d1a4dfc8fc7085cb36b73a1d8b7f4`；执行前重新核对远端 HEAD）  
-> Documentation PR: [#1](https://github.com/Yeecean/DSH-workbench/pull/1)（本指令所在 PR；先确认已合并，或从该 PR 分支继承文档，不要丢失归档）  
-> Follow-up report: `workbench-reports/2026-11-14-p8-s1-signing-isolation/WORK_REPORT.md`（**执行时创建**，路径日期可按实际执行日期调整，并同步索引）。
+English | [中文](INSTRUCTION.zh.md)
 
-## 0. 给执行 Agent 的直接任务
+> Status: **Ready for implementation / not executed**
+>
+> Date: 2026-11-14
+>
+> Scope: P8 release security remediation S1 (code, static checks, simulated acceptance); **S2 hardware-signing integration and a real release are out of scope**.
+>
+> Target repo: Yeecean/DSH-workbench
+>
+> Baseline: `workbench-p1-work-code-ux-spec` (the authoring-time HEAD commit is recorded in Git history; re-check the remote HEAD before executing)
+>
+> Documentation PR: [#1](https://github.com/Yeecean/DSH-workbench/pull/1) (the PR this instruction lives in; confirm it is already merged, or inherit the documentation from that PR branch — do not lose the archive)
+>
+> Follow-up report: `workbench-reports/2026-11-14-p8-s1-signing-isolation/WORK_REPORT.md` (**created at execution time**; the path date may follow the actual execution date, and keep the index in sync).
 
-请在当前 **DSH Workbench 原创架构**之内完成 P8-S1：消除未审查源码与 Windows 硬件签名环境的潜在交叉，将 Windows Packaging 改为 **默认 unsigned、前置可信授权策略、普通构建与签名权限隔离、产物完整性/来源追踪、发布端严格拒绝不合格制品**。同时解决相关 CI 测试的确定性问题。
+## 0. Direct task for the executing agent
 
-本轮**允许实现代码与测试，但不允许实际调用硬件签名、触碰 EV Token/PIN、生产 COS、宿主机既有安装、真实 OTA 或发布权限配置**。在真正的物理签名隔离、GitHub 受保护来源/Environment 审批和无 CLI PIN 实现尚未具备前，**任何 signed 执行路径必须 fail closed（拒绝执行）**；只可通过模拟对象/假制品验证未来签名流程的逻辑。不得以“Workflow YAML 中写了 environment”就宣称签名隔离已经生效。
+Complete P8-S1 inside the current **DSH Workbench original architecture**: eliminate the potential crossover between unreviewed source code and the Windows hardware-signing environment, and turn Windows Packaging into **unsigned by default, a trusted-authorization policy checked up front, ordinary builds and signing permission domains kept apart, artifact integrity and build-identity tracking, and strict rejection of unqualified artifacts at the release end**. Also fix the determinism problems of the related CI tests.
 
-本任务是上次审查确定的**发布阻断项修复**，不是重新设计 Agent Runtime、UI 或 P7 WSL。不要因为参考 Open Cowork、Claude、Codex 等外部产品而替换项目架构。
+This round **allows implementing code and tests, but does not allow actually invoking hardware signing, touching the EV Token/PIN, production COS, existing host installations, real OTA, or release permission configuration**. Until real physical signing isolation, GitHub protected-source/Environment approval, and a CLI-PIN-free implementation exist, **every signed execution path must fail closed (refuse to execute)**; the future signing flow may only be verified with simulated objects/fake artifacts. Do not claim that signing isolation is already in effect merely because “the Workflow YAML declares an environment”.
 
-### 关联的设计/事实依据
+This task is the **release-blocker fix** identified by the previous review; it is not a redesign of the Agent Runtime, the UI, or P7 WSL. Do not replace the project architecture because of external products such as Open Cowork, Claude, or Codex.
 
-- [原创架构](../../WORKBENCH_ARCHITECTURE.zh.md)、[P0–P8 路线](../../DEVELOPMENT_ROADMAP.zh.md)、[文档规范](../../DOCUMENTATION_GUIDE.zh.md)。
-- [上一轮签名/安装器/更新器报告](../../../../workbench-reports/2026-11-14-round2-signing-installer-updater/WORK_REPORT.md)，重点 `2.1–2.5`；**其中方案为设计建议，不等于已实施**。
-- 现状（编写时核实）：`.github/workflows/windows-package.yml` 的 `signing` 默认 `signed`，`package` 使用 `dsh-win-package-trial` 自托管 Runner，`test` 对任意仓内开发分支开放；`apps/desktop/scripts/windows-sign.cmd` 仍把 Token PIN 写入 SignTool 命令参数；`apps/desktop/scripts/desktop-release-store.ts` 采用 `schemaVersion: 1` 且仅记录 SHA-512；`scripts/windows-package-workflow.spec.ts` 有依赖旧 workflow 形状的断言及曾经的 PowerShell 超时。**以上是代码基线事实，不是本轮结果。**
+### Related design and factual basis
 
-## 1. 作业边界和禁止事项（必须先检查）
+- [Original architecture](../../WORKBENCH_ARCHITECTURE.md), [P0–P8 roadmap](../../DEVELOPMENT_ROADMAP.md), [documentation guideline](../../DOCUMENTATION_GUIDE.md).
+- [Previous round's signing/installer/updater report](../../../../workbench-reports/2026-11-14-round2-signing-installer-updater/WORK_REPORT.md), focus on `2.1–2.5`; **its proposals are design recommendations, not implemented results**.
+- Current state (verified while authoring): `.github/workflows/windows-package.yml` defaults `signing` to `signed`, `package` uses the self-hosted Runner `dsh-win-package-trial`, and `test` is open to any development branch in the repository; `apps/desktop/scripts/windows-sign.cmd` still writes the Token PIN into SignTool command arguments; `apps/desktop/scripts/desktop-release-store.ts` uses `schemaVersion: 1` and records only SHA-512; `scripts/windows-package-workflow.spec.ts` has assertions that depend on the old workflow shape, plus the former PowerShell timeouts. **These are code-baseline facts, not results of this round.**
 
-1. `git fetch` 后确认目标开发分支、工作区状态、当前 SHA。基于真实开发分支新建 `feature/p8-s1-windows-release-security`；不要从过时的 `main` 开始；不要覆盖、清理或重置用户现有未跟踪文件。
-2. 快速阅读现有 `AGENTS.md`、`docs/architecture.md`、`docs/workbench/` 内相关设计及构建/签名脚本。列一份**实际调用链**：`windows-package.yml` → 环境与打包适配 → 产物存储 → `desktop-publish.yml` / 上传校验；记录每个节点可访问的 Runner、凭据、制品和代码来源。
-3. 若发现方案要求修改 Agent Loop、Session、Host/Client RPC、Renderer 安全边界，立即停止该部分并提交 ADR 供审核。本轮默认**不得修改这些契约**。
-4. **绝对禁止**：实际 PIN、证书私钥、EV Token 操作；生产或测试 COS 写入；创建仓内 `apps/desktop/.env.windows`；安装/卸载正式客户端；运行真实签名工作流；接触、复用或清理用户既有机器级缓存、安装目录、凭据目录；关闭已有安全检查以“让测试通过”。
-5. 禁止直接 push/merge 到 `master` 或开发主线；所有代码放在功能分支和待审 PR。提交报告时附上具体 SHA 和验证数据。
+## 1. Work boundaries and prohibitions (check these first)
 
-## 2. 先实施来源与授权策略（S1-A）
+1. After `git fetch`, confirm the target development branch, the worktree state, and the current SHA. Create `feature/p8-s1-windows-release-security` from the real development branch; do not start from an outdated `main`; do not overwrite, clean, or reset the existing untracked files of the user.
+2. Quickly read the existing `AGENTS.md`, `docs/architecture.md`, the relevant designs under `docs/workbench/`, and the build/signing scripts. Write down an **actual call chain**: `windows-package.yml` → environment and packaging adaptation → artifact storage → `desktop-publish.yml` / upload verification; record the Runners, credentials, artifacts, and code sources that each node can reach.
+3. If the plan requires changing the Agent Loop, Session, Host/Client RPC, or the Renderer security boundary, stop that part immediately and submit an ADR for review. By default this round **must not change those contracts**.
+4. **Absolutely forbidden**: real PIN, certificate private key, or EV Token operations; production or test COS writes; creating `apps/desktop/.env.windows` in the repository; installing/uninstalling the production client; running a real signing workflow; touching, reusing, or cleaning the existing machine-level caches, install directories, or credential directories of the user; disabling existing security checks in order to “make the tests pass”.
+5. Do not push/merge directly to `master` or the development mainline; all code goes on a feature branch and a PR awaiting review. Attach the concrete SHAs and verification data when submitting the report.
 
-建议抽离可单测的纯函数/脚本，例如 `apps/desktop/scripts/windows-package-policy.mjs`，供工作流前置校验与本地辅助校验共享，避免在 YAML、`prepare-windows-ci.mjs` 和 Release Store 中出现不同规则。
+## 2. Implement the source and authorization policy first (S1-A)
 
-### 2.1 拒绝优先的组合矩阵
+It is recommended to extract a unit-testable pure function/script, for example `apps/desktop/scripts/windows-package-policy.mjs`, shared by the workflow preflight validation and the local helper validation, so that the YAML, `prepare-windows-ci.mjs`, and the Release Store do not end up with different rules.
 
-| 来源 | test + unsigned | test + signed | production + unsigned | production + signed |
+### 2.1 Reject-first combination matrix
+
+| Source | test + unsigned | test + signed | production + unsigned | production + signed |
 | --- | --- | --- | --- | --- |
-| 任意开发分支 | **允许仅无凭据构建** | **拒绝** | **拒绝** | **拒绝** |
-| 可信、受保护的 master | **允许仅无凭据构建** | 仅在 S2 门禁全部就绪后才可能放行；S1 **拒绝** | 建议拒绝 | 仅在 S2 门禁全部就绪后才可能放行；S1 **拒绝** |
-| 明确允许的受保护发布 tag | 按既有版本规则允许无凭据构建 | S1 **拒绝** | 拒绝 | S1 **拒绝** |
-| SHA、PR ref、非白名单 tag、外部仓库或不明确来源 | **拒绝** | **拒绝** | **拒绝** | **拒绝** |
+| Any development branch | **Allow credential-free builds only** | **Reject** | **Reject** | **Reject** |
+| Trusted, protected master | **Allow credential-free builds only** | Only possibly admitted once all S2 gates are ready; S1 **rejects** | Recommend rejecting | Only possibly admitted once all S2 gates are ready; S1 **rejects** |
+| Explicitly allowed protected release tag | Allow credential-free builds per the existing version rules | S1 **rejects** | Reject | S1 **rejects** |
+| SHA, PR ref, non-allowlisted tag, external repository, or unclear source | **Reject** | **Reject** | **Reject** | **Reject** |
 
-**关键约束：**“字符串等于 master”并不证明该分支受保护；用户可选择的 `source_ref`、`preset`、`signing` 也不等于可信授权。必须结合 GitHub 受保护 refs/规则集、授权者身份、审批环境与不可篡改的 commit 身份设计 S2 的放行条件。**仓库此前未验证 master 的保护规则已开启**；如未配置则记录为管理端阻塞项，不能悄悄假定配置存在。S1 应采用更严格的“一律拒绝 signed”而不是以不充分检查临时放行。
+**Key constraint:** “the string equals master” does not prove that the branch is protected; the user-selectable `source_ref`, `preset`, and `signing` do not amount to trusted authorization either. The S2 admission conditions must combine GitHub protected refs/rulesets, the authorizing identity, the approval environment, and an immutable commit identity. **The repository has not previously verified that the protection rules of master are enabled**; if they are not configured, record it as an administrator-side blocker and never quietly assume the configuration exists. S1 should take the stricter “reject signed in every case” instead of temporarily admitting it on the basis of an insufficient check.
 
-### 2.2 Workflow 前置门禁
+### 2.2 Workflow preflight gate
 
-- `.github/workflows/windows-package.yml` 将签名输入默认改为 `unsigned`，文案明确 unsigned 仅调试、不具备发布资格。
-- 加入**不依赖 Windows 自托管机器、不得访问签名/COS 凭据**的 `preflight-policy` Job；先校验用户输入、ref 格式、仓库、来源身份、tag/版本关联及权限，再允许任何构建 Job 被调度。
-- 不能先启动具有 Token 权限的 Runner、`pnpm install` 或执行未经验证的源码后才进行策略检查。
-- 禁止使用不受信任的 PR/源码分支来执行签名策略脚本；策略代码应来自经审查的可信工作流版本。警惕工作流执行 ref 和源码 `source_ref` 是两种独立信任主体；不能仅凭 `github.workflow_sha` 字段存在就把某份脚本视为可信。
-- 检查 `prepare-windows-ci.mjs`、`desktop-release-store.ts`、`retain-desktop-ci.ts` 及相关发布前置脚本的**重复校验**：signed 元数据和 unsigned 制品不得被参数伪装、重新标记或绕过前置拦截。
-- 对失败路径给出明确但不泄密的报错，必须在任何有凭据的 Job 前终止。
+- Change the default signing input of `.github/workflows/windows-package.yml` to `unsigned`, and state explicitly in the wording that unsigned is for debugging only and carries no release eligibility.
+- Add a `preflight-policy` job that **does not depend on a Windows self-hosted machine and must not access signing/COS credentials**; validate user input, ref format, repository, source identity, tag/version association, and permissions before any build job may be scheduled.
+- Do not start a Runner that holds Token permissions, run `pnpm install`, or execute unverified source code before the policy check.
+- Do not use untrusted PR/source branches to execute signing policy scripts; policy code must come from a reviewed trusted workflow revision. Beware that the workflow execution ref and the source `source_ref` are two independent trust subjects; the mere presence of a `github.workflow_sha` field does not make a script trusted.
+- Check the **duplicate validation** in `prepare-windows-ci.mjs`, `desktop-release-store.ts`, `retain-desktop-ci.ts`, and the related release preflight scripts: signed metadata and unsigned artifacts must not be disguised by parameters, relabeled, or able to bypass the preflight interception.
+- Report failures with explicit but non-disclosing errors, and terminate before any job that holds credentials.
 
-## 3. 分离构建和签名权限域（S1-B）
+## 3. Separate the build and signing permission domains (S1-B)
 
-把现有 `package` “同机执行任意源码安装依赖 + 签名”的组合拆分为**无密钥构建**与**隔离签名接口**，并保留现有 packaging 环境选择、版本、通道、测试 Release ID、归档语义：
+Split the current `package` combination of “install dependencies from arbitrary source code and sign on the same machine” into a **key-free build** and an **isolated signing interface**, while preserving the existing packaging environment selection, version, channel, test Release ID, and archiving semantics:
 
-1. **Builder**：只运行允许的 unsigned 编译/NSIS 打包，使用不带 EV Token、PIN、COS 写凭据的账户/Runner。不得把 `dsh-win-package-trial` 自动当作“无密钥”机器；先核实其权限和缓存边界。若无可信无密钥 Windows Runner，可完成离线脚本和模拟验证，并将运行状态标记 `BLOCKED`。
-2. **Signer（S1 只实现可审查接口/Job 骨架）**：独立的专用 Runner 标签、工作区、账户和缓存；不得检出可选 `source_ref`，不得运行其 `pnpm install`、postinstall 或任意脚本。**本轮不调度真实 Signer Job，signed 路径必须显式拒绝。** 以后 S2 才能在审批和硬件凭据保护就绪时开放。
-3. **制品交接**：Builder 输出不可变 unsigned 制品及 manifest；签名前先重算字节摘要、大小、来源 commit；不得把上传的 manifest 自报“已签名”作为授权依据。禁止可覆盖的 artifact 名称造成跨 run、attempt 或来源混淆。
-4. **受控脚本**：Signer 的未来脚本必须来自经过验证的受保护来源和固定 SHA。用于执行的策略/脚本、制品字节与来源证明要绑定同一获批发布意图。不能将用户可改动的 workflow/helper 混同于可信代码。
-5. 保持 unsigned 产物可用于**严格隔离**的测试，但不得有任何到 `desktop-publish.yml` / 正式 update feed 的可达路径。
+1. **Builder**: runs only the allowed unsigned compilation/NSIS packaging, using an account/Runner that has no EV Token, PIN, or COS write credentials. Do not automatically treat `dsh-win-package-trial` as a “key-free” machine; verify its permissions and cache boundaries first. If no trusted key-free Windows Runner is available, you may complete the offline scripts and the simulated verification and mark the run state `BLOCKED`.
+2. **Signer (S1 implements only a reviewable interface/job skeleton)**: a separate dedicated Runner label, workspace, account, and cache; it must not check out the optional `source_ref`, and must not run its `pnpm install`, postinstall, or any other script. **This round does not schedule a real Signer job, and the signed path must be explicitly rejected.** Only later, in S2, may it open once approvals and hardware credential protection are ready.
+3. **Artifact handover**: the Builder outputs immutable unsigned artifacts plus a manifest; before signing, recompute the byte digests, the size, and the source commit; the uploaded manifest reporting itself as “already signed” must not be used as the basis for authorization. Forbid overwritable artifact names that cause confusion across runs, attempts, or sources.
+4. **Controlled scripts**: future Signer scripts must come from a verified protected source and a fixed SHA. The policy/scripts used for execution, the artifact bytes, and the build-identity evidence must be bound to the same approved release intent. Do not confuse a user-editable workflow/helper with trusted code.
+5. Keep unsigned artifacts usable for **strictly isolated** tests, but with no reachable path to `desktop-publish.yml` / the production update feed.
 
-请在 PR 中附上新的 Mermaid 数据/信任边界图，并逐条说明运行账户、Runner labels、机器隔离、缓存 ACL、签名配置目录的关系。没有实际环境证据时一律写“设计/待部署”，不写“已隔离”。
+Include the new Mermaid data/trust boundary diagram in the PR, and explain item by item the relationship between the runtime accounts, Runner labels, machine isolation, cache ACLs, and the signing configuration directory. Without real-environment evidence, always write “design/to be deployed”, never “isolated”.
 
-## 4. 不在 S1 触碰 PIN：禁用不安全签名路径
+## 4. Do not touch the PIN in S1: disable insecure signing paths
 
-已知 `apps/desktop/scripts/windows-sign.cmd` 当前通过 `/kc` 参数包含 PIN 原文。**不要为赶进度在 S1 试运行它**，也不要以日志掩码、环境变量清空或隐藏 shell 回显声称已修复进程命令行泄漏。
+It is known that `apps/desktop/scripts/windows-sign.cmd` currently carries the plaintext PIN through the `/kc` argument. **Do not trial-run it in S1 just to save time**, and do not claim that the process command-line leak is fixed by masking logs, clearing environment variables, or hiding shell echo.
 
-- 在安全策略与测试中静态验证：任何 S1 可达 Job 均不能触发 `windows-sign.cmd` 或其他真实签名入口。
-- 记录该脚本为**遗留风险，S2 专项整改**。如本轮需要修改该文件，修改也必须严格保持 signed fail-closed，并新增 argv/环境/日志无明文 PIN 的反回归测试；不能提交“未经硬件验证即可用于生产”的替代实现。
-- S2 才评审 Native Signer / CSP 会话方式及硬件验证；必须另外取得明确授权，并检查 Windows 进程创建审计、证书指纹、Authenticode 状态和时间戳行为。
+- Statically verify in the security policy and the tests that no S1-reachable job can trigger `windows-sign.cmd` or any other real signing entry point.
+- Record the script as a **legacy risk for a dedicated S2 remediation**. If this round does need to modify that file, the modification must strictly keep signed fail-closed and add anti-regression tests proving no plaintext PIN in argv/environment/logs; do not submit a replacement implementation that claims to be “usable in production without hardware verification”.
+- Only S2 reviews the Native Signer / CSP session approach and hardware verification; it requires a separate explicit authorization and must check Windows process-creation auditing, certificate thumbprints, Authenticode state, and timestamp behavior.
 
-## 5. 制品 Manifest v2 与发布硬阻断（S1-C）
+## 5. Artifact Manifest v2 and release hard blocking (S1-C)
 
-处理 `apps/desktop/scripts/desktop-release-store.ts`、`desktop-upload-plan.ts` 及直接/间接消费者。优先一次实现共享的可测试完整性验证，避免每条路径各写一套哈希逻辑。
+Handle `apps/desktop/scripts/desktop-release-store.ts`, `desktop-upload-plan.ts`, and their direct/indirect consumers. Prefer implementing the shared testable integrity verification once, instead of writing a separate hash logic for each path.
 
-### 5.1 数据契约
+### 5.1 Data contract
 
-- 新写入的受控 Release Store 记录采用明确版本化的 `schemaVersion: 2`。每个文件记录 `name`、`size`、`sha256`（64 位小写 hex）及当前 `sha512`（Base64），来源记录与构建/签名溯源记录应与文件摘要明确绑定。
-- 来源至少包括 repository、受审查的 source ref、resolved commit SHA、workflow SHA、run ID/attempt、preset/channel/target/version、Builder 身份；未来签名还必须具有可信的 Signer、受控环境、证书指纹和签名时间。**不能靠用户可填字段把 unsigned 伪装成 signed。**
-- v1 的处理需明确分流：对已有历史报告可读取/审计，但**不得在缺少 v2 溯源及签名资格时被自动升级为可发布资格**。如果仍需兼容历史部署，明确写出转换/迁移约束和测试，不静默重解释。
-- 在签名/发布边界重新读取并核验 SHA-256、SHA-512、size、目标文件、来源与身份；先验证后签名/发布，任意不匹配立即中断。
-- `desktop-upload-plan.ts` 的更新元数据 SHA-512 校验应**保留**；额外对照可信 Release Store 清单中的 SHA-256/size，而不是要求修改第三方更新协议为只有 SHA-256。
-- 需要校验真实签名的路径，在 S1 只能测**可信模拟校验器**和拒绝路径；S2 再验证 Windows Authenticode 实机证据。明确生产发布需要双哈希 + Authenticode + 预期证书指纹与完整来源链。
+- Newly written controlled Release Store records use an explicitly versioned `schemaVersion: 2`. Each file records `name`, `size`, `sha256` (64 lowercase hex characters), and the current `sha512` (Base64); the build-identity record and the build/signing attestation record must be explicitly bound to the file digests.
+- The build-identity record includes at least the repository, the reviewed source ref, the resolved commit SHA, the workflow SHA, the run ID/attempt, preset/channel/target/version, and the Builder identity; future signing must additionally carry a trusted Signer, a controlled environment, the certificate thumbprint, and the signing time. **User-fillable fields must not disguise unsigned as signed.**
+- Handling of v1 needs an explicit split: existing historical reports may be read/audited, but **they must not be automatically upgraded to release eligibility while v2 build identity and signing eligibility are missing**. If historical deployments must still be supported, state the conversion/migration constraints and tests explicitly; never silently reinterpret.
+- At the signing/release boundary, re-read and verify SHA-256, SHA-512, size, target files, build identity, and signer identity; verify before signing/releasing and abort immediately on any mismatch.
+- The SHA-512 verification of the update metadata in `desktop-upload-plan.ts` should be **kept**; additionally compare it against the SHA-256/size in the trusted Release Store manifest, instead of requiring the third-party update protocol to be changed to SHA-256 only.
+- Paths that must verify real signatures may, in S1, only test the **trusted simulated verifier** and the rejection paths; S2 will then verify Windows Authenticode real-machine evidence. State explicitly that a production release needs dual hashes + Authenticode + the expected certificate thumbprint + a complete build-identity chain.
 
-### 5.2 发布门禁
+### 5.2 Release gate
 
-- 复核 `.github/workflows/desktop-publish.yml` 的 `route / prepare / publish / upload-website-installer` 及 `preflight-desktop-publish.mjs`、`publish-desktop-ci.ts`；保证在读取敏感发布凭据或上传前即能拒绝 unsigned、缺字段/错误 hash、错误来源、错误 run/attempt、伪造签名状态。
-- 不要只检查“包名含 signed”或输入 `qualification=signed`；资格必须来自可信存储并经实际制品验证。
-- `master` 当前保护配置未经确认，**禁止**把“仅允许 master 启动工作流”当成发布授权完整闭环。需在报告列出 GitHub 保护规则、环境 reviewer、Runner 实际权限和证书策略等需管理员完成的项目；不要自动改变仓库管理设置。
+- Review the `route / prepare / publish / upload-website-installer` of `.github/workflows/desktop-publish.yml` together with `preflight-desktop-publish.mjs` and `publish-desktop-ci.ts`; ensure that unsigned artifacts, missing fields/wrong hashes, wrong build identity, wrong run/attempt, and a forged signing state are rejected before sensitive release credentials are read or anything is uploaded.
+- Do not check only “the package name contains signed” or the input `qualification=signed`; eligibility must come from the trusted store and be verified against the actual artifacts.
+- The current protection configuration of `master` is unconfirmed, so **do not** treat “only master may start the workflow” as a complete release authorization loop. The report must list the items that need an administrator — GitHub protection rules, environment reviewers, the actual Runner permissions, and the certificate policy; do not change repository administration settings automatically.
 
-## 6. 测试与回归验收（S1-D）
+## 6. Tests and regression acceptance (S1-D)
 
-### 6.1 必须增加/改造的测试
+### 6.1 Tests that must be added/changed
 
-- `scripts/windows-package-workflow.spec.ts`：适配多 Job 结构，不保留旧 `jobs.package` / 默认 signed 的过时断言；测试所有组合矩阵、preflight 依赖顺序、无密钥 Runner 与 signer 分离、环境门禁、signed fail-closed、unsigned 无发布通路。
-- `scripts/desktop-publish-workflow.spec.ts`：拒绝无合格 manifest 的制品和未经授权来源；保留现有 package run/attempt 及批准环境约束。
-- `apps/desktop/tests/desktop-release-store.spec.ts`：v2 正常读写、v1 只读不具发布资格、同大小篡改、摘要误配、sourceRef/commit/workflow/attempt 错配、重复/路径穿越、部分拷贝失败、原子性。
-- `apps/desktop/tests/desktop-upload-plan.spec.ts` 与相关发布测试：同时核对 SHA-256/SHA-512/size，拒绝缺失签名证明、缺失 hash、伪造签名状态和 unsigned 上传。
-- `apps/desktop/tests/windows-sign.spec.ts`：本轮仅验证禁用路径与安全断言，不需要真实 Token；如果未修改签名脚本，测试应诚实体现遗留漏洞不被本轮误报为“已修”。
-- 修复上一轮 `scripts/windows-package-workflow.spec.ts` 中 Windows `pwsh` 多次冷启动导致的 5000ms 级超时：优先减少进程启动次数、拆分确定性的纯逻辑测试与 OS 集成测试；**不得仅通过增大 timeout、跳过或删除安全断言处理**。
+- `scripts/windows-package-workflow.spec.ts`: adapt to the multi-job structure and do not keep the outdated assertions about `jobs.package` / default signed; test the whole combination matrix, the preflight dependency order, the separation of the key-free Runner and the signer, the environment gates, signed fail-closed, and unsigned having no release path.
+- `scripts/desktop-publish-workflow.spec.ts`: reject artifacts without a qualified manifest and unauthorized sources; keep the existing package run/attempt and approved-environment constraints.
+- `apps/desktop/tests/desktop-release-store.spec.ts`: v2 normal read/write, v1 read-only without release eligibility, same-size tampering, digest mismatch, sourceRef/commit/workflow/attempt mismatch, duplicates/path traversal, partial copy failure, and atomicity.
+- `apps/desktop/tests/desktop-upload-plan.spec.ts` and the related release tests: verify SHA-256/SHA-512/size together, and reject missing signing evidence, missing hashes, a forged signing state, and unsigned uploads.
+- `apps/desktop/tests/windows-sign.spec.ts`: this round verifies only the disabled path and the security assertions and does not need a real Token; if the signing script is not modified, the tests should honestly reflect that the legacy hole is not misreported as “fixed” in this round.
+- Fix the 5000 ms-class timeouts in the previous round's `scripts/windows-package-workflow.spec.ts` caused by repeated Windows `pwsh` cold starts: prefer reducing the number of process starts and splitting deterministic pure-logic tests from OS integration tests; **do not handle it by only raising the timeout, skipping, or deleting security assertions**.
 
-### 6.2 实际检查
+### 6.2 Actual checks
 
-在具备项目依赖的受控环境里执行（具体命令与工作区按项目现有脚本调整）：
+Run these in a controlled environment that has the project dependencies (adjust the concrete commands and workspace to the existing project scripts):
 
 ~~~sh
 git diff --check
@@ -115,37 +123,37 @@ pnpm exec vitest run apps/desktop/tests/desktop-release-store.spec.ts apps/deskt
 pnpm run typecheck
 ~~~
 
-再执行实际受影响 package 的 Lint、构建与相关完整回归集。对 PowerShell 定向用例，需在 Windows 环境多次重跑并记录各次耗时/失败；非 Windows 下条件跳过不算通过。对所有签名相关真实流程明确写 `NOT_RUN — S2 / 未授权`。
+Then run Lint, the build, and the related full regression set for the actually affected packages. For the targeted PowerShell cases, rerun several times in a Windows environment and record each duration/failure; a conditional skip on non-Windows does not count as a pass. For all real signing-related flows, explicitly write `NOT_RUN — S2 / unauthorized`.
 
-**最低负例矩阵：**开发分支 + signed；master + signed（S1 仍拒绝）；production + unsigned；伪造 tag/ref；被篡改 installer；仅改 manifest 中 qualification；不匹配 run/attempt；缺失/错误双哈希；无审批环境/无专用签名机。每个负例的预期必须是“**拒绝、无凭据侧效应**”。
+**Minimum negative-case matrix:** development branch + signed; master + signed (S1 still rejects); production + unsigned; forged tag/ref; tampered installer; changing only the qualification in the manifest; mismatched run/attempt; missing/wrong dual hashes; no approval environment/no dedicated signing machine. The expectation for every negative case must be “**rejected, with no credential-side effects**”.
 
-## 7. 提交节奏、交付和停止条件
+## 7. Commit cadence, delivery, and stop conditions
 
-建议按逻辑拆成 3–5 个提交（仅建议，按实际变更调整）：
+It is recommended to split the work into 3–5 commits by logic (a recommendation only; adjust to the actual changes):
 
-1. `test/security`：来源授权矩阵 + fail-closed 签名策略测试。
-2. `ci`：Preflight 与无密钥构建、隔离 Signer 骨架；保留原版本/通道/归档契约。
-3. `security/release`：Manifest v2 + 完整性/来源校验 + 发布路径阻断。
-4. `test`：跨平台/Windows 回归、解决 PowerShell 超时（仅当真正修复）。
-5. `docs`：信任边界图、运维前置条件、工作报告及索引。
+1. `test/security`: source authorization matrix + fail-closed signing policy tests.
+2. `ci`: Preflight and key-free build, isolated Signer skeleton; keep the original version/channel/archiving contract.
+3. `security/release`: Manifest v2 + integrity and build-identity verification + release path blocking.
+4. `test`: cross-platform/Windows regression, resolve the PowerShell timeouts (only if actually fixed).
+5. `docs`: trust boundary diagram, operational preconditions, work report, and indexes.
 
-执行结束后必须**在仓库**创建同轮 `WORK_REPORT.md`，含：
-- 基线、功能分支、PR URL、每个实际 commit 的完整 SHA（无法在自身 commit 内填写则标记 `PENDING` 并在下一提交/PR 更新）。
-- 文件变更清单、每项安全风险的前后状态及未完成的 S2 事项。
-- 每条测试命令、平台、实际 exit code、通过/失败/跳过计数；本机/CI 证据路径与保留期限，不得杜撰。
-- GitHub Environment、分支保护、Runner OS 账户/Token ACL 等**真实配置是否已核实**，未核实写 `BLOCKED / NOT_VERIFIED`。
-- 最终结论分为：**S1 代码整改状态**、**是否允许真实 signed**（默认 NO）、**是否允许发布**（默认 NO）。
+After execution you must create the same-round `WORK_REPORT.md` **in the repository**, containing:
+- The baseline, the feature branch, the PR URL, and the full SHA of every actual commit (if it cannot be filled inside its own commit, mark it `PENDING` and update it in the next commit/PR).
+- The file change list, the before/after state of each security risk, and the unfinished S2 items.
+- Every test command, platform, actual exit code, and pass/fail/skip counts; the local/CI evidence paths and retention period, never fabricated.
+- Whether the **real configuration has been verified** — GitHub Environment, branch protection, Runner OS account/Token ACLs, and so on; write `BLOCKED / NOT_VERIFIED` when it has not.
+- Split the final conclusion into: **S1 code remediation status**, **whether a real signed run is allowed** (default NO), and **whether a release is allowed** (default NO).
 
-更新 [指令索引](../README.md) 与 [报告索引](../../../../workbench-reports/README.md)（注意核对实际相对路径）；只把实际完成的事项标记为完成。提交并推送功能分支，创建待审 PR，**不要自行合并、签名、上传或触发发布**。
+Update the [instruction index](../README.md) and the [report index](../../../../workbench-reports/README.md) (check the actual relative paths); mark only genuinely completed items as complete. Commit and push the feature branch, open a PR awaiting review, and **do not merge, sign, upload, or trigger a release yourself**.
 
-### 立即停止并报告的情况
+### Cases that require an immediate stop and report
 
-出现以下任一情况，不得自行放宽规则：需要真实 Token/PIN、生产上传凭据、Runner 管理员权限、GitHub 管理权限才能验证；需运行未受信任代码于签名主机；用户环境存在会被安装器或清理脚本改动的已有数据；原生架构契约与 S1 设计冲突；无法建立可验证的签名来源。允许保留已完成的安全代码与测试，并如实标记阻塞项。
+If any of the following occurs, do not relax the rules on your own: verification needs a real Token/PIN, production upload credentials, Runner administrator rights, or GitHub administration rights; untrusted code must be run on the signing host; the user environment holds existing data that the installer or cleanup scripts would modify; the original architecture contract conflicts with the S1 design; a verifiable signing identity cannot be established. You may keep the completed security code and tests, and you must mark the blockers truthfully.
 
-## 8. 本轮完成定义（Definition of Done）
+## 8. Definition of Done for this round
 
-- **代码验收**：符合上述矩阵，默认 unsigned；不可信源码无法触发含签名凭据的执行环境；S1 任何 signed 请求全部拒绝。
-- **完整性验收**：v2 双哈希和来源校验覆盖保存、读取、上传前检查，旧版数据不获得虚假发布资格；负例全拒绝。
-- **测试验收**：受影响 Lint/typecheck/测试均按实际平台复测并留存报告，失败和跳过单独列明；不靠降低断言满足通过。
-- **交付验收**：独立 PR、完整 Commit/工作报告索引、风险清单和后续 S2 待授权条件齐全。
-- **安全结论**：**S1 结束 ≠ 允许正式签名或正式发布**；只有后续 S2 与真实部署审批通过后才可变更 signed 门禁。
+- **Code acceptance**: matches the matrix above, unsigned by default; untrusted source cannot trigger any execution environment that holds signing credentials; all signed requests in S1 are rejected.
+- **Integrity acceptance**: v2 dual hashing and build-identity verification cover saving, reading, and pre-upload checks, legacy data gains no false release eligibility, and every negative case is rejected.
+- **Test acceptance**: the affected Lint/typecheck/tests are re-run on the actual platform with the reports retained, failures and skips listed separately; passing must not come from weakening assertions.
+- **Delivery acceptance**: an independent PR, complete Commit/work report indexes, the risk list, and the subsequent S2 authorization preconditions are all in place.
+- **Security conclusion**: **the end of S1 ≠ permission to sign or release officially**; the signed gate may change only after the subsequent S2 and real deployment approvals pass.

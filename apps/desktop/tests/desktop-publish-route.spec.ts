@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest'
 import { resolveDesktopPublishRoute } from '../scripts/desktop-publish-route.ts'
-import type { DesktopRetainedProvenance } from '../scripts/desktop-release-store.ts'
+import type { DesktopRetainedBuildIdentity } from '../scripts/desktop-release-store.ts'
 
 function fixture() {
   const run = { id: 42, run_attempt: 2, head_sha: 'a'.repeat(40), path: '.github/workflows/macos-package.yml',
@@ -8,16 +8,16 @@ function fixture() {
   const source = { repository: 'owner/repo', runId: '42', attempt: '2', commit: run.head_sha, runnerName: 'mini',
     workflowCommit: run.head_sha, sourceRef: 'master', channel: 'nightly',
     target: 'mac-arm64', preset: 'test', publishRequested: true, qualification: 'notarized' }
-  const provenance: DesktopRetainedProvenance = {
+  const buildIdentity: DesktopRetainedBuildIdentity = {
     builderRunner: 'mini',
     builderRunId: '42',
     builderAttempt: '2',
     workflowSha: run.head_sha,
   }
-  const manifest = { schemaVersion: 2 as const, source, provenance }
+  const manifest = { schemaVersion: 2 as const, source, buildIdentity }
   const jobs = [{ name: 'package', runner_name: 'mini', conclusion: 'success', labels: ['self-hosted', 'dsh-mini'] }]
   const routes = { mini: { label: 'dsh-mini', target: 'mac-arm64' } }
-  return { run, source, provenance, manifest, jobs, routes }
+  return { run, source, buildIdentity, manifest, jobs, routes }
 }
 
 it('routes the exact successful attempt to its registered machine', () => {
@@ -83,7 +83,7 @@ it('allows repository branch packages for test but rejects them for production',
   expect(() => resolveDesktopPublishRoute('owner/repo', f.run, f.manifest, f.jobs, f.routes)).toThrow(/Production source/u)
 })
 
-it('rejects legacy v1 manifests, signed Windows without signer provenance, and signed dev branches', () => {
+it('rejects legacy v1 manifests, signed Windows without signer identity, and signed dev branches', () => {
   const f = fixture()
   expect(() => resolveDesktopPublishRoute('owner/repo', f.run, { schemaVersion: 1, source: f.source }, f.jobs, f.routes)).toThrow()
   const win = fixture()
@@ -91,9 +91,9 @@ it('rejects legacy v1 manifests, signed Windows without signer provenance, and s
   win.source.target = 'win-x64'
   win.source.qualification = 'signed'
   expect(() => resolveDesktopPublishRoute('owner/repo', win.run, win.manifest, win.jobs, { mini: { label: 'dsh-mini', target: 'win-x64' } }))
-    .toThrow(/signer provenance/u)
-  win.manifest.provenance = {
-    ...win.provenance,
+    .toThrow(/signer identity/u)
+  win.manifest.buildIdentity = {
+    ...win.buildIdentity,
     signer: {
       runnerName: 'mini', runId: '42', attempt: '2',
       environment: 'windows-sign-test', certificateThumbprint: 'A'.repeat(40), signedAt: '2026-11-14T12:00:00.000Z',

@@ -1,0 +1,58 @@
+# Bilingual-pair consistency record for INSTRUCTION.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/instructions/2026-11-14-p8-s1-signing-isolation/INSTRUCTION.md
+/p8-s1-windows-release-chain-security-remediation-instruction:
+  en: 8165d47326dc2362
+  zh: ad165c60e96c5675
+/p8-s1-windows-release-chain-security-remediation-instruction/0-direct-task-for-the-executing-agent:
+  en: cb1121a99498c2e2
+  zh: b5af50f51af47fc3
+/p8-s1-windows-release-chain-security-remediation-instruction/0-direct-task-for-the-executing-agent/related-design-and-factual-basis:
+  en: 0a860399c431795e
+  zh: d023a6df7c0190c4
+/p8-s1-windows-release-chain-security-remediation-instruction/1-work-boundaries-and-prohibitions-check-these-first:
+  en: 9d4ef5ebd9e95a26
+  zh: ca411fed67244ff8
+/p8-s1-windows-release-chain-security-remediation-instruction/2-implement-the-source-and-authorization-policy-first-s1-a:
+  en: 2439f579a1533e74
+  zh: b632d69852fbda88
+/p8-s1-windows-release-chain-security-remediation-instruction/2-implement-the-source-and-authorization-policy-first-s1-a/2-1-reject-first-combination-matrix:
+  en: 5e9b0fd371a70923
+  zh: 2070b7b3ceafb961
+/p8-s1-windows-release-chain-security-remediation-instruction/2-implement-the-source-and-authorization-policy-first-s1-a/2-2-workflow-preflight-gate:
+  en: 87792ed26d7160b7
+  zh: 48eaca399cd3889b
+/p8-s1-windows-release-chain-security-remediation-instruction/3-separate-the-build-and-signing-permission-domains-s1-b:
+  en: 7a0adaa9b81148e5
+  zh: b8364f00a777f30f
+/p8-s1-windows-release-chain-security-remediation-instruction/4-do-not-touch-the-pin-in-s1-disable-insecure-signing-paths:
+  en: e8d26a0b8684e798
+  zh: 7c1b5f962d5c8526
+/p8-s1-windows-release-chain-security-remediation-instruction/5-artifact-manifest-v2-and-release-hard-blocking-s1-c:
+  en: 071c44f766d59ca9
+  zh: 5b90b0f2f50d19d8
+/p8-s1-windows-release-chain-security-remediation-instruction/5-artifact-manifest-v2-and-release-hard-blocking-s1-c/5-1-data-contract:
+  en: 1e20e67e0816c52f
+  zh: a880a3b9b22ab91e
+/p8-s1-windows-release-chain-security-remediation-instruction/5-artifact-manifest-v2-and-release-hard-blocking-s1-c/5-2-release-gate:
+  en: 13da905fd6a9c70b
+  zh: c5a88b90f02f8d40
+/p8-s1-windows-release-chain-security-remediation-instruction/6-tests-and-regression-acceptance-s1-d:
+  en: f8844ae78112dd38
+  zh: c33a4f983d09fa07
+/p8-s1-windows-release-chain-security-remediation-instruction/6-tests-and-regression-acceptance-s1-d/6-1-tests-that-must-be-added-changed:
+  en: 755118511ffa0e4e
+  zh: 12ae8ada8043f063
+/p8-s1-windows-release-chain-security-remediation-instruction/6-tests-and-regression-acceptance-s1-d/6-2-actual-checks:
+  en: 87b87e8798a16658
+  zh: 0ffa5a3b17a2aa0d
+/p8-s1-windows-release-chain-security-remediation-instruction/7-commit-cadence-delivery-and-stop-conditions:
+  en: 47d36aee2fa88d98
+  zh: 5f8adf2ee98fc29c
+/p8-s1-windows-release-chain-security-remediation-instruction/7-commit-cadence-delivery-and-stop-conditions/cases-that-require-an-immediate-stop-and-report:
+  en: 782151360e9ceb42
+  zh: 9b56ce7320b2918b
+/p8-s1-windows-release-chain-security-remediation-instruction/8-definition-of-done-for-this-round:
+  en: 7c1e997bf71fc73b
+  zh: 518819995aa85a16

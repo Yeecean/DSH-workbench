@@ -73,7 +73,7 @@ export interface DesktopUploadPlanOptions {
   readonly artifactsRoot?: string
   /** Original product version from a verified retained build; absent reads the checkout manifests. */
   readonly packagedProductVersion?: string
-  /** Verified retained release manifest; when provided, enforces v2 provenance and dual-hash verification. */
+  /** Verified retained release manifest; when provided, enforces the v2 build identity and dual-hash verification. */
   readonly retainedManifest?: DesktopRetainedManifest
 }
 

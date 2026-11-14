@@ -1,17 +1,19 @@
 # Workbench 文档体系与追溯规范
 
+[English](DOCUMENTATION_GUIDE.md) | 中文
+
 > 适用范围：DSH Workbench 自研变更。保留上游 DSH 文档及其既有翻译、同步规则；本规范不要求重写上游文件。
 
 ## 1. 信息分层与权威性
 
 | 层级 | 文件/目录 | 记录的内容 | 判定边界 |
 | --- | --- | --- | --- |
-| 产品入口 | [WORKBENCH.zh.md](../../WORKBENCH.zh.md) | 定位、边界、导航 | 不替代上游 README |
+| 产品入口 | [WORKBENCH.md](../../WORKBENCH.md) | 定位、边界、导航 | 不替代上游 README |
 | 架构 | [WORKBENCH_ARCHITECTURE.zh.md](WORKBENCH_ARCHITECTURE.zh.md)、[EXTENSION_POINTS.zh.md](EXTENSION_POINTS.zh.md)、已批准 ADR | 原创设计原则、职责、接口、决策 | **设计权威**；研究参考不能覆盖 |
 | 规划 | [DEVELOPMENT_ROADMAP.zh.md](DEVELOPMENT_ROADMAP.zh.md)、专项规格 | 计划、依赖、验收标准 | **目标**而非当前实现事实 |
-| 指令 | [instructions/](instructions/README.md) | 每轮执行 Agent 输入、授权范围与约束 | 不得擅改架构 |
+| 指令 | [instructions/](instructions/README.zh.md) | 每轮执行 Agent 输入、授权范围与约束 | 不得擅改架构 |
 | 实现 | Git commit / diff | 实际提交代码 | **代码事实**，以明确 SHA 和分支复核 |
-| 证据 | [workbench-reports/](../../workbench-reports/README.md) | 测试命令、结果、截图/日志路径、问题 | **验证事实**；不能用报告代替运行证据 |
+| 证据 | [workbench-reports/](../../workbench-reports/README.zh.md) | 测试命令、结果、截图/日志路径、问题 | **验证事实**；不能用报告代替运行证据 |
 | 验收 | 同轮报告中的验收结论或独立复核 | 通过、条件通过、阻塞、遗留风险 | 不把“测试通过”推断为“发布获准” |
 
 **冲突处理**：实际实现以对应 SHA 源码为准；期望设计以已批准的架构/ADR 为准；两者不一致时记录偏差与决策，不默默以现状改写架构。
@@ -41,11 +43,11 @@ workbench-reports/
 ## 3. 变更闭环（必须）
 
 1. **规划/决策**：写清所依赖架构、里程碑和 ADR；如需更改原生边界，先提交单独 ADR 审批。
-2. **执行前**：从 [指令模板](instructions/TEMPLATE.md) 建立独立 `INSTRUCTION.md`，约定范围、禁止事项、验收标准、回滚策略与授权条件。保存发给 Agent 的最终版本；有中途变更则追加修订记录。
+2. **执行前**：从 [指令模板](instructions/TEMPLATE.zh.md) 建立独立 `INSTRUCTION.md`，约定范围、禁止事项、验收标准、回滚策略与授权条件。保存发给 Agent 的最终版本；有中途变更则追加修订记录。
 3. **执行中**：控制每个 commit 的职责；提交信息说明变更意图；不要把未经验证的结论写成事实。
 4. **提交后**：从 [工作报告模板](../../workbench-reports/TEMPLATE.md) 填写报告，关联指令路径、实际分支、每个 commit 的完整 SHA、文件变更、验证/失败、遗留问题和证据位置。
 5. **复核**：明确记录 `PASS / CONDITIONAL / FAIL / NOT_RUN` 及理由。权限敏感、签名和正式发布需要额外安全门禁，不因合并报告即视为批准。
-6. **更新索引**：新一轮文档同时加入 [指令索引](instructions/README.md) 和 [报告索引](../../workbench-reports/README.md)；关联实际 PR/commit，保持历史记录不被覆盖。
+6. **更新索引**：新一轮文档同时加入 [指令索引](instructions/README.zh.md) 和 [报告索引](../../workbench-reports/README.zh.md)；关联实际 PR/commit，保持历史记录不被覆盖。
 
 **最小要求**：每个功能性 commit 都应能经由轮次报告追踪到执行指令和验证情况；纯格式/文档维护 commit 可共用同轮报告，但仍需列出 SHA 或说明待回填。
 

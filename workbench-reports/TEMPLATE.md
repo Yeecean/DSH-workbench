@@ -1,7 +1,7 @@
 # 工作报告｜<YYYY-MM-DD-slug>
 
 - Status: PASS / CONDITIONAL / FAIL / NOT_RUN
-- Baseline ref / full SHA:
+- Baseline branch / starting point:
 - Actual branch:
 - Related instruction: `docs/workbench/instructions/YYYY-MM-DD-slug/INSTRUCTION.md`
 - Related architecture / ADR / milestone:
@@ -16,13 +16,13 @@
 
 列出执行前实际阅读的基础文档、任务指令及相关架构、ADR、规格和历史报告；未适用或未读取的项目注明原因。
 
-## 实际提交映射
+## 提交与变更映射
 
-| 完整 commit SHA（提交后填写） | 变更目的和工作内容 | 修改文件 | 验证证据编号及验收状态 |
+| 提交主题（提交后填写） | 变更目的和工作内容 | 变更文件（项目相对路径） | 验证证据编号及验收状态 |
 | --- | --- | --- | --- |
-| PENDING：提交后通过 `git rev-parse HEAD` 等核实后回填 | | | |
+| | | | |
 
-**说明**：每个功能性提交须对应具体工作和验证证据。同一提交无法在自身文件内容中准确写出自己的 SHA；下一提交核实并回填，最终回填提交自身可保留 PENDING，并在交付时提供实际 SHA。不得猜测。
+**说明**：报告以轮次目录和变更文件的项目相对路径作为追溯单位，不记录 commit SHA、短哈希或提交链接。每个功能性提交把主题行填进对应行，并在提交信息正文写明 `Report: workbench-reports/YYYY-MM-DD-slug/WORK_REPORT.md`；需要核对提交时用 `git log -- workbench-reports/YYYY-MM-DD-slug/` 找出引入本报告的提交。不得猜测或补造提交。
 
 ## 实现与设计偏差
 
