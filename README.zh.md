@@ -1,5 +1,7 @@
 # DeepSeek Harness
 
+> **DSH Workbench 分支项目入口：**请阅读 [Workbench 项目说明](WORKBENCH.zh.md)（[English](WORKBENCH.md)），了解桌面产品、架构、规划和实施记录。下文保留 DeepSeek Harness 上游说明。
+
 [English](README.md) | 中文
 
 DeepSeek Harness（`dsh`）是由 [DeepSeek AI](https://deepseek.com) 开发的开源 agent harness（智能体框架）。
