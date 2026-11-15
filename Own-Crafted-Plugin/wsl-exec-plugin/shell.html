@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WSL 环境</title>
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    display: flex; flex-direction: column;
+    font: 13px/1.4 "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+    background: Canvas; color: CanvasText;
+  }
+  /* The desktop window draws the native minimize/maximize/close buttons as a 40px
+     overlay on top of the page (apps/desktop/src/windows-layout.ts). Its preload
+     marks the document with [data-windows-titlebar] and exposes the height, so the
+     toolbar starts below the caption buttons instead of colliding with them. */
+  html[data-windows-titlebar] body {
+    padding-top: var(--dsh-windows-titlebar-height, 40px);
+  }
+  html[data-windows-titlebar] body::before {
+    content: "";
+    position: fixed; top: 0; left: 0; right: 138px;
+    height: var(--dsh-windows-titlebar-height, 40px);
+    -webkit-app-region: drag;
+  }
+  .bar {
+    display: flex; align-items: center; gap: 12px;
+    padding: 6px 12px; flex: 0 0 auto;
+    border-bottom: 1px solid color-mix(in srgb, CanvasText 14%, transparent);
+    background: color-mix(in srgb, CanvasText 4%, Canvas);
+    -webkit-app-region: no-drag; user-select: none;
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: #9aa0a6; flex: 0 0 auto; }
+  .dot.starting { background: #d99a2b; }
+  .dot.running { background: #2e9e5b; }
+  .dot.failed { background: #cf4b3f; }
+  .title { font-weight: 600; }
+  .meta { color: color-mix(in srgb, CanvasText 62%, transparent); }
+  .grow { flex: 1 1 auto; }
+  button {
+    font: inherit; padding: 3px 10px; border-radius: 6px; cursor: pointer;
+    border: 1px solid color-mix(in srgb, CanvasText 22%, transparent);
+    background: transparent; color: inherit;
+  }
+  button:hover { background: color-mix(in srgb, CanvasText 8%, transparent); }
+  button.primary { border-color: transparent; background: color-mix(in srgb, CanvasText 88%, Canvas); color: Canvas; }
+  button:disabled { opacity: .45; cursor: default; }
+  main { flex: 1 1 auto; position: relative; }
+  iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: Canvas; }
+  .note {
+    position: absolute; inset: 0; display: flex; flex-direction: column; gap: 10px;
+    align-items: center; justify-content: center; text-align: center; padding: 24px;
+  }
+  .note[hidden], iframe[hidden] { display: none; }
+  .note h1 { font-size: 15px; margin: 0; font-weight: 600; }
+  .note p { margin: 0; max-width: 46ch; color: color-mix(in srgb, CanvasText 68%, transparent); }
+  .spin {
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 2px solid color-mix(in srgb, CanvasText 20%, transparent);
+    border-top-color: color-mix(in srgb, CanvasText 70%, transparent);
+    animation: spin .8s linear infinite;
+  }
+  .spin[hidden] { display: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+  <header class="bar">
+    <span class="dot" id="dot"></span>
+    <span class="title" id="title">WSL 环境</span>
+    <span class="meta" id="meta"></span>
+    <span class="grow"></span>
+    <button id="reload" disabled>重载界面</button>
+    <button id="action" disabled>停止 Linux 环境</button>
+    <button id="back" class="primary">返回 Windows</button>
+  </header>
+  <main>
+    <div class="note" id="note">
+      <div class="spin" id="spin"></div>
+      <h1 id="noteTitle">正在启动 Linux 环境…</h1>
+      <p id="noteBody"></p>
+    </div>
+    <iframe id="frame" hidden referrerpolicy="no-referrer" allow="clipboard-read; clipboard-write"></iframe>
+  </main>
+<script type="module">
+const BASE = location.pathname.replace(/\/[^/]*$/, '/')
+const dot = document.getElementById('dot')
+const meta = document.getElementById('meta')
+const note = document.getElementById('note')
+const spin = document.getElementById('spin')
+const noteTitle = document.getElementById('noteTitle')
+const noteBody = document.getElementById('noteBody')
+const frame = document.getElementById('frame')
+const reload = document.getElementById('reload')
+const action = document.getElementById('action')
+const back = document.getElementById('back')
+
+const ACTIVE = ['starting', 'running', 'stopping']
+const human = {
+  idle: '未启动', starting: '正在启动', running: '运行中', stopping: '正在停止', failed: '启动失败',
+}
+let distroName = ''
+let busy = false
+
+const paint = (status) => {
+  const state = status.state ?? 'idle'
+  distroName = status.distro ?? distroName
+  dot.className = `dot ${state}`
+  meta.textContent = [distroName, human[state] ?? state].filter(Boolean).join(' · ')
+  const active = state === 'starting' || state === 'running'
+  action.textContent = active ? '停止 Linux 环境' : '启动 Linux 环境'
+  action.disabled = busy
+  reload.disabled = state !== 'running'
+  if (state === 'running') {
+    note.hidden = true
+    frame.hidden = false
+    if (frame.dataset.origin !== status.origin) {
+      // The proxy owns its own loopback port and serves the Linux GUI at its root:
+      // going through the desktop Host's own port would trip the main process's
+      // WebSocket origin filter (apps/desktop/src/main.ts:846), which cancels any
+      // ws:// to the Host port whose Origin is not dsh-app://app.
+      frame.dataset.origin = status.origin
+      frame.src = `${status.origin}/`
+    }
+    return
+  }
+  frame.hidden = true
+  if (frame.getAttribute('src')) frame.removeAttribute('src')
+  frame.dataset.origin = ''
+  note.hidden = false
+  spin.hidden = !(state === 'starting' || state === 'stopping')
+  if (state === 'starting') {
+    noteTitle.textContent = '正在启动 Linux 环境…'
+    noteBody.textContent = '第一次启动需要在 WSL 里拉起 DSH Host，通常几秒。'
+  } else if (state === 'stopping') {
+    noteTitle.textContent = '正在停止 Linux 环境…'
+    noteBody.textContent = ''
+  } else if (state === 'idle') {
+    noteTitle.textContent = 'Linux 环境未启动'
+    noteBody.textContent = '点上面的「启动 Linux 环境」把它拉起来，或者「返回 Windows」。'
+  } else {
+    noteTitle.textContent = 'Linux 环境没有起来'
+    noteBody.textContent = status.error ?? '点上面的「启动 Linux 环境」再试一次。'
+  }
+}
+
+const status = async () => {
+  try {
+    const response = await fetch(`${BASE}__status`, { cache: 'no-store' })
+    if (!response.ok) throw new Error(`HTTP ${response.status}`)
+    return await response.json()
+  } catch (error) {
+    return {
+      state: 'failed',
+      distro: distroName,
+      error: `无法查询状态：${error instanceof Error ? error.message : String(error)}`,
+    }
+  }
+}
+
+const control = async (verb) => {
+  const response = await fetch(`${BASE}__control/${verb}`, { method: 'POST', cache: 'no-store' })
+  if (!response.ok) throw new Error(`HTTP ${response.status}`)
+  return await response.json()
+}
+
+let timer
+const tick = async () => {
+  clearTimeout(timer)
+  const current = await status()
+  paint(current)
+  const delay = current.state === 'starting' || current.state === 'stopping' ? 1200 : 5000
+  timer = setTimeout(tick, delay)
+  return current
+}
+
+const run = async (verb) => {
+  if (busy) return
+  busy = true
+  paint({ state: verb === 'start' ? 'starting' : 'stopping', distro: distroName })
+  try {
+    const next = await control(verb)
+    paint(next)
+  } catch (error) {
+    paint({ state: 'failed', distro: distroName, error: String(error?.message ?? error) })
+  } finally {
+    busy = false
+    void tick()
+  }
+}
+
+action.addEventListener('click', async () => {
+  const current = await status()
+  await run(ACTIVE.includes(current.state ?? 'idle') ? 'stop' : 'start')
+})
+
+reload.addEventListener('click', () => {
+  const current = frame.src
+  if (current) frame.src = current
+})
+
+back.addEventListener('click', () => {
+  location.assign('dsh-app://app/')
+})
+
+// First entry: bring the environment up automatically, but never fight a user who
+// has just stopped it (clicking 停止 returns the runtime to `idle`, which must stay
+// idle instead of being restarted by the poll loop).
+void tick().then((current) => {
+  if ((current.state ?? 'idle') === 'idle') void run('start')
+})
+</script>
+</body>
+</html>

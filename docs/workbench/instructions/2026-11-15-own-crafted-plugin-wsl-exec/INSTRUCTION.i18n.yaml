@@ -1,0 +1,31 @@
+# Bilingual-pair consistency record for INSTRUCTION.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/workbench/instructions/2026-11-15-own-crafted-plugin-wsl-exec/INSTRUCTION.md
+/workbench-execution-instruction-2026-11-15-own-crafted-plugin-wsl-exec:
+  en: 3f8f09fe3ba9a418
+  zh: 59d0de250aa2fbcc
+/workbench-execution-instruction-2026-11-15-own-crafted-plugin-wsl-exec/task-objective:
+  en: 23460af1739c9c58
+  zh: 6bb672eb518b46ef
+/workbench-execution-instruction-2026-11-15-own-crafted-plugin-wsl-exec/pre-execution-reading-confirmation:
+  en: 04573eb360843a46
+  zh: c7874dec59d9391e
+/workbench-execution-instruction-2026-11-15-own-crafted-plugin-wsl-exec/allowed-modification-scope:
+  en: fd69b7894b7270a0
+  zh: 485be9400209430c
+/workbench-execution-instruction-2026-11-15-own-crafted-plugin-wsl-exec/non-negotiable-constraints:
+  en: 0c02c2d42b4ce9e0
+  zh: 86e59c19e7d301c9
+/workbench-execution-instruction-2026-11-15-own-crafted-plugin-wsl-exec/execution-steps:
+  en: 2e9fbcce962a0bac
+  zh: 822d46dcb7f3a426
+/workbench-execution-instruction-2026-11-15-own-crafted-plugin-wsl-exec/acceptance-criteria:
+  en: 41eebaf87c9bf9f2
+  zh: a4a76394eb62a499
+/workbench-execution-instruction-2026-11-15-own-crafted-plugin-wsl-exec/delivery-requirements:
+  en: a75253d6c9286405
+  zh: 10e8e5c64d61ac21
+/workbench-execution-instruction-2026-11-15-own-crafted-plugin-wsl-exec/instruction-revision-record:
+  en: 867a85fa3118ccd5
+  zh: 222d07086a27d88d

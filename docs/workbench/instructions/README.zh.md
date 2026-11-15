@@ -13,5 +13,6 @@
 | 2026-11-14 · P8-S1 发布链路安全整改 | [详细执行指令](2026-11-14-p8-s1-signing-isolation/INSTRUCTION.zh.md) | [工作报告](../../../workbench-reports/2026-11-14-p8-s1-signing-isolation/WORK_REPORT.md) | S1 代码与单测已完成（待 PR 审阅）；S2 硬件签名与真实发布仍禁用 |
 | 2026-11-14 · Agent 治理规则 | [执行指令](2026-11-14-agent-governance-rules/INSTRUCTION.zh.md) | [工作报告](../../../workbench-reports/2026-11-14-agent-governance-rules/WORK_REPORT.md) | 项目级 Agent 规则和文档追溯 |
 | 2026-11-15 · 报告路径追溯 | [执行指令](2026-11-15-report-path-traceability/INSTRUCTION.zh.md) | [工作报告](../../../workbench-reports/2026-11-15-report-path-traceability/WORK_REPORT.md) | 追溯改为“提交信息 → 报告路径 → 报告”，并清理历史提交编号与文档门禁 |
+| 2026-11-15 · 自研插件交付归档 | [执行指令](2026-11-15-own-crafted-plugin-wsl-exec/INSTRUCTION.zh.md) | [工作报告](../../../workbench-reports/2026-11-15-own-crafted-plugin-wsl-exec/WORK_REPORT.md) | 归档 WSL2 执行环境插件源码、报告、证据与截图；文档门禁通过后提交并推送 |
 
 早期轮次的指令若仍在外部对话或本地，不假定已经存档；核实后再逐轮迁入。

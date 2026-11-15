@@ -3,5 +3,5 @@
 # After editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write docs/workbench/instructions/README.md
 /workbench-execution-instruction-index:
-  en: 1df516b557696f04
-  zh: e5183fef5c14cfd2
+  en: b3166c8b1b7972ad
+  zh: 6063a887c94c8bb1

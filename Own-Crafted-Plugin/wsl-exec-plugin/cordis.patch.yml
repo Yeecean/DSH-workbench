@@ -1,0 +1,21 @@
+# dsh-wsl-exec: run a DeepSeekRuntime Host inside WSL2 and reach it from the
+# desktop app through a private loopback proxy. Every value below is optional
+# and mirrors the defaults compiled into index.js.
+- insert:
+    - id: wsl-exec
+      name: '@local/dsh-wsl-exec'
+      config:
+        # WSL distribution holding the Linux Host.
+        distro: RockyLinux-9.8
+        # Linux user the Host runs as (must own ~/.deepseek-harness).
+        user: yeecean
+        # Profile name and the `dsh` launcher inside that distribution.
+        profile: web
+        dshCommand: /usr/local/bin/dsh
+        # Loopback port the Linux Host binds, and the Windows proxy port.
+        linuxPort: 4610
+        proxyPort: 45991
+        # Host URL prefix these endpoints live under.
+        mount: /wsl-exec
+        # Start the environment when the plugin loads.
+        autoStart: false

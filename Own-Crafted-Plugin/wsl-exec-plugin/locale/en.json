@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "WSL environment",
+    "description": "Runs a DeepSeekRuntime Host inside WSL2 and opens it in a desktop window: the sidebar button launches the Linux environment, and the window shows its own interface served over a loopback proxy."
+  }
+}

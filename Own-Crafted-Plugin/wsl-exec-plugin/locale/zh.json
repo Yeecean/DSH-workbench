@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "WSL 环境",
+    "description": "在 WSL2 里运行一个 DeepSeekRuntime Host 并在桌面窗口中打开：侧边栏按钮用于启动 Linux 环境，窗口里是该环境的完整界面，经由本机回环代理转发。"
+  }
+}
